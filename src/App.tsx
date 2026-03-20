@@ -17,6 +17,7 @@ import OrdersBilling from "./pages/OrdersBilling";
 import SettingsPage from "./pages/SettingsPage";
 import PlaylistEditor from "./pages/PlaylistEditor";
 import Screens from "./pages/Screens";
+import ScreenDetail from "./pages/ScreenDetail";
 import Media from "./pages/Media";
 import Analytics from "./pages/Analytics";
 import NotFound from "./pages/NotFound";
