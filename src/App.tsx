@@ -17,6 +17,7 @@ import OrdersBilling from "./pages/OrdersBilling";
 import SettingsPage from "./pages/SettingsPage";
 import PlaylistEditor from "./pages/PlaylistEditor";
 import Screens from "./pages/Screens";
+import ScreenDetail from "./pages/ScreenDetail";
 import Media from "./pages/Media";
 import Analytics from "./pages/Analytics";
 import NotFound from "./pages/NotFound";
@@ -36,6 +37,7 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Overview />} />
                 <Route path="/screens" element={<Screens />} />
+                <Route path="/screens/:id" element={<ScreenDetail />} />
                 <Route path="/media" element={<Media />} />
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/placements" element={<Placements />} />

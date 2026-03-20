@@ -1,23 +1,31 @@
-import { MapPin, ArrowLeft, Monitor, ExternalLink } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { MapPin, ArrowLeft, Monitor, ExternalLink, AlertTriangle } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useState, useMemo } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import PageHeader from "@/components/layout/PageHeader";
 import MixBar from "@/components/shared/MixBar";
 import StatusChip from "@/components/shared/StatusChip";
+import ScreenSelectorModal from "@/components/shared/ScreenSelectorModal";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { allScreens } from "@/data/screens";
+import { allPlacements, calcCapacity } from "@/data/placements";
 
 const sections = ["Where it runs", "How it runs", "How it is monetised"];
 const PIE_COLORS = ["hsl(215,16%,47%)", "hsl(210,100%,50%)", "hsl(262,80%,60%)"];
 
-const screens = ["Lobby Screen 1", "Lobby Screen 2", "Lobby Screen 3", "Lobby Screen 4", "Lobby Screen 5", "Lobby Screen 6"];
-
 export default function PlacementDetail() {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+
+  const placement = allPlacements.find((p) => p.id === id) ?? allPlacements[0];
+
   const [section, setSection] = useState("Where it runs");
-  const [owned, setOwned] = useState(50);
-  const [direct, setDirect] = useState(30);
+  const [owned, setOwned] = useState(placement.owned);
+  const [direct, setDirect] = useState(placement.direct);
+  const [screenIds, setScreenIds] = useState<string[]>(placement.screenIds);
+  const [showScreenModal, setShowScreenModal] = useState(false);
+
   const prog = 100 - owned - direct;
 
   const pieData = [
@@ -26,10 +34,25 @@ export default function PlacementDetail() {
     { name: "Programmatic", value: Math.max(0, prog) },
   ];
 
+  const assignedScreens = useMemo(
+    () => allScreens.filter((s) => screenIds.includes(s.id)),
+    [screenIds]
+  );
+
+  const capacity = useMemo(
+    () => calcCapacity(screenIds, allScreens),
+    [screenIds]
+  );
+
+  const venues = useMemo(() => {
+    const set = new Set(assignedScreens.map((s) => s.venue));
+    return Array.from(set);
+  }, [assignedScreens]);
+
   return (
     <div>
       <PageHeader
-        title="Lobby Screens — Main Loop"
+        title={placement.name}
         subtitle="Ad Placement · Defines how ads run on selected screens"
         icon={<MapPin size={20} />}
         actions={
@@ -66,36 +89,59 @@ export default function PlacementDetail() {
                 <p className="skoop-section-header">Placement Scope</p>
                 <p className="text-xs text-muted-foreground">This ad placement is linked to screens at a specific venue. All screens below will display content from campaigns assigned to this placement.</p>
                 <div className="grid grid-cols-3 gap-4">
-                  <div><p className="text-xs text-muted-foreground">Scope</p><p className="text-sm font-medium">Venue</p></div>
-                  <div><p className="text-xs text-muted-foreground">Venue</p><p className="text-sm font-medium">Westfield Sydney</p></div>
-                  <div><p className="text-xs text-muted-foreground">Status</p><StatusChip status="healthy" /></div>
+                  <div><p className="text-xs text-muted-foreground">Scope</p><p className="text-sm font-medium">{placement.scope}</p></div>
+                  <div><p className="text-xs text-muted-foreground">Venue{venues.length > 1 ? "s" : ""}</p><p className="text-sm font-medium">{venues.join(", ")}</p></div>
+                  <div><p className="text-xs text-muted-foreground">Status</p><StatusChip status={placement.status.toLowerCase().replace(" ", "-")} label={placement.status} /></div>
                 </div>
               </div>
 
               <div className="skoop-card p-5 space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="skoop-section-header">Active Screens</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{screens.length} screens assigned to this ad placement</p>
+                    <p className="skoop-section-header">Screens in this Placement</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">These screens will display campaigns assigned to this placement</p>
                   </div>
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={() => setShowScreenModal(true)}>
                     <Monitor size={13} className="mr-1.5" /> Manage Screens
                   </Button>
                 </div>
-                {screens.map((s) => (
-                  <div key={s} className="flex items-center justify-between py-2.5 px-3 border border-border rounded-md">
-                    <div className="flex items-center gap-2.5">
-                      <Monitor size={14} className="text-muted-foreground" />
-                      <span className="text-sm font-medium">{s}</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <StatusChip status="online" />
-                      <button className="text-xs text-primary flex items-center gap-1 hover:underline">
-                        View <ExternalLink size={10} />
-                      </button>
-                    </div>
+
+                {assignedScreens.length === 0 ? (
+                  <div className="border border-dashed border-border rounded-lg py-8 text-center">
+                    <AlertTriangle size={20} className="mx-auto text-amber-500 mb-2" />
+                    <p className="text-sm font-medium text-foreground">No screens assigned yet</p>
+                    <p className="text-xs text-muted-foreground mt-1">This placement is not assigned to any screens</p>
+                    <Button size="sm" className="mt-3" onClick={() => setShowScreenModal(true)}>
+                      Assign Screens
+                    </Button>
                   </div>
-                ))}
+                ) : (
+                  <div className="space-y-1.5">
+                    {assignedScreens.map((s) => (
+                      <div key={s.id} className="flex items-center justify-between py-2.5 px-3 border border-border rounded-md">
+                        <div className="flex items-center gap-2.5">
+                          <Monitor size={14} className="text-muted-foreground" />
+                          <div>
+                            <span className="text-sm font-medium">{s.name}</span>
+                            <span className="text-xs text-muted-foreground ml-2">{s.venue} · {s.resolution}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${s.status === "Online" ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"}`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${s.status === "Online" ? "bg-emerald-500" : "bg-red-400"}`} />
+                            {s.status}
+                          </span>
+                          <button
+                            className="text-xs text-primary flex items-center gap-1 hover:underline"
+                            onClick={() => navigate(`/screens/${s.id}`)}
+                          >
+                            View <ExternalLink size={10} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -108,11 +154,11 @@ export default function PlacementDetail() {
               </div>
               <div className="skoop-card p-5 space-y-3">
                 <p className="skoop-section-header">Capacity Usage</p>
-                <p className="text-[11px] text-muted-foreground">Total available ad slots based on loop duration</p>
+                <p className="text-[11px] text-muted-foreground">Total available ad slots based on loop duration across {assignedScreens.length} screen{assignedScreens.length !== 1 ? "s" : ""}</p>
                 <div className="space-y-2">
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">3,600 slots/day</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">2,952 slots/day</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">648 slots/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} slots/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} slots/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} slots/day</span></div>
                 </div>
               </div>
             </div>
@@ -127,7 +173,7 @@ export default function PlacementDetail() {
                 <p className="skoop-section-header">Playback Model</p>
                 <p className="text-xs text-muted-foreground">Determines how content is scheduled within this placement.</p>
                 <div className="grid grid-cols-3 gap-4">
-                  <div><p className="text-xs text-muted-foreground">Model</p><p className="text-sm font-medium">Loop-based</p></div>
+                  <div><p className="text-xs text-muted-foreground">Model</p><p className="text-sm font-medium">{placement.model}-based</p></div>
                   <div><p className="text-xs text-muted-foreground">Loop Duration</p><p className="text-sm font-medium tabular-nums">120 seconds</p></div>
                   <div><p className="text-xs text-muted-foreground">Loops per Hour</p><p className="text-sm font-medium tabular-nums">30</p></div>
                 </div>
@@ -161,14 +207,14 @@ export default function PlacementDetail() {
                 <p className="skoop-section-header">Capacity Usage</p>
                 <p className="text-[11px] text-muted-foreground">Total available ad slots based on loop duration</p>
                 <div className="space-y-2">
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">3,600 slots/day</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">2,952 slots/day</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">648 slots/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} slots/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} slots/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} slots/day</span></div>
                 </div>
                 <div className="h-2 rounded-full bg-secondary overflow-hidden mt-2">
-                  <div className="h-full bg-primary rounded-full" style={{ width: "82%" }} />
+                  <div className="h-full bg-primary rounded-full" style={{ width: `${capacity.total > 0 ? Math.round((capacity.booked / capacity.total) * 100) : 0}%` }} />
                 </div>
-                <p className="text-xs text-muted-foreground tabular-nums">82% utilised</p>
+                <p className="text-xs text-muted-foreground tabular-nums">{capacity.total > 0 ? Math.round((capacity.booked / capacity.total) * 100) : 0}% utilised</p>
               </div>
             </div>
           </div>
@@ -251,9 +297,9 @@ export default function PlacementDetail() {
                 <p className="skoop-section-header">Capacity Usage</p>
                 <p className="text-[11px] text-muted-foreground">Total available ad slots based on loop duration</p>
                 <div className="space-y-2">
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">3,600 slots/day</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">2,952 slots/day</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">648 slots/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} slots/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} slots/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} slots/day</span></div>
                 </div>
               </div>
               <div className="skoop-card p-5 space-y-3">
@@ -264,6 +310,13 @@ export default function PlacementDetail() {
           </div>
         )}
       </div>
+
+      <ScreenSelectorModal
+        open={showScreenModal}
+        onClose={() => setShowScreenModal(false)}
+        selectedIds={screenIds}
+        onSave={setScreenIds}
+      />
     </div>
   );
 }

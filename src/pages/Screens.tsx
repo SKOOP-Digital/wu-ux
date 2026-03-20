@@ -1,17 +1,10 @@
 import { Monitor } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import PageHeader from "@/components/layout/PageHeader";
+import { allScreens } from "@/data/screens";
 
 export default function Screens() {
-  const screens = [
-    { id: "1", name: "Lobby Screen 1", venue: "Westfield Sydney", status: "Online", resolution: "1920×1080", orientation: "Landscape" },
-    { id: "2", name: "Lobby Screen 2", venue: "Westfield Sydney", status: "Online", resolution: "1920×1080", orientation: "Landscape" },
-    { id: "3", name: "Food Court Display A", venue: "Melbourne Central", status: "Online", resolution: "1080×1920", orientation: "Portrait" },
-    { id: "4", name: "Food Court Display B", venue: "Melbourne Central", status: "Offline", resolution: "1080×1920", orientation: "Portrait" },
-    { id: "5", name: "Elevator Panel 1", venue: "Brisbane CBD Tower", status: "Online", resolution: "1080×1920", orientation: "Portrait" },
-    { id: "6", name: "Elevator Panel 2", venue: "Brisbane CBD Tower", status: "Online", resolution: "1080×1920", orientation: "Portrait" },
-    { id: "7", name: "Parking Totem A", venue: "Perth Arena", status: "Online", resolution: "1920×1080", orientation: "Landscape" },
-    { id: "8", name: "Concourse Video Wall", venue: "Westfield Sydney", status: "Online", resolution: "3840×2160", orientation: "Landscape" },
-  ];
+  const navigate = useNavigate();
 
   return (
     <div>
@@ -29,9 +22,15 @@ export default function Screens() {
               </tr>
             </thead>
             <tbody>
-              {screens.map((s) => (
-                <tr key={s.id} className="skoop-table-row">
-                  <td className="skoop-table-cell font-medium text-foreground flex items-center gap-2"><Monitor size={14} className="text-muted-foreground" />{s.name}</td>
+              {allScreens.map((s) => (
+                <tr
+                  key={s.id}
+                  className="skoop-table-row cursor-pointer"
+                  onClick={() => navigate(`/screens/${s.id}`)}
+                >
+                  <td className="skoop-table-cell font-medium text-foreground flex items-center gap-2">
+                    <Monitor size={14} className="text-muted-foreground" />{s.name}
+                  </td>
                   <td className="skoop-table-cell text-muted-foreground">{s.venue}</td>
                   <td className="skoop-table-cell text-muted-foreground tabular-nums text-xs">{s.resolution}</td>
                   <td className="skoop-table-cell text-muted-foreground text-xs">{s.orientation}</td>
