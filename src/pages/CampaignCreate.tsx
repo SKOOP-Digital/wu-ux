@@ -52,18 +52,21 @@ export default function CampaignCreate() {
           <div className="space-y-5">
             <div className="skoop-card p-5 space-y-4">
               <p className="skoop-section-header">Campaign Basics</p>
+              <p className="text-xs text-muted-foreground">Campaigns define what content runs and how it is delivered across your ad placements.</p>
               <div className="space-y-3">
                 <div><label className="text-xs text-muted-foreground">Campaign Name</label><Input placeholder="e.g. Nike Summer Push" className="mt-1" /></div>
                 <div><label className="text-xs text-muted-foreground">Campaign Type</label>
                   <Select><SelectTrigger className="mt-1"><SelectValue placeholder="Select type" /></SelectTrigger>
-                    <SelectContent><SelectItem value="direct">Direct</SelectItem><SelectItem value="owned">Owned</SelectItem><SelectItem value="programmatic">Programmatic</SelectItem></SelectContent>
+                    <SelectContent><SelectItem value="direct">Direct — Booked campaigns with advertisers</SelectItem><SelectItem value="owned">Owned — Your own brand content</SelectItem><SelectItem value="programmatic">Programmatic — Automated ads via demand partners</SelectItem></SelectContent>
                   </Select>
                 </div>
                 <div><label className="text-xs text-muted-foreground">Advertiser / Partner</label><Input placeholder="e.g. Nike Australia" className="mt-1" /></div>
                 <div><label className="text-xs text-muted-foreground">Objective</label><Input placeholder="e.g. Brand awareness, product launch" className="mt-1" /></div>
-                <div><label className="text-xs text-muted-foreground">Placements</label>
-                  <Select><SelectTrigger className="mt-1"><SelectValue placeholder="Select placements" /></SelectTrigger>
-                    <SelectContent><SelectItem value="lobby">Lobby Screens — Main Loop</SelectItem><SelectItem value="food">Food Court Digital Menu Boards</SelectItem><SelectItem value="elevator">Elevator Portrait Panels</SelectItem></SelectContent>
+                <div>
+                  <label className="text-xs text-muted-foreground">Ad Placements</label>
+                  <p className="text-[11px] text-muted-foreground mt-0.5 mb-1">Select which ad placements this campaign will run on. Placements define the available inventory on your screens.</p>
+                  <Select><SelectTrigger className="mt-1"><SelectValue placeholder="Select ad placements" /></SelectTrigger>
+                    <SelectContent><SelectItem value="lobby">Lobby Screens — Main Loop (6 screens · Westfield Sydney)</SelectItem><SelectItem value="food">Food Court Digital Menu Boards (4 screens · Melbourne Central)</SelectItem><SelectItem value="elevator">Elevator Portrait Panels (12 screens · Brisbane CBD Tower)</SelectItem></SelectContent>
                   </Select>
                 </div>
               </div>
