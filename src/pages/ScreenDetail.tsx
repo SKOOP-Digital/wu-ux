@@ -41,8 +41,8 @@ export default function ScreenDetail() {
         subtitle={`${screen.venue} · ${screen.orientation} · ${screen.resolution}`}
         icon={<Monitor size={20} />}
         actions={
-          <Button variant="outline" size="sm" onClick={() => navigate("/screens")}>
-            <ArrowLeft size={14} className="mr-1" /> Back
+          <Button variant="outline" size="sm" onClick={() => navigate(backPath)}>
+            <ArrowLeft size={14} className="mr-1" /> {backLabel}
           </Button>
         }
       />
