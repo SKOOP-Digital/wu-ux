@@ -17,7 +17,7 @@ export default function Placements() {
   const [view, setView] = useState<"table" | "card">("table");
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
-  const [drawer, setDrawer] = useState<typeof allPlacements[0] | null>(null);
+  const [drawer, setDrawer] = useState<(typeof enriched)[0] | null>(null);
 
   const enriched = useMemo(() => allPlacements.map((p) => {
     const cap = calcCapacity(p.screenIds, allScreens);
