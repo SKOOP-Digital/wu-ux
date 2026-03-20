@@ -20,6 +20,7 @@ import Screens from "./pages/Screens";
 import ScreenDetail from "./pages/ScreenDetail";
 import Media from "./pages/Media";
 import Analytics from "./pages/Analytics";
+import CampaignDetail from "./pages/CampaignDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
