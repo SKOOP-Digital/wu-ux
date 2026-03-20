@@ -45,6 +45,7 @@ const App = () => (
                 <Route path="/placements/:id" element={<PlacementDetail />} />
                 <Route path="/campaigns" element={<Campaigns />} />
                 <Route path="/campaigns/create" element={<CampaignCreate />} />
+                <Route path="/campaigns/:id" element={<CampaignDetail />} />
                 <Route path="/programmatic" element={<ProgrammaticSlots />} />
                 <Route path="/playback-mix" element={<PlaybackMix />} />
                 <Route path="/proof-of-play" element={<ProofOfPlay />} />
