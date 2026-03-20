@@ -24,8 +24,8 @@ export default function ScreenDetail() {
       <div>
         <PageHeader title="Screen Not Found" subtitle="This screen does not exist" icon={<Monitor size={20} />} />
         <div className="p-8">
-          <Button variant="outline" size="sm" onClick={() => navigate("/screens")}>
-            <ArrowLeft size={14} className="mr-1" /> Back to Screens
+          <Button variant="outline" size="sm" onClick={() => navigate(backPath)}>
+            <ArrowLeft size={14} className="mr-1" /> {backLabel}
           </Button>
         </div>
       </div>
