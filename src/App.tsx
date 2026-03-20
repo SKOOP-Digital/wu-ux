@@ -37,6 +37,7 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Overview />} />
                 <Route path="/screens" element={<Screens />} />
+                <Route path="/screens/:id" element={<ScreenDetail />} />
                 <Route path="/media" element={<Media />} />
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/placements" element={<Placements />} />
