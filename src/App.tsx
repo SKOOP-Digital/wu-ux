@@ -16,6 +16,9 @@ import RevenueReports from "./pages/RevenueReports";
 import OrdersBilling from "./pages/OrdersBilling";
 import SettingsPage from "./pages/SettingsPage";
 import PlaylistEditor from "./pages/PlaylistEditor";
+import Screens from "./pages/Screens";
+import Media from "./pages/Media";
+import Analytics from "./pages/Analytics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +35,9 @@ const App = () => (
             <AppLayout>
               <Routes>
                 <Route path="/" element={<Overview />} />
+                <Route path="/screens" element={<Screens />} />
+                <Route path="/media" element={<Media />} />
+                <Route path="/analytics" element={<Analytics />} />
                 <Route path="/placements" element={<Placements />} />
                 <Route path="/placements/:id" element={<PlacementDetail />} />
                 <Route path="/campaigns" element={<Campaigns />} />
