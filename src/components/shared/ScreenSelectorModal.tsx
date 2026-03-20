@@ -18,7 +18,6 @@ export default function ScreenSelectorModal({ open, onClose, selectedIds, onSave
   const [selected, setSelected] = useState<string[]>(selectedIds);
   const [venueFilter, setVenueFilter] = useState("All");
 
-  // Reset state when modal opens
   const handleOpenChange = (isOpen: boolean) => {
     if (isOpen) {
       setSelected(selectedIds);
@@ -56,6 +55,10 @@ export default function ScreenSelectorModal({ open, onClose, selectedIds, onSave
     }
   };
 
+  // Capacity preview
+  const selectedScreens = allScreens.filter((s) => selected.includes(s.id));
+  const totalCapacity = selectedScreens.reduce((sum, s) => sum + s.loopsPerHour * 16, 0);
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
@@ -69,14 +72,9 @@ export default function ScreenSelectorModal({ open, onClose, selectedIds, onSave
         <div className="flex items-center gap-3 mt-2">
           <div className="relative flex-1">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Search screens…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 h-9 text-sm"
-            />
+            <Input placeholder="Search screens…" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-9 text-sm" />
           </div>
-          <div className="flex gap-1">
+          <div className="flex gap-1 flex-wrap">
             {venues.map((v) => (
               <button
                 key={v}
@@ -92,17 +90,20 @@ export default function ScreenSelectorModal({ open, onClose, selectedIds, onSave
         </div>
 
         <div className="flex items-center justify-between py-2 px-1">
-          <button onClick={toggleAll} className="text-xs text-primary hover:underline font-medium">
-            {filtered.every((s) => selected.includes(s.id)) ? "Deselect all" : "Select all"}
-          </button>
+          <div className="flex items-center gap-3">
+            <button onClick={toggleAll} className="text-xs text-primary hover:underline font-medium">
+              {filtered.every((s) => selected.includes(s.id)) ? "Deselect all" : "Select all in this venue"}
+            </button>
+          </div>
           <span className="text-xs text-muted-foreground tabular-nums">
-            {selected.length} screen{selected.length !== 1 ? "s" : ""} selected
+            {selected.length} screen{selected.length !== 1 ? "s" : ""} selected · {totalCapacity.toLocaleString()} opp/day
           </span>
         </div>
 
         <div className="flex-1 overflow-y-auto space-y-1 min-h-0 max-h-[40vh] pr-1">
           {filtered.map((s) => {
             const isSelected = selected.includes(s.id);
+            const dailyCap = s.loopsPerHour * 16;
             return (
               <label
                 key={s.id}
@@ -114,7 +115,7 @@ export default function ScreenSelectorModal({ open, onClose, selectedIds, onSave
                 <Monitor size={14} className="text-muted-foreground shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{s.name}</p>
-                  <p className="text-xs text-muted-foreground">{s.venue} · {s.resolution} · {s.orientation}</p>
+                  <p className="text-xs text-muted-foreground">{s.venue} · {s.resolution} · {s.orientation} · {dailyCap.toLocaleString()} opp/day</p>
                 </div>
                 <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${
                   s.status === "Online" ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"
@@ -133,7 +134,7 @@ export default function ScreenSelectorModal({ open, onClose, selectedIds, onSave
         <DialogFooter className="mt-4">
           <Button variant="outline" onClick={onClose}>Cancel</Button>
           <Button onClick={() => { onSave(selected); onClose(); }}>
-            <Check size={14} className="mr-1" /> Save ({selected.length} screens)
+            <Check size={14} className="mr-1" /> Save ({selected.length} screens · {totalCapacity.toLocaleString()} opp/day)
           </Button>
         </DialogFooter>
       </DialogContent>

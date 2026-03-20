@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { MapPin, Search, Plus, LayoutGrid, List, MoreHorizontal, Monitor, ExternalLink } from "lucide-react";
+import { MapPin, Search, Plus, LayoutGrid, List, MoreHorizontal, Monitor, ExternalLink, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import PageHeader from "@/components/layout/PageHeader";
 import MixBar from "@/components/shared/MixBar";
@@ -7,10 +7,17 @@ import StatusChip from "@/components/shared/StatusChip";
 import DetailDrawer from "@/components/shared/DetailDrawer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { allPlacements, calcCapacity } from "@/data/placements";
 import { allScreens } from "@/data/screens";
 
 const filters = ["All", "Healthy", "Overbooked", "At Risk", "Loop", "Ad-break"];
+
+const statusTooltips: Record<string, string> = {
+  Healthy: "Capacity within safe range",
+  "At Risk": "Pacing or capacity issue emerging",
+  Overbooked: "Booked demand exceeds eligible capacity",
+};
 
 export default function Placements() {
   const navigate = useNavigate();
@@ -22,7 +29,15 @@ export default function Placements() {
     const cap = calcCapacity(p.screenIds, allScreens);
     const screens = allScreens.filter((s) => p.screenIds.includes(s.id));
     const venues = [...new Set(screens.map((s) => s.venue))];
-    return { ...p, screens: screens.length, venueLabel: venues.join(", "), capacitySlots: cap, capacityPct: cap.total > 0 ? `${Math.round((cap.booked / cap.total) * 100)}%` : "0%" };
+    const utilPct = cap.total > 0 ? Math.round((cap.booked / cap.total) * 100) : 0;
+    return {
+      ...p,
+      screens: screens.length,
+      venueLabel: venues.join(", "),
+      capacitySlots: cap,
+      capacityPct: utilPct,
+      capacityDisplay: `${utilPct}% · ${cap.booked.toLocaleString()} / ${cap.total.toLocaleString()}`,
+    };
   }), []);
 
   const [drawer, setDrawer] = useState<(typeof enriched)[0] | null>(null);
@@ -95,16 +110,27 @@ export default function Placements() {
                     <td className="skoop-table-cell">
                       <div className="flex items-center gap-1.5 text-muted-foreground">
                         <Monitor size={13} className="shrink-0" />
-                        <span className="text-sm">{p.screens} Screens</span>
-                        <span className="text-xs">·</span>
-                        <span className="text-xs">{p.venueLabel}</span>
+                        <div className="leading-tight">
+                          <span className="text-sm">{p.screens} screen{p.screens !== 1 ? "s" : ""}</span>
+                          <span className="text-xs block text-muted-foreground">{p.venueLabel}</span>
+                        </div>
                       </div>
                     </td>
                     <td className="skoop-table-cell"><StatusChip status={p.model.toLowerCase()} label={p.model} /></td>
                     <td className="skoop-table-cell"><MixBar owned={p.owned} direct={p.direct} programmatic={p.prog} /></td>
                     <td className="skoop-table-cell text-muted-foreground text-xs">{p.dayparts}</td>
-                    <td className="skoop-table-cell text-right tabular-nums">{p.capacityPct}</td>
-                    <td className="skoop-table-cell"><StatusChip status={p.status.toLowerCase().replace(" ", "-")} label={p.status} /></td>
+                    <td className="skoop-table-cell text-right">
+                      <div className="text-sm tabular-nums font-medium">{p.capacityPct}%</div>
+                      <div className="text-[11px] text-muted-foreground tabular-nums">{p.capacitySlots.booked.toLocaleString()} / {p.capacitySlots.total.toLocaleString()}</div>
+                    </td>
+                    <td className="skoop-table-cell">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span><StatusChip status={p.status.toLowerCase().replace(" ", "-")} label={p.status} /></span>
+                        </TooltipTrigger>
+                        <TooltipContent><p className="text-xs">{statusTooltips[p.status] || p.status}</p></TooltipContent>
+                      </Tooltip>
+                    </td>
                     <td className="skoop-table-cell text-center"><MoreHorizontal size={14} className="text-muted-foreground" /></td>
                   </tr>
                 ))}
@@ -122,12 +148,12 @@ export default function Placements() {
                 <h3 className="font-medium text-sm text-foreground mb-1">{p.name}</h3>
                 <div className="flex items-center gap-1.5 text-muted-foreground mb-3">
                   <Monitor size={12} />
-                  <span className="text-xs">{p.screens} Screens · {p.venueLabel}</span>
+                  <span className="text-xs">{p.screens} screen{p.screens !== 1 ? "s" : ""} · {p.venueLabel}</span>
                 </div>
                 <MixBar owned={p.owned} direct={p.direct} programmatic={p.prog} showLabels />
                 <div className="flex justify-between mt-3 text-xs text-muted-foreground">
-                  <span>{p.capacitySlots.booked.toLocaleString()} / {p.capacitySlots.total.toLocaleString()} slots</span>
-                  <span className="tabular-nums">Capacity: {p.capacityPct}</span>
+                  <span className="tabular-nums">{p.capacitySlots.booked.toLocaleString()} / {p.capacitySlots.total.toLocaleString()} opp</span>
+                  <span className="tabular-nums font-medium">{p.capacityPct}%</span>
                 </div>
               </div>
             ))}
@@ -148,10 +174,12 @@ export default function Placements() {
               <p className="text-[11px] text-muted-foreground">These screens will display campaigns assigned to this placement</p>
               <div className="flex items-center gap-2 bg-secondary/60 rounded-md px-3 py-2">
                 <Monitor size={14} className="text-primary" />
-                <span className="text-sm font-medium">{drawer.screens} Screens</span>
-                <span className="text-xs text-muted-foreground">· {drawer.venueLabel}</span>
+                <div className="flex-1">
+                  <span className="text-sm font-medium">{drawer.screens} screen{drawer.screens !== 1 ? "s" : ""}</span>
+                  <span className="text-xs text-muted-foreground ml-1">· {drawer.venueLabel}</span>
+                </div>
                 <button
-                  className="ml-auto text-xs text-primary flex items-center gap-1 hover:underline"
+                  className="text-xs text-primary flex items-center gap-1 hover:underline"
                   onClick={() => { setDrawer(null); navigate(`/placements/${drawer.id}`); }}
                 >
                   View Screens <ExternalLink size={10} />
@@ -176,22 +204,22 @@ export default function Placements() {
 
             <div className="space-y-2">
               <p className="skoop-section-header">Capacity Usage</p>
-              <p className="text-[11px] text-muted-foreground mb-2">Total available ad slots based on loop duration</p>
+              <p className="text-[11px] text-muted-foreground mb-2">Eligible playback opportunities based on loop duration</p>
               <div className="grid grid-cols-3 gap-3">
                 <div className="bg-secondary/60 rounded-md px-3 py-2">
                   <p className="text-[10px] text-muted-foreground">Total</p>
                   <p className="text-sm font-semibold tabular-nums">{drawer.capacitySlots.total.toLocaleString()}</p>
-                  <p className="text-[10px] text-muted-foreground">slots/day</p>
+                  <p className="text-[10px] text-muted-foreground">opp/day</p>
                 </div>
                 <div className="bg-secondary/60 rounded-md px-3 py-2">
                   <p className="text-[10px] text-muted-foreground">Booked</p>
                   <p className="text-sm font-semibold tabular-nums">{drawer.capacitySlots.booked.toLocaleString()}</p>
-                  <p className="text-[10px] text-muted-foreground">slots/day</p>
+                  <p className="text-[10px] text-muted-foreground">opp/day</p>
                 </div>
                 <div className="bg-secondary/60 rounded-md px-3 py-2">
                   <p className="text-[10px] text-muted-foreground">Available</p>
                   <p className="text-sm font-semibold tabular-nums text-primary">{drawer.capacitySlots.available.toLocaleString()}</p>
-                  <p className="text-[10px] text-muted-foreground">slots/day</p>
+                  <p className="text-[10px] text-muted-foreground">opp/day</p>
                 </div>
               </div>
             </div>
