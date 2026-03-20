@@ -17,7 +17,6 @@ export default function Placements() {
   const [view, setView] = useState<"table" | "card">("table");
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
-  const [drawer, setDrawer] = useState<(typeof enriched)[0] | null>(null);
 
   const enriched = useMemo(() => allPlacements.map((p) => {
     const cap = calcCapacity(p.screenIds, allScreens);
@@ -25,6 +24,8 @@ export default function Placements() {
     const venues = [...new Set(screens.map((s) => s.venue))];
     return { ...p, screens: screens.length, venueLabel: venues.join(", "), capacitySlots: cap, capacityPct: cap.total > 0 ? `${Math.round((cap.booked / cap.total) * 100)}%` : "0%" };
   }), []);
+
+  const [drawer, setDrawer] = useState<(typeof enriched)[0] | null>(null);
 
   const filtered = enriched.filter((p) => {
     if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
