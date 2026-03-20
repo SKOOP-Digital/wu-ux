@@ -1,4 +1,4 @@
-import { LayoutDashboard, Plus, MapPin, Megaphone, Radio, Download, AlertTriangle, TrendingUp, DollarSign } from "lucide-react";
+import { LayoutDashboard, Plus, MapPin, Megaphone, Radio, Download, AlertTriangle, TrendingUp, DollarSign, Monitor, Play, ArrowRight } from "lucide-react";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import PageHeader from "@/components/layout/PageHeader";
 import KPICard from "@/components/shared/KPICard";
@@ -38,6 +38,13 @@ const topVenues = [
   { name: "Perth Arena Complex", revenue: "$1,540", fill: "76%" },
 ];
 
+const flowSteps = [
+  { icon: Monitor, label: "Screens", desc: "Physical devices", to: "/screens", color: "bg-muted text-foreground" },
+  { icon: MapPin, label: "Ad Placements", desc: "Monetisable inventory", to: "/placements", color: "bg-primary/10 text-primary" },
+  { icon: Megaphone, label: "Campaigns", desc: "Content & delivery", to: "/campaigns", color: "bg-skoop-blue/10 text-skoop-blue" },
+  { icon: Play, label: "Playback", desc: "Automated delivery", to: "/playback-mix", color: "bg-skoop-purple/10 text-skoop-purple" },
+];
+
 export default function Overview() {
   const navigate = useNavigate();
   return (
@@ -48,7 +55,7 @@ export default function Overview() {
         actions={
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={() => navigate("/placements")}>
-              <Plus size={14} className="mr-1" /> Create Placement
+              <Plus size={14} className="mr-1" /> New Ad Placement
             </Button>
             <Button size="sm" onClick={() => navigate("/campaigns/create")}>
               <Plus size={14} className="mr-1" /> Create Campaign
@@ -58,15 +65,47 @@ export default function Overview() {
       />
 
       <div className="p-8 space-y-6">
+        {/* How it works — Flow Diagram */}
+        <div className="skoop-card p-5">
+          <p className="skoop-section-header mb-1">How Monetisation Works</p>
+          <p className="text-xs text-muted-foreground mb-4">Screens are devices → Ad Placements define inventory on those screens → Campaigns use that inventory → System manages playback automatically</p>
+          <div className="flex items-center gap-0">
+            {flowSteps.map((step, i) => (
+              <div key={step.label} className="flex items-center flex-1 min-w-0">
+                <button
+                  onClick={() => navigate(step.to)}
+                  className={`flex items-center gap-3 rounded-lg px-4 py-3 w-full transition-all hover:shadow-sm border border-border hover:border-primary/30 group`}
+                >
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${step.color}`}>
+                    <step.icon size={18} />
+                  </div>
+                  <div className="text-left min-w-0">
+                    <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{step.label}</p>
+                    <p className="text-[11px] text-muted-foreground">{step.desc}</p>
+                  </div>
+                </button>
+                {i < flowSteps.length - 1 && (
+                  <ArrowRight size={16} className="text-muted-foreground/40 mx-2 shrink-0" />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Network Mix Bar */}
         <div className="skoop-card p-5">
-          <p className="skoop-section-header mb-3">Network Playback Mix</p>
+          <p className="skoop-section-header mb-1">Network Playback Mix</p>
+          <p className="text-xs text-muted-foreground mb-3">
+            <span className="font-medium text-foreground">Owned:</span> Your content &nbsp;·&nbsp;
+            <span className="font-medium text-foreground">Direct:</span> Booked campaigns &nbsp;·&nbsp;
+            <span className="font-medium text-foreground">Programmatic:</span> Automated ads
+          </p>
           <MixBar owned={48} direct={32} programmatic={20} height="h-3" showLabels />
         </div>
 
         {/* KPIs */}
         <div className="grid grid-cols-4 gap-4">
-          <KPICard label="Active Placements" value="24" change="+3 this month" changeType="positive" icon={<MapPin size={16} />} />
+          <KPICard label="Active Ad Placements" value="24" change="+3 this month" changeType="positive" icon={<MapPin size={16} />} />
           <KPICard label="Direct Revenue (MTD)" value="$14,200" change="+12% vs last month" changeType="positive" icon={<DollarSign size={16} />} />
           <KPICard label="Programmatic Fill Rate" value="88.4%" change="-2.1% vs target" changeType="negative" icon={<Radio size={16} />} />
           <KPICard label="Under-delivery Alerts" value="2" change="2 campaigns at risk" changeType="negative" icon={<AlertTriangle size={16} />} />
@@ -154,7 +193,7 @@ export default function Overview() {
           <p className="skoop-section-header mb-3">Quick Actions</p>
           <div className="flex gap-3">
             <Button variant="outline" size="sm" onClick={() => navigate("/placements")}>
-              <MapPin size={14} className="mr-1.5" /> Create Placement
+              <MapPin size={14} className="mr-1.5" /> New Ad Placement
             </Button>
             <Button variant="outline" size="sm" onClick={() => navigate("/campaigns/create")}>
               <Megaphone size={14} className="mr-1.5" /> Create Campaign
@@ -171,5 +210,3 @@ export default function Overview() {
     </div>
   );
 }
-
-

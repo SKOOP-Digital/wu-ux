@@ -1,4 +1,4 @@
-import { MapPin, ArrowLeft } from "lucide-react";
+import { MapPin, ArrowLeft, Monitor, ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
@@ -8,12 +8,14 @@ import StatusChip from "@/components/shared/StatusChip";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 
-const tabs = ["General", "Mix & Capacity", "Dayparts", "Rules", "Reporting"];
+const sections = ["Where it runs", "How it runs", "How it is monetised"];
 const PIE_COLORS = ["hsl(215,16%,47%)", "hsl(210,100%,50%)", "hsl(262,80%,60%)"];
+
+const screens = ["Lobby Screen 1", "Lobby Screen 2", "Lobby Screen 3", "Lobby Screen 4", "Lobby Screen 5", "Lobby Screen 6"];
 
 export default function PlacementDetail() {
   const navigate = useNavigate();
-  const [tab, setTab] = useState("Mix & Capacity");
+  const [section, setSection] = useState("Where it runs");
   const [owned, setOwned] = useState(50);
   const [direct, setDirect] = useState(30);
   const prog = 100 - owned - direct;
@@ -28,7 +30,7 @@ export default function PlacementDetail() {
     <div>
       <PageHeader
         title="Lobby Screens — Main Loop"
-        subtitle="Venue · Westfield Sydney · 6 Screens"
+        subtitle="Ad Placement · Defines how ads run on selected screens"
         icon={<MapPin size={20} />}
         actions={
           <div className="flex gap-2">
@@ -38,48 +40,65 @@ export default function PlacementDetail() {
         }
       />
 
-      {/* Tabs */}
+      {/* Sections nav */}
       <div className="border-b border-border px-8">
         <div className="flex gap-0">
-          {tabs.map((t) => (
+          {sections.map((s) => (
             <button
-              key={t}
-              onClick={() => setTab(t)}
+              key={s}
+              onClick={() => setSection(s)}
               className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
-                tab === t ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
+                section === s ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
               }`}
             >
-              {t}
+              {s}
             </button>
           ))}
         </div>
       </div>
 
       <div className="p-8">
-        {tab === "General" && (
+        {/* ======= WHERE IT RUNS ======= */}
+        {section === "Where it runs" && (
           <div className="grid grid-cols-3 gap-6">
             <div className="col-span-2 space-y-6">
               <div className="skoop-card p-5 space-y-4">
-                <p className="skoop-section-header">Placement Info</p>
-                <div className="grid grid-cols-2 gap-4">
-                  <div><p className="text-xs text-muted-foreground">Name</p><p className="text-sm font-medium">Lobby Screens — Main Loop</p></div>
+                <p className="skoop-section-header">Placement Scope</p>
+                <p className="text-xs text-muted-foreground">This ad placement is linked to screens at a specific venue. All screens below will display content from campaigns assigned to this placement.</p>
+                <div className="grid grid-cols-3 gap-4">
                   <div><p className="text-xs text-muted-foreground">Scope</p><p className="text-sm font-medium">Venue</p></div>
                   <div><p className="text-xs text-muted-foreground">Venue</p><p className="text-sm font-medium">Westfield Sydney</p></div>
-                  <div><p className="text-xs text-muted-foreground">Screens</p><p className="text-sm font-medium">6</p></div>
-                  <div><p className="text-xs text-muted-foreground">Model</p><p className="text-sm font-medium">Loop-based</p></div>
                   <div><p className="text-xs text-muted-foreground">Status</p><StatusChip status="healthy" /></div>
                 </div>
               </div>
-              <div className="skoop-card p-5">
-                <p className="skoop-section-header mb-3">Assigned Screens</p>
-                {["Lobby Screen 1","Lobby Screen 2","Lobby Screen 3","Lobby Screen 4","Lobby Screen 5","Lobby Screen 6"].map((s) => (
-                  <div key={s} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                    <span className="text-sm">{s}</span>
-                    <StatusChip status="online" />
+
+              <div className="skoop-card p-5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="skoop-section-header">Active Screens</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{screens.length} screens assigned to this ad placement</p>
+                  </div>
+                  <Button variant="outline" size="sm">
+                    <Monitor size={13} className="mr-1.5" /> Manage Screens
+                  </Button>
+                </div>
+                {screens.map((s) => (
+                  <div key={s} className="flex items-center justify-between py-2.5 px-3 border border-border rounded-md">
+                    <div className="flex items-center gap-2.5">
+                      <Monitor size={14} className="text-muted-foreground" />
+                      <span className="text-sm font-medium">{s}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <StatusChip status="online" />
+                      <button className="text-xs text-primary flex items-center gap-1 hover:underline">
+                        View <ExternalLink size={10} />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
+
             <div className="space-y-4">
               <div className="skoop-card p-5 space-y-3">
                 <p className="skoop-section-header">Summary</p>
@@ -87,23 +106,91 @@ export default function PlacementDetail() {
                 <div><p className="text-xs text-muted-foreground">Forecasted Fill</p><p className="text-lg font-semibold tabular-nums">88%</p></div>
                 <div><p className="text-xs text-muted-foreground">Projected Revenue</p><p className="text-lg font-semibold tabular-nums">$4,820</p></div>
               </div>
+              <div className="skoop-card p-5 space-y-3">
+                <p className="skoop-section-header">Capacity Usage</p>
+                <p className="text-[11px] text-muted-foreground">Total available ad slots based on loop duration</p>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">3,600 slots/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">2,952 slots/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">648 slots/day</span></div>
+                </div>
+              </div>
             </div>
           </div>
         )}
 
-        {tab === "Mix & Capacity" && (
+        {/* ======= HOW IT RUNS ======= */}
+        {section === "How it runs" && (
           <div className="grid grid-cols-3 gap-6">
             <div className="col-span-2 space-y-6">
               <div className="skoop-card p-5 space-y-4">
-                <p className="skoop-section-header">Capacity Model</p>
+                <p className="skoop-section-header">Playback Model</p>
+                <p className="text-xs text-muted-foreground">Determines how content is scheduled within this placement.</p>
                 <div className="grid grid-cols-3 gap-4">
+                  <div><p className="text-xs text-muted-foreground">Model</p><p className="text-sm font-medium">Loop-based</p></div>
                   <div><p className="text-xs text-muted-foreground">Loop Duration</p><p className="text-sm font-medium tabular-nums">120 seconds</p></div>
                   <div><p className="text-xs text-muted-foreground">Loops per Hour</p><p className="text-sm font-medium tabular-nums">30</p></div>
-                  <div><p className="text-xs text-muted-foreground">Avg Utilisation</p><p className="text-sm font-medium tabular-nums">82%</p></div>
                 </div>
               </div>
+
+              <div className="skoop-card p-5">
+                <p className="skoop-section-header mb-1">Daypart Schedule</p>
+                <p className="text-xs text-muted-foreground mb-4">Controls when this placement is active during the day</p>
+                <div className="space-y-2">
+                  {[
+                    { name: "Morning", time: "6:00 AM – 11:00 AM", active: true },
+                    { name: "Midday", time: "11:00 AM – 2:00 PM", active: true },
+                    { name: "Afternoon", time: "2:00 PM – 5:00 PM", active: true },
+                    { name: "Evening", time: "5:00 PM – 9:00 PM", active: true },
+                    { name: "Late Night", time: "9:00 PM – 12:00 AM", active: false },
+                  ].map((dp) => (
+                    <div key={dp.name} className="flex items-center justify-between py-3 px-4 rounded-md bg-secondary/50">
+                      <div>
+                        <p className="text-sm font-medium">{dp.name}</p>
+                        <p className="text-xs text-muted-foreground">{dp.time}</p>
+                      </div>
+                      <StatusChip status={dp.active ? "active" : "paused"} label={dp.active ? "Active" : "Inactive"} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="skoop-card p-5 space-y-3">
+                <p className="skoop-section-header">Capacity Usage</p>
+                <p className="text-[11px] text-muted-foreground">Total available ad slots based on loop duration</p>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">3,600 slots/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">2,952 slots/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">648 slots/day</span></div>
+                </div>
+                <div className="h-2 rounded-full bg-secondary overflow-hidden mt-2">
+                  <div className="h-full bg-primary rounded-full" style={{ width: "82%" }} />
+                </div>
+                <p className="text-xs text-muted-foreground tabular-nums">82% utilised</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ======= HOW IT IS MONETISED ======= */}
+        {section === "How it is monetised" && (
+          <div className="grid grid-cols-3 gap-6">
+            <div className="col-span-2 space-y-6">
               <div className="skoop-card p-5 space-y-5">
-                <p className="skoop-section-header">Playback Mix Policy</p>
+                <div>
+                  <p className="skoop-section-header">Playback Mix Policy</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Controls the ratio between content types in this placement</p>
+                </div>
+                <div className="bg-secondary/50 rounded-md px-4 py-3 space-y-1">
+                  <p className="text-xs font-medium text-foreground">What do these mean?</p>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    <span className="font-medium text-foreground">Owned</span> — Your own brand content, always fills remaining capacity<br />
+                    <span className="font-medium text-foreground">Direct</span> — Campaigns booked directly with advertisers<br />
+                    <span className="font-medium text-foreground">Programmatic</span> — Automated ads served via demand partners
+                  </p>
+                </div>
                 <div className="space-y-4">
                   <div>
                     <div className="flex justify-between text-sm mb-1"><span>Owned</span><span className="tabular-nums font-medium">{owned}%</span></div>
@@ -123,7 +210,23 @@ export default function PlacementDetail() {
                 </div>
                 <MixBar owned={owned} direct={direct} programmatic={Math.max(0, prog)} height="h-3" showLabels />
               </div>
+
+              <div className="space-y-4">
+                <p className="skoop-section-header">Placement Rules</p>
+                {[
+                  { rule: "Category Separation", desc: "Prevent competing brands from appearing in the same loop", value: "Enabled — 2 slot gap" },
+                  { rule: "Back-to-back Prevention", desc: "Same creative cannot play consecutively", value: "Enabled" },
+                  { rule: "Frequency Cap", desc: "Maximum plays per unique creative per hour", value: "4 plays/hour" },
+                  { rule: "No-fill Fallback", desc: "When programmatic has no fill, fall back to owned content", value: "Enabled — Owned Content Pool" },
+                ].map((r) => (
+                  <div key={r.rule} className="skoop-card p-4 flex items-center justify-between">
+                    <div><p className="text-sm font-medium">{r.rule}</p><p className="text-xs text-muted-foreground mt-0.5">{r.desc}</p></div>
+                    <span className="text-sm text-foreground font-medium">{r.value}</span>
+                  </div>
+                ))}
+              </div>
             </div>
+
             <div className="space-y-4">
               <div className="skoop-card p-5">
                 <p className="skoop-section-header mb-4">Mix Allocation</p>
@@ -145,56 +248,20 @@ export default function PlacementDetail() {
                 </div>
               </div>
               <div className="skoop-card p-5 space-y-3">
+                <p className="skoop-section-header">Capacity Usage</p>
+                <p className="text-[11px] text-muted-foreground">Total available ad slots based on loop duration</p>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">3,600 slots/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">2,952 slots/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">648 slots/day</span></div>
+                </div>
+              </div>
+              <div className="skoop-card p-5 space-y-3">
                 <p className="skoop-section-header">Forecast</p>
-                <div><p className="text-xs text-muted-foreground">Available Inventory</p><p className="text-sm font-medium tabular-nums">3,600 slots/day</p></div>
-                <div><p className="text-xs text-muted-foreground">Booked Inventory</p><p className="text-sm font-medium tabular-nums">2,952 slots/day</p></div>
                 <div><p className="text-xs text-muted-foreground">Risk</p><StatusChip status="healthy" label="No under-delivery risk" /></div>
               </div>
             </div>
           </div>
-        )}
-
-        {tab === "Dayparts" && (
-          <div className="skoop-card p-5">
-            <p className="skoop-section-header mb-4">Daypart Schedule</p>
-            <div className="space-y-2">
-              {[
-                { name: "Morning", time: "6:00 AM – 11:00 AM", active: true },
-                { name: "Midday", time: "11:00 AM – 2:00 PM", active: true },
-                { name: "Afternoon", time: "2:00 PM – 5:00 PM", active: true },
-                { name: "Evening", time: "5:00 PM – 9:00 PM", active: true },
-                { name: "Late Night", time: "9:00 PM – 12:00 AM", active: false },
-              ].map((dp) => (
-                <div key={dp.name} className="flex items-center justify-between py-3 px-4 rounded-md bg-secondary/50">
-                  <div>
-                    <p className="text-sm font-medium">{dp.name}</p>
-                    <p className="text-xs text-muted-foreground">{dp.time}</p>
-                  </div>
-                  <StatusChip status={dp.active ? "active" : "paused"} label={dp.active ? "Active" : "Inactive"} />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {tab === "Rules" && (
-          <div className="space-y-4">
-            {[
-              { rule: "Category Separation", desc: "Prevent competing brands from appearing in the same loop", value: "Enabled — 2 slot gap" },
-              { rule: "Back-to-back Prevention", desc: "Same creative cannot play consecutively", value: "Enabled" },
-              { rule: "Frequency Cap", desc: "Maximum plays per unique creative per hour", value: "4 plays/hour" },
-              { rule: "No-fill Fallback", desc: "When programmatic has no fill, fall back to owned content", value: "Enabled — Owned Content Pool" },
-            ].map((r) => (
-              <div key={r.rule} className="skoop-card p-5 flex items-center justify-between">
-                <div><p className="text-sm font-medium">{r.rule}</p><p className="text-xs text-muted-foreground mt-0.5">{r.desc}</p></div>
-                <span className="text-sm text-foreground font-medium">{r.value}</span>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {tab === "Reporting" && (
-          <div className="text-sm text-muted-foreground p-8 text-center">Reporting data will appear here once campaigns are delivering.</div>
         )}
       </div>
     </div>

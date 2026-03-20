@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Megaphone, Search, Plus, MoreHorizontal } from "lucide-react";
+import { Megaphone, Search, Plus, MoreHorizontal, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import PageHeader from "@/components/layout/PageHeader";
 import StatusChip from "@/components/shared/StatusChip";
@@ -9,12 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 
 const campaigns = [
-  { id: "1", name: "Nike Summer Push", type: "Direct", advertiser: "Nike Australia", dates: "Mar 1 – Mar 31", dayparts: "All Day", goal: "5,000 plays", delivered: 3100, target: 5000, revenue: "$8,400", status: "Live" },
-  { id: "2", name: "Coca-Cola Lobby Spots", type: "Direct", advertiser: "Coca-Cola", dates: "Mar 5 – Apr 5", dayparts: "11am–9pm", goal: "SoV 15%", delivered: 1800, target: 2500, revenue: "$4,200", status: "Under-delivering" },
-  { id: "3", name: "Brand Awareness — Q1", type: "Owned", advertiser: "Skoop Network", dates: "Jan 1 – Mar 31", dayparts: "All Day", goal: "SoV 50%", delivered: 48000, target: 50000, revenue: "—", status: "Live" },
-  { id: "4", name: "Programmatic Backfill — All", type: "Programmatic", advertiser: "Multiple", dates: "Ongoing", dayparts: "All Day", goal: "Fill rate", delivered: 88, target: 100, revenue: "$5,100", status: "Live" },
-  { id: "5", name: "Samsung Galaxy Launch", type: "Direct", advertiser: "Samsung", dates: "Apr 1 – Apr 15", dayparts: "Morning, Afternoon", goal: "2,000 plays", delivered: 0, target: 2000, revenue: "$3,600", status: "Scheduled" },
-  { id: "6", name: "Holiday Season Promo", type: "Direct", advertiser: "Myer", dates: "Dec 1 – Dec 25", dayparts: "All Day", goal: "10,000 plays", delivered: 10000, target: 10000, revenue: "$12,000", status: "Completed" },
+  { id: "1", name: "Nike Summer Push", type: "Direct", advertiser: "Nike Australia", dates: "Mar 1 – Mar 31", dayparts: "All Day", goal: "5,000 plays", delivered: 3100, target: 5000, revenue: "$8,400", status: "Live", placements: ["Lobby Screens — Main Loop", "Concourse Video Wall"], placementCount: 2 },
+  { id: "2", name: "Coca-Cola Lobby Spots", type: "Direct", advertiser: "Coca-Cola", dates: "Mar 5 – Apr 5", dayparts: "11am–9pm", goal: "SoV 15%", delivered: 1800, target: 2500, revenue: "$4,200", status: "Under-delivering", placements: ["Food Court Digital Menu Boards"], placementCount: 1 },
+  { id: "3", name: "Brand Awareness — Q1", type: "Owned", advertiser: "Skoop Network", dates: "Jan 1 – Mar 31", dayparts: "All Day", goal: "SoV 50%", delivered: 48000, target: 50000, revenue: "—", status: "Live", placements: ["All Placements"], placementCount: 5 },
+  { id: "4", name: "Programmatic Backfill — All", type: "Programmatic", advertiser: "Multiple", dates: "Ongoing", dayparts: "All Day", goal: "Fill rate", delivered: 88, target: 100, revenue: "$5,100", status: "Live", placements: ["All Placements"], placementCount: 5 },
+  { id: "5", name: "Samsung Galaxy Launch", type: "Direct", advertiser: "Samsung", dates: "Apr 1 – Apr 15", dayparts: "Morning, Afternoon", goal: "2,000 plays", delivered: 0, target: 2000, revenue: "$3,600", status: "Scheduled", placements: ["Elevator Portrait Panels"], placementCount: 1 },
+  { id: "6", name: "Holiday Season Promo", type: "Direct", advertiser: "Myer", dates: "Dec 1 – Dec 25", dayparts: "All Day", goal: "10,000 plays", delivered: 10000, target: 10000, revenue: "$12,000", status: "Completed", placements: ["Lobby Screens — Main Loop", "Food Court Digital Menu Boards"], placementCount: 2 },
 ];
 
 const statusFilters = ["All", "Live", "Scheduled", "Draft", "Under-delivering", "Completed", "At Risk"];
@@ -35,7 +35,7 @@ export default function Campaigns() {
     <div>
       <PageHeader
         title="Campaigns"
-        subtitle="Manage owned, direct, and programmatic campaigns"
+        subtitle="Define what content runs and how it is delivered"
         icon={<Megaphone size={20} />}
         actions={<Button size="sm" onClick={() => navigate("/campaigns/create")}><Plus size={14} className="mr-1" /> Create Campaign</Button>}
       />
@@ -61,6 +61,7 @@ export default function Campaigns() {
                 <th className="skoop-table-cell text-left">Campaign</th>
                 <th className="skoop-table-cell text-left">Type</th>
                 <th className="skoop-table-cell text-left">Advertiser</th>
+                <th className="skoop-table-cell text-left">Ad Placements</th>
                 <th className="skoop-table-cell text-left">Dates</th>
                 <th className="skoop-table-cell text-left">Goal</th>
                 <th className="skoop-table-cell text-left w-32">Delivery</th>
@@ -77,6 +78,12 @@ export default function Campaigns() {
                     <td className="skoop-table-cell font-medium text-foreground">{c.name}</td>
                     <td className="skoop-table-cell"><StatusChip status={c.type.toLowerCase()} /></td>
                     <td className="skoop-table-cell text-muted-foreground">{c.advertiser}</td>
+                    <td className="skoop-table-cell">
+                      <div className="flex items-center gap-1.5 text-muted-foreground">
+                        <MapPin size={12} className="shrink-0" />
+                        <span className="text-xs">{c.placementCount} placement{c.placementCount !== 1 ? "s" : ""}</span>
+                      </div>
+                    </td>
                     <td className="skoop-table-cell text-muted-foreground text-xs">{c.dates}</td>
                     <td className="skoop-table-cell text-xs text-muted-foreground">{c.goal}</td>
                     <td className="skoop-table-cell">
@@ -101,8 +108,23 @@ export default function Campaigns() {
           <div className="space-y-5">
             <div>
               <h3 className="font-semibold text-foreground">{drawer.name}</h3>
+              <p className="text-[11px] text-muted-foreground mt-1">Defines what content runs and how it is delivered</p>
               <div className="flex gap-2 mt-2"><StatusChip status={drawer.type.toLowerCase()} /><StatusChip status={drawer.status.toLowerCase().replace(" ", "-")} label={drawer.status} /></div>
             </div>
+
+            {/* This campaign runs on */}
+            <div className="space-y-2">
+              <p className="skoop-section-header">This campaign runs on</p>
+              <div className="space-y-1.5">
+                {drawer.placements.map((p) => (
+                  <div key={p} className="flex items-center gap-2 bg-secondary/60 rounded-md px-3 py-2">
+                    <MapPin size={13} className="text-primary shrink-0" />
+                    <span className="text-sm">{p}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
               <div><p className="text-xs text-muted-foreground">Advertiser</p><p className="text-sm font-medium">{drawer.advertiser}</p></div>
               <div><p className="text-xs text-muted-foreground">Revenue</p><p className="text-sm font-medium tabular-nums">{drawer.revenue}</p></div>
