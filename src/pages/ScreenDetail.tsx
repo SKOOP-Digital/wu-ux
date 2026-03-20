@@ -1,5 +1,5 @@
 import { Monitor, ArrowLeft, MapPin, ExternalLink } from "lucide-react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import PageHeader from "@/components/layout/PageHeader";
 import StatusChip from "@/components/shared/StatusChip";
 import MixBar from "@/components/shared/MixBar";
@@ -10,6 +10,13 @@ import { allPlacements } from "@/data/placements";
 export default function ScreenDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const fromPlacement = searchParams.get("from") === "placement";
+  const placementId = searchParams.get("placementId");
+
+  const backPath = fromPlacement && placementId ? `/placements/${placementId}` : "/screens";
+  const backLabel = fromPlacement ? "Back to Ad Placement" : "Back";
   const screen = allScreens.find((s) => s.id === id);
 
   if (!screen) {
