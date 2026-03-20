@@ -133,7 +133,7 @@ export default function PlacementDetail() {
                           </span>
                           <button
                             className="text-xs text-primary flex items-center gap-1 hover:underline"
-                            onClick={() => navigate(`/screens/${s.id}`)}
+                            onClick={() => navigate(`/screens/${s.id}?from=placement&placementId=${placement.id}`)}
                           >
                             View <ExternalLink size={10} />
                           </button>

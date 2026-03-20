@@ -1,5 +1,5 @@
 import { Monitor, ArrowLeft, MapPin, ExternalLink } from "lucide-react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import PageHeader from "@/components/layout/PageHeader";
 import StatusChip from "@/components/shared/StatusChip";
 import MixBar from "@/components/shared/MixBar";
@@ -10,6 +10,13 @@ import { allPlacements } from "@/data/placements";
 export default function ScreenDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const fromPlacement = searchParams.get("from") === "placement";
+  const placementId = searchParams.get("placementId");
+
+  const backPath = fromPlacement && placementId ? `/placements/${placementId}` : "/screens";
+  const backLabel = fromPlacement ? "Back to Ad Placement" : "Back";
   const screen = allScreens.find((s) => s.id === id);
 
   if (!screen) {
@@ -17,8 +24,8 @@ export default function ScreenDetail() {
       <div>
         <PageHeader title="Screen Not Found" subtitle="This screen does not exist" icon={<Monitor size={20} />} />
         <div className="p-8">
-          <Button variant="outline" size="sm" onClick={() => navigate("/screens")}>
-            <ArrowLeft size={14} className="mr-1" /> Back to Screens
+          <Button variant="outline" size="sm" onClick={() => navigate(backPath)}>
+            <ArrowLeft size={14} className="mr-1" /> {backLabel}
           </Button>
         </div>
       </div>
@@ -34,8 +41,8 @@ export default function ScreenDetail() {
         subtitle={`${screen.venue} · ${screen.orientation} · ${screen.resolution}`}
         icon={<Monitor size={20} />}
         actions={
-          <Button variant="outline" size="sm" onClick={() => navigate("/screens")}>
-            <ArrowLeft size={14} className="mr-1" /> Back
+          <Button variant="outline" size="sm" onClick={() => navigate(backPath)}>
+            <ArrowLeft size={14} className="mr-1" /> {backLabel}
           </Button>
         }
       />
