@@ -1,5 +1,5 @@
-import { MapPin, ArrowLeft, Monitor, ExternalLink, AlertTriangle } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { MapPin, ArrowLeft, Monitor, ExternalLink, AlertTriangle, Info, ChevronRight } from "lucide-react";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import PageHeader from "@/components/layout/PageHeader";
@@ -8,11 +8,19 @@ import StatusChip from "@/components/shared/StatusChip";
 import ScreenSelectorModal from "@/components/shared/ScreenSelectorModal";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb";
 import { allScreens } from "@/data/screens";
 import { allPlacements, calcCapacity } from "@/data/placements";
 
-const sections = ["Where it runs", "How it runs", "How it is monetised"];
+const sections = ["Where it runs", "How it runs", "How it is monetised", "Active Campaigns"];
 const PIE_COLORS = ["hsl(215,16%,47%)", "hsl(210,100%,50%)", "hsl(262,80%,60%)"];
+
+// Mock campaigns for this placement
+const mockCampaigns = [
+  { id: "1", name: "Nike Summer Push", type: "Direct", target: "5,000 plays", delivered: "3,100", pct: 62, status: "Live" },
+  { id: "2", name: "Coca-Cola Lobby Spots", type: "Direct", target: "SoV 15%", delivered: "1,800", pct: 72, status: "Under-delivering" },
+  { id: "3", name: "Brand Awareness — Q1", type: "Owned", target: "SoV 50%", delivered: "48,000", pct: 96, status: "Live" },
+];
 
 export default function PlacementDetail() {
   const { id } = useParams<{ id: string }>();
@@ -49,8 +57,66 @@ export default function PlacementDetail() {
     return Array.from(set);
   }, [assignedScreens]);
 
+  // Derive scope label based on actual selection
+  const venueScreenCounts = useMemo(() => {
+    const map: Record<string, { total: number; selected: number }> = {};
+    allScreens.forEach((s) => {
+      if (!map[s.venue]) map[s.venue] = { total: 0, selected: 0 };
+      map[s.venue].total++;
+      if (screenIds.includes(s.id)) map[s.venue].selected++;
+    });
+    return map;
+  }, [screenIds]);
+
+  const scopeLabel = useMemo(() => {
+    if (venues.length === 0) return "No screens assigned";
+    const allFull = venues.every((v) => venueScreenCounts[v]?.selected === venueScreenCounts[v]?.total);
+    if (allFull && venues.length === 1) return `All screens in ${venues[0]}`;
+    if (allFull) return `All screens across ${venues.length} venues`;
+    return `${assignedScreens.length} selected screen${assignedScreens.length !== 1 ? "s" : ""} in ${venues.join(", ")}`;
+  }, [venues, venueScreenCounts, assignedScreens.length]);
+
+  const capacityFormula = useMemo(() => {
+    if (assignedScreens.length === 0) return null;
+    const avgLoops = Math.round(assignedScreens.reduce((s, sc) => s + sc.loopsPerHour, 0) / assignedScreens.length);
+    return `${assignedScreens.length} screen${assignedScreens.length !== 1 ? "s" : ""} × ${avgLoops} avg loops/hour × 16 active hours = ${capacity.total.toLocaleString()} opportunities/day`;
+  }, [assignedScreens, capacity.total]);
+
+  // Capacity by bucket
+  const ownedCap = Math.round(capacity.total * owned / 100);
+  const directCap = Math.round(capacity.total * direct / 100);
+  const progCap = Math.round(capacity.total * Math.max(0, prog) / 100);
+
+  // Forecast states
+  const forecastItems = useMemo(() => {
+    const items: { label: string; status: string; statusLabel: string }[] = [];
+    const utilPct = capacity.total > 0 ? Math.round((capacity.booked / capacity.total) * 100) : 0;
+    if (utilPct < 70) items.push({ label: "Overall utilisation", status: "healthy", statusLabel: "On track" });
+    else if (utilPct < 90) items.push({ label: "Overall utilisation", status: "at-risk", statusLabel: "Direct allocation nearing limit" });
+    else items.push({ label: "Overall utilisation", status: "overbooked", statusLabel: "Capacity near maximum" });
+    if (prog > 10) items.push({ label: "Programmatic", status: "healthy", statusLabel: "Backfill available" });
+    if (direct > 40) items.push({ label: "Direct campaigns", status: "at-risk", statusLabel: "Under-delivery risk for booked direct" });
+    if (items.length === 0) items.push({ label: "Status", status: "healthy", statusLabel: "No conflicts detected" });
+    return items;
+  }, [capacity, prog, direct]);
+
   return (
     <div>
+      {/* Breadcrumb */}
+      <div className="px-8 pt-4 pb-0">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild><Link to="/placements">Ad Placements</Link></BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{placement.name}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
+
       <PageHeader
         title={placement.name}
         subtitle="Ad Placement · Defines how ads run on selected screens"
@@ -87,10 +153,10 @@ export default function PlacementDetail() {
             <div className="col-span-2 space-y-6">
               <div className="skoop-card p-5 space-y-4">
                 <p className="skoop-section-header">Placement Scope</p>
-                <p className="text-xs text-muted-foreground">This ad placement is linked to screens at a specific venue. All screens below will display content from campaigns assigned to this placement.</p>
+                <p className="text-xs text-muted-foreground">This ad placement is linked to screens at specific venues. All screens below will display content from campaigns assigned to this placement.</p>
                 <div className="grid grid-cols-3 gap-4">
-                  <div><p className="text-xs text-muted-foreground">Scope</p><p className="text-sm font-medium">{placement.scope}</p></div>
-                  <div><p className="text-xs text-muted-foreground">Venue{venues.length > 1 ? "s" : ""}</p><p className="text-sm font-medium">{venues.join(", ")}</p></div>
+                  <div><p className="text-xs text-muted-foreground">Scope</p><p className="text-sm font-medium">{scopeLabel}</p></div>
+                  <div><p className="text-xs text-muted-foreground">Venue{venues.length > 1 ? "s" : ""}</p><p className="text-sm font-medium">{venues.length > 0 ? venues.join(", ") : "—"}</p></div>
                   <div><p className="text-xs text-muted-foreground">Status</p><StatusChip status={placement.status.toLowerCase().replace(" ", "-")} label={placement.status} /></div>
                 </div>
               </div>
@@ -123,10 +189,11 @@ export default function PlacementDetail() {
                           <Monitor size={14} className="text-muted-foreground" />
                           <div>
                             <span className="text-sm font-medium">{s.name}</span>
-                            <span className="text-xs text-muted-foreground ml-2">{s.venue} · {s.resolution}</span>
+                            <span className="text-xs text-muted-foreground ml-2">{s.venue} · {s.resolution} · {s.orientation}</span>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
+                          <span className="text-xs text-muted-foreground tabular-nums">{(s.loopsPerHour * 16).toLocaleString()} opp/day</span>
                           <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${s.status === "Online" ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"}`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${s.status === "Online" ? "bg-emerald-500" : "bg-red-400"}`} />
                             {s.status}
@@ -148,18 +215,22 @@ export default function PlacementDetail() {
             <div className="space-y-4">
               <div className="skoop-card p-5 space-y-3">
                 <p className="skoop-section-header">Summary</p>
-                <div><p className="text-xs text-muted-foreground">Active Campaigns</p><p className="text-lg font-semibold tabular-nums">3</p></div>
+                <div><p className="text-xs text-muted-foreground">Active Campaigns</p><p className="text-lg font-semibold tabular-nums">{mockCampaigns.length}</p></div>
                 <div><p className="text-xs text-muted-foreground">Forecasted Fill</p><p className="text-lg font-semibold tabular-nums">88%</p></div>
                 <div><p className="text-xs text-muted-foreground">Projected Revenue</p><p className="text-lg font-semibold tabular-nums">$4,820</p></div>
               </div>
               <div className="skoop-card p-5 space-y-3">
                 <p className="skoop-section-header">Capacity Usage</p>
-                <p className="text-[11px] text-muted-foreground">Total available ad slots based on loop duration across {assignedScreens.length} screen{assignedScreens.length !== 1 ? "s" : ""}</p>
+                <p className="text-[11px] text-muted-foreground">Eligible playback opportunities based on loop duration across {assignedScreens.length} screen{assignedScreens.length !== 1 ? "s" : ""}</p>
                 <div className="space-y-2">
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} slots/day</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} slots/day</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} slots/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} opp/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} opp/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} opp/day</span></div>
                 </div>
+                <div className="h-2 rounded-full bg-secondary overflow-hidden mt-2">
+                  <div className="h-full bg-primary rounded-full" style={{ width: `${capacity.total > 0 ? Math.round((capacity.booked / capacity.total) * 100) : 0}%` }} />
+                </div>
+                <p className="text-xs text-muted-foreground tabular-nums">{capacity.total > 0 ? Math.round((capacity.booked / capacity.total) * 100) : 0}% utilised</p>
               </div>
             </div>
           </div>
@@ -174,14 +245,51 @@ export default function PlacementDetail() {
                 <p className="text-xs text-muted-foreground">Determines how content is scheduled within this placement.</p>
                 <div className="grid grid-cols-3 gap-4">
                   <div><p className="text-xs text-muted-foreground">Model</p><p className="text-sm font-medium">{placement.model}-based</p></div>
-                  <div><p className="text-xs text-muted-foreground">Loop Duration</p><p className="text-sm font-medium tabular-nums">120 seconds</p></div>
-                  <div><p className="text-xs text-muted-foreground">Loops per Hour</p><p className="text-sm font-medium tabular-nums">30</p></div>
+                  <div><p className="text-xs text-muted-foreground">Avg Loop Duration</p><p className="text-sm font-medium tabular-nums">{assignedScreens.length > 0 ? Math.round(assignedScreens.reduce((s, sc) => s + sc.loopDuration, 0) / assignedScreens.length) : 0}s</p></div>
+                  <div><p className="text-xs text-muted-foreground">Avg Loops/Hour</p><p className="text-sm font-medium tabular-nums">{assignedScreens.length > 0 ? Math.round(assignedScreens.reduce((s, sc) => s + sc.loopsPerHour, 0) / assignedScreens.length) : 0}</p></div>
                 </div>
               </div>
 
+              {/* Capacity calculation block */}
+              {capacityFormula && (
+                <div className="flex items-start gap-3 bg-primary/5 border border-primary/10 rounded-lg px-4 py-3">
+                  <Info size={14} className="text-primary mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-xs font-medium text-foreground">How capacity is calculated</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5 tabular-nums">{capacityFormula}</p>
+                  </div>
+                </div>
+              )}
+
               <div className="skoop-card p-5">
                 <p className="skoop-section-header mb-1">Daypart Schedule</p>
-                <p className="text-xs text-muted-foreground mb-4">Controls when this placement is active during the day</p>
+                <p className="text-xs text-muted-foreground mb-2">Controls when this placement is active. Only these dayparts are available for campaigns on this placement.</p>
+
+                {/* Visual timeline strip */}
+                <div className="mb-4">
+                  <div className="flex h-8 rounded-md overflow-hidden border border-border">
+                    {[
+                      { label: "6am", hours: 5, active: true },
+                      { label: "11am", hours: 3, active: true },
+                      { label: "2pm", hours: 3, active: true },
+                      { label: "5pm", hours: 4, active: true },
+                      { label: "9pm", hours: 3, active: false },
+                    ].map((dp, i) => (
+                      <div
+                        key={i}
+                        className={`flex items-center justify-center text-[10px] font-medium border-r border-border last:border-0 ${dp.active ? "bg-primary/10 text-primary" : "bg-secondary text-muted-foreground"}`}
+                        style={{ flex: dp.hours }}
+                      >
+                        {dp.label}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex justify-between mt-1 text-[10px] text-muted-foreground">
+                    <span>6:00 AM</span>
+                    <span>12:00 AM</span>
+                  </div>
+                </div>
+
                 <div className="space-y-2">
                   {[
                     { name: "Morning", time: "6:00 AM – 11:00 AM", active: true },
@@ -205,16 +313,22 @@ export default function PlacementDetail() {
             <div className="space-y-4">
               <div className="skoop-card p-5 space-y-3">
                 <p className="skoop-section-header">Capacity Usage</p>
-                <p className="text-[11px] text-muted-foreground">Total available ad slots based on loop duration</p>
+                <p className="text-[11px] text-muted-foreground">Eligible playback opportunities based on loop duration</p>
                 <div className="space-y-2">
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} slots/day</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} slots/day</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} slots/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} opp/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} opp/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} opp/day</span></div>
                 </div>
                 <div className="h-2 rounded-full bg-secondary overflow-hidden mt-2">
                   <div className="h-full bg-primary rounded-full" style={{ width: `${capacity.total > 0 ? Math.round((capacity.booked / capacity.total) * 100) : 0}%` }} />
                 </div>
                 <p className="text-xs text-muted-foreground tabular-nums">{capacity.total > 0 ? Math.round((capacity.booked / capacity.total) * 100) : 0}% utilised</p>
+              </div>
+              <div className="skoop-card p-5 space-y-2">
+                <p className="skoop-section-header">Capacity by Type</p>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Owned ({owned}%)</span><span className="tabular-nums font-medium">{ownedCap.toLocaleString()} opp/day</span></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Direct ({direct}%)</span><span className="tabular-nums font-medium">{directCap.toLocaleString()} opp/day</span></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Programmatic ({Math.max(0, prog)}%)</span><span className="tabular-nums font-medium">{progCap.toLocaleString()} opp/day</span></div>
               </div>
             </div>
           </div>
@@ -239,15 +353,24 @@ export default function PlacementDetail() {
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <div className="flex justify-between text-sm mb-1"><span>Owned</span><span className="tabular-nums font-medium">{owned}%</span></div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span>Owned</span>
+                      <span className="tabular-nums font-medium">{owned}% · {Math.round(capacity.total * owned / 100).toLocaleString()} opp/day</span>
+                    </div>
                     <Slider value={[owned]} onValueChange={([v]) => { if (v + direct <= 100) setOwned(v); }} max={100} step={5} className="[&_[role=slider]]:bg-skoop-slate" />
                   </div>
                   <div>
-                    <div className="flex justify-between text-sm mb-1"><span>Direct</span><span className="tabular-nums font-medium">{direct}%</span></div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span>Direct</span>
+                      <span className="tabular-nums font-medium">{direct}% · {Math.round(capacity.total * direct / 100).toLocaleString()} opp/day</span>
+                    </div>
                     <Slider value={[direct]} onValueChange={([v]) => { if (owned + v <= 100) setDirect(v); }} max={100} step={5} className="[&_[role=slider]]:bg-skoop-blue" />
                   </div>
                   <div>
-                    <div className="flex justify-between text-sm mb-1"><span>Programmatic</span><span className="tabular-nums font-medium">{Math.max(0, prog)}%</span></div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span>Programmatic</span>
+                      <span className="tabular-nums font-medium">{Math.max(0, prog)}% · {Math.round(capacity.total * Math.max(0, prog) / 100).toLocaleString()} opp/day</span>
+                    </div>
                     <div className="h-2 rounded-full bg-secondary overflow-hidden">
                       <div className="h-full bg-skoop-purple rounded-full transition-all" style={{ width: `${Math.max(0, prog)}%` }} />
                     </div>
@@ -295,16 +418,85 @@ export default function PlacementDetail() {
               </div>
               <div className="skoop-card p-5 space-y-3">
                 <p className="skoop-section-header">Capacity Usage</p>
-                <p className="text-[11px] text-muted-foreground">Total available ad slots based on loop duration</p>
+                <p className="text-[11px] text-muted-foreground">Eligible playback opportunities based on loop duration</p>
                 <div className="space-y-2">
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} slots/day</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} slots/day</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} slots/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} opp/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} opp/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} opp/day</span></div>
                 </div>
               </div>
               <div className="skoop-card p-5 space-y-3">
                 <p className="skoop-section-header">Forecast</p>
-                <div><p className="text-xs text-muted-foreground">Risk</p><StatusChip status="healthy" label="No under-delivery risk" /></div>
+                {forecastItems.map((f, i) => (
+                  <div key={i}>
+                    <p className="text-xs text-muted-foreground">{f.label}</p>
+                    <StatusChip status={f.status} label={f.statusLabel} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ======= ACTIVE CAMPAIGNS ======= */}
+        {section === "Active Campaigns" && (
+          <div className="space-y-6">
+            <div className="flex items-start gap-3 bg-primary/5 border border-primary/10 rounded-lg px-4 py-3">
+              <Info size={14} className="text-primary mt-0.5 shrink-0" />
+              <p className="text-xs text-muted-foreground">
+                These campaigns consume inventory from this ad placement. Delivery targets draw from the placement's available capacity.
+              </p>
+            </div>
+
+            <div className="skoop-card overflow-hidden">
+              <table className="w-full">
+                <thead>
+                  <tr className="skoop-table-header">
+                    <th className="skoop-table-cell text-left">Campaign</th>
+                    <th className="skoop-table-cell text-left">Type</th>
+                    <th className="skoop-table-cell text-left">Delivery Target</th>
+                    <th className="skoop-table-cell text-left">Current Delivery</th>
+                    <th className="skoop-table-cell text-left w-32">Progress</th>
+                    <th className="skoop-table-cell text-left">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {mockCampaigns.map((c) => (
+                    <tr key={c.id} className="skoop-table-row cursor-pointer" onClick={() => navigate(`/campaigns/${c.id}`)}>
+                      <td className="skoop-table-cell font-medium text-foreground">{c.name}</td>
+                      <td className="skoop-table-cell"><StatusChip status={c.type.toLowerCase()} /></td>
+                      <td className="skoop-table-cell text-muted-foreground text-xs">{c.target}</td>
+                      <td className="skoop-table-cell tabular-nums text-sm">{c.delivered}</td>
+                      <td className="skoop-table-cell">
+                        <div className="flex items-center gap-2">
+                          <div className="h-1.5 flex-1 bg-secondary rounded-full overflow-hidden">
+                            <div className="h-full bg-primary rounded-full" style={{ width: `${c.pct}%` }} />
+                          </div>
+                          <span className="text-xs tabular-nums text-muted-foreground w-8">{c.pct}%</span>
+                        </div>
+                      </td>
+                      <td className="skoop-table-cell"><StatusChip status={c.status.toLowerCase().replace(" ", "-")} label={c.status} /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div className="skoop-card p-4">
+                <p className="text-xs text-muted-foreground">Direct Reserved</p>
+                <p className="text-lg font-semibold tabular-nums">{directCap.toLocaleString()} opp/day</p>
+                <p className="text-[11px] text-muted-foreground">{direct}% of total capacity</p>
+              </div>
+              <div className="skoop-card p-4">
+                <p className="text-xs text-muted-foreground">Programmatic Reserved</p>
+                <p className="text-lg font-semibold tabular-nums">{progCap.toLocaleString()} opp/day</p>
+                <p className="text-[11px] text-muted-foreground">{Math.max(0, prog)}% of total capacity</p>
+              </div>
+              <div className="skoop-card p-4">
+                <p className="text-xs text-muted-foreground">Owned Reserved</p>
+                <p className="text-lg font-semibold tabular-nums">{ownedCap.toLocaleString()} opp/day</p>
+                <p className="text-[11px] text-muted-foreground">{owned}% of total capacity</p>
               </div>
             </div>
           </div>

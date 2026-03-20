@@ -1,9 +1,10 @@
 import { Monitor, ArrowLeft, MapPin, ExternalLink } from "lucide-react";
-import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams, Link } from "react-router-dom";
 import PageHeader from "@/components/layout/PageHeader";
 import StatusChip from "@/components/shared/StatusChip";
 import MixBar from "@/components/shared/MixBar";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb";
 import { allScreens } from "@/data/screens";
 import { allPlacements } from "@/data/placements";
 
@@ -16,7 +17,7 @@ export default function ScreenDetail() {
   const placementId = searchParams.get("placementId");
 
   const backPath = fromPlacement && placementId ? `/placements/${placementId}` : "/screens";
-  const backLabel = fromPlacement ? "Back to Ad Placement" : "Back";
+  const backLabel = fromPlacement ? "Back to Ad Placement" : "Back to Screens";
   const screen = allScreens.find((s) => s.id === id);
 
   if (!screen) {
@@ -33,9 +34,46 @@ export default function ScreenDetail() {
   }
 
   const linkedPlacements = allPlacements.filter((p) => p.screenIds.includes(screen.id));
+  const dailyCapacity = screen.loopsPerHour * 16;
+
+  // Breadcrumb context
+  const placementObj = placementId ? allPlacements.find(p => p.id === placementId) : null;
 
   return (
     <div>
+      {/* Breadcrumb */}
+      <div className="px-8 pt-4 pb-0">
+        <Breadcrumb>
+          <BreadcrumbList>
+            {fromPlacement && placementObj ? (
+              <>
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild><Link to="/placements">Ad Placements</Link></BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild><Link to={`/placements/${placementObj.id}`}>{placementObj.name}</Link></BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>{screen.name}</BreadcrumbPage>
+                </BreadcrumbItem>
+              </>
+            ) : (
+              <>
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild><Link to="/screens">Screens</Link></BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>{screen.name}</BreadcrumbPage>
+                </BreadcrumbItem>
+              </>
+            )}
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
+
       <PageHeader
         title={screen.name}
         subtitle={`${screen.venue} · ${screen.orientation} · ${screen.resolution}`}
@@ -49,7 +87,6 @@ export default function ScreenDetail() {
 
       <div className="p-8">
         <div className="grid grid-cols-3 gap-6">
-          {/* Left: Details */}
           <div className="col-span-2 space-y-6">
             <div className="skoop-card p-5 space-y-4">
               <p className="skoop-section-header">Screen Details</p>
@@ -80,8 +117,8 @@ export default function ScreenDetail() {
 
             <div className="skoop-card p-5 space-y-4">
               <p className="skoop-section-header">Playback Capacity</p>
-              <p className="text-xs text-muted-foreground">This screen's playback configuration</p>
-              <div className="grid grid-cols-3 gap-4">
+              <p className="text-xs text-muted-foreground">This screen's playback configuration determines eligible ad inventory</p>
+              <div className="grid grid-cols-4 gap-4">
                 <div>
                   <p className="text-xs text-muted-foreground">Loop Duration</p>
                   <p className="text-sm font-medium tabular-nums">{screen.loopDuration}s</p>
@@ -91,8 +128,12 @@ export default function ScreenDetail() {
                   <p className="text-sm font-medium tabular-nums">{screen.loopsPerHour}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">Slots per Day (16h)</p>
-                  <p className="text-sm font-medium tabular-nums">{(screen.loopsPerHour * 16).toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">Active Hours/Day</p>
+                  <p className="text-sm font-medium tabular-nums">16h</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Daily Eligible Capacity</p>
+                  <p className="text-sm font-semibold tabular-nums text-primary">{dailyCapacity.toLocaleString()} opp</p>
                 </div>
               </div>
             </div>
@@ -137,7 +178,7 @@ export default function ScreenDetail() {
                           <MixBar owned={p.owned} direct={p.direct} programmatic={p.prog} />
                         </div>
                         <StatusChip status={p.status.toLowerCase().replace(" ", "-")} label={p.status} />
-                        <ExternalLink size={12} className="text-primary" />
+                        <span className="text-xs text-primary">View Placement</span>
                       </div>
                     </div>
                   ))}
@@ -155,8 +196,8 @@ export default function ScreenDetail() {
                 <p className="text-lg font-semibold tabular-nums">{linkedPlacements.length}</p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Daily Capacity</p>
-                <p className="text-lg font-semibold tabular-nums">{(screen.loopsPerHour * 16).toLocaleString()} slots</p>
+                <p className="text-xs text-muted-foreground">Daily Eligible Playback Capacity</p>
+                <p className="text-lg font-semibold tabular-nums">{dailyCapacity.toLocaleString()} opportunities</p>
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Status</p>
