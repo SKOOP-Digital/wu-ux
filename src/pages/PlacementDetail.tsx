@@ -19,7 +19,7 @@ import { allScreens } from "@/data/screens";
 import { allPlacements, calcCapacity } from "@/data/placements";
 import { toast } from "@/hooks/use-toast";
 
-const SECTIONS_EXISTING = ["Screens", "Schedule", "Mix", "Active Campaigns"];
+
 const PIE_COLORS = ["hsl(215,16%,47%)", "hsl(210,100%,50%)", "hsl(262,80%,60%)"];
 
 const mockCampaigns = [
