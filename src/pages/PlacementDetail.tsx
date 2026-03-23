@@ -82,7 +82,7 @@ export default function PlacementDetail() {
   const [backToBack, setBackToBack] = useState(true);
   const [freqCap, setFreqCap] = useState(4);
   const [noFillFallback, setNoFillFallback] = useState(true);
-  const [editingRules, setEditingRules] = useState(false);
+  
 
   const [dayparts, setDayparts] = useState([
     { id: "dp-1", name: "Morning", start: "06:00", end: "11:00", active: true },
