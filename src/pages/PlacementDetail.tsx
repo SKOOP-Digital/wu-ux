@@ -145,13 +145,19 @@ export default function PlacementDetail() {
       name: placementName,
       scope: screenIds.length === 1 ? "Screen" : "Group",
       venue: venues[0] || "",
+      venueType: "",
+      region: venues.join(", "),
       model: playbackModel,
       owned,
       direct,
       prog: Math.max(0, 100 - owned - direct),
       dayparts: dayparts.filter(d => d.active).map(d => d.name).join(", ") || "All Day",
+      activeHours: totalActiveHours,
       status: "Healthy",
+      screenCount: screenIds.length,
       screenIds: [...screenIds],
+      defaultPlayDuration: defaultPlayDuration === "custom" ? customPlayDuration : parseInt(defaultPlayDuration),
+      capacityUsagePct: 0,
     };
     allPlacements.push(newPlacement);
     toast({ title: "Network rule published successfully", description: `${placementName} is now live.` });
