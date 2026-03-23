@@ -56,6 +56,7 @@ export default function PlacementDetail() {
   const [owned, setOwned] = useState(placement.owned);
   const [direct, setDirect] = useState(placement.direct);
   const [screenIds, setScreenIds] = useState<string[]>(placement.screenIds);
+  const [placementName, setPlacementName] = useState(isNew ? "" : placement.name);
   const [showScreenModal, setShowScreenModal] = useState(false);
 
   // Editable rules state
