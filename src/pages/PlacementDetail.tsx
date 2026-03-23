@@ -1402,23 +1402,6 @@ export default function PlacementDetail() {
                       </div>
                     )}
 
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="skoop-card p-4">
-                        <p className="text-xs text-muted-foreground">Direct Reserved</p>
-                        <p className="text-lg font-semibold tabular-nums">{existingDirectCap.toLocaleString()} plays/day</p>
-                        <p className="text-[11px] text-muted-foreground">{direct}% of total capacity</p>
-                      </div>
-                      <div className="skoop-card p-4">
-                        <p className="text-xs text-muted-foreground">Programmatic Reserved</p>
-                        <p className="text-lg font-semibold tabular-nums">{existingProgCap.toLocaleString()} plays/day</p>
-                        <p className="text-[11px] text-muted-foreground">{Math.max(0, prog)}% of total capacity</p>
-                      </div>
-                      <div className="skoop-card p-4">
-                        <p className="text-xs text-muted-foreground">Owned Reserved</p>
-                        <p className="text-lg font-semibold tabular-nums">{existingOwnedCap.toLocaleString()} plays/day</p>
-                        <p className="text-[11px] text-muted-foreground">{owned}% of total capacity</p>
-                      </div>
-                    </div>
                   </div>
                 </CollapsibleContent>
               </Collapsible>
@@ -1433,7 +1416,6 @@ export default function PlacementDetail() {
               <div className="space-y-2">
                 <div className="flex justify-between text-sm"><span className="text-muted-foreground">Active Campaigns</span><span className="font-medium tabular-nums">{activeCampaigns.length}</span></div>
                 <div className="flex justify-between text-sm"><span className="text-muted-foreground">Forecasted Fill</span><span className="font-medium tabular-nums">{placement.capacityUsagePct}%</span></div>
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Projected Revenue</span><span className="font-medium tabular-nums">${isDraft ? "—" : (existingTotalPlays * 0.0032).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span></div>
               </div>
             </div>
 
@@ -1450,25 +1432,13 @@ export default function PlacementDetail() {
                 <div className="h-full bg-primary rounded-full" style={{ width: `${placement.capacityUsagePct}%` }} />
               </div>
               <p className="text-xs text-muted-foreground tabular-nums">{placement.capacityUsagePct}% utilised</p>
-            </div>
-
-            {/* Capacity by Type */}
-            <div className="skoop-card p-5 space-y-2">
-              <p className="skoop-section-header">Capacity by Type</p>
-              <div className="flex justify-between text-sm"><span className="text-muted-foreground">Owned ({owned}%)</span><span className="tabular-nums font-medium">{existingOwnedCap.toLocaleString()} plays/day</span></div>
-              <div className="flex justify-between text-sm"><span className="text-muted-foreground">Direct ({direct}%)</span><span className="tabular-nums font-medium">{existingDirectCap.toLocaleString()} plays/day</span></div>
-              <div className="flex justify-between text-sm"><span className="text-muted-foreground">Programmatic ({Math.max(0, prog)}%)</span><span className="tabular-nums font-medium">{existingProgCap.toLocaleString()} plays/day</span></div>
-            </div>
-
-            {/* Forecast */}
-            <div className="skoop-card p-5 space-y-3">
-              <p className="skoop-section-header">Forecast</p>
-              {forecastItems.map((f, i) => (
-                <div key={i}>
-                  <p className="text-xs text-muted-foreground">{f.label}</p>
-                  <StatusChip status={f.status} label={f.statusLabel} />
-                </div>
-              ))}
+              <div className="border-t border-border pt-2 mt-2 flex items-center gap-2">
+                {forecastItems.map((f, i) => (
+                  <span key={i} className="flex items-center gap-1.5">
+                    <StatusChip status={f.status} label={f.statusLabel} />
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </div>
