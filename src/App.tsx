@@ -13,7 +13,6 @@ import ProgrammaticSlots from "./pages/ProgrammaticSlots";
 import PlaybackMix from "./pages/PlaybackMix";
 import ProofOfPlay from "./pages/ProofOfPlay";
 import SettingsPage from "./pages/SettingsPage";
-import SettingsPage from "./pages/SettingsPage";
 import PlaylistEditor from "./pages/PlaylistEditor";
 import Screens from "./pages/Screens";
 import ScreenDetail from "./pages/ScreenDetail";
