@@ -1365,22 +1365,24 @@ export default function PlacementDetail() {
                         </Button>
                       </div>
                     ) : (
-                      <div className="skoop-card overflow-x-auto">
-                        <table className="w-full">
+                      <div className="skoop-card overflow-hidden">
+                        <table className="w-full table-fixed">
                           <thead>
                             <tr className="skoop-table-header">
-                              <th className="skoop-table-cell text-left">Campaign</th>
-                              <th className="skoop-table-cell text-left">Type</th>
-                              <th className="skoop-table-cell text-left">Delivery Target</th>
-                              <th className="skoop-table-cell text-left">Current Delivery</th>
-                              <th className="skoop-table-cell text-left w-32">Progress</th>
-                              <th className="skoop-table-cell text-left">Status</th>
+                              <th className="skoop-table-cell text-left" style={{ width: "24%" }}>Campaign</th>
+                              <th className="skoop-table-cell text-left" style={{ width: "10%" }}>Type</th>
+                              <th className="skoop-table-cell text-left" style={{ width: "16%" }}>Delivery Target</th>
+                              <th className="skoop-table-cell text-left" style={{ width: "16%" }}>Current Delivery</th>
+                              <th className="skoop-table-cell text-left" style={{ width: "18%" }}>Progress</th>
+                              <th className="skoop-table-cell text-left" style={{ width: "16%" }}>Status</th>
                             </tr>
                           </thead>
                           <tbody>
                             {activeCampaigns.map((c) => (
                               <tr key={c.id} className="skoop-table-row cursor-pointer" onClick={() => navigate(`/campaigns/${c.id}`)}>
-                                <td className="skoop-table-cell font-medium text-foreground">{c.name}</td>
+                                <td className="skoop-table-cell font-medium text-foreground">
+                                  <span className="line-clamp-2">{c.name}</span>
+                                </td>
                                 <td className="skoop-table-cell"><StatusChip status={c.type.toLowerCase()} /></td>
                                 <td className="skoop-table-cell text-muted-foreground text-xs">{c.target}</td>
                                 <td className="skoop-table-cell tabular-nums text-sm">{c.delivered}</td>
@@ -1389,7 +1391,7 @@ export default function PlacementDetail() {
                                     <div className="h-1.5 flex-1 bg-secondary rounded-full overflow-hidden">
                                       <div className="h-full bg-primary rounded-full" style={{ width: `${c.pct}%` }} />
                                     </div>
-                                    <span className="text-xs tabular-nums text-muted-foreground w-8">{c.pct}%</span>
+                                    <span className="text-xs tabular-nums text-muted-foreground">{c.pct}%</span>
                                   </div>
                                 </td>
                                 <td className="skoop-table-cell"><StatusChip status={c.status.toLowerCase().replace(" ", "-")} label={c.status} /></td>
