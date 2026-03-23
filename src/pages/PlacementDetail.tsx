@@ -166,6 +166,11 @@ export default function PlacementDetail() {
     [screenIds]
   );
 
+  const totalPlaysPerDay = useMemo(() => {
+    if (screenIds.length === 0) return 0;
+    return assignedScreens.reduce((sum, s) => sum + calcPlaysPerDay(s), 0);
+  }, [screenIds, assignedScreens, playDurationSeconds, activeHours]);
+
   const capacity = useMemo(
     () => calcCapacity(screenIds, allScreens),
     [screenIds]
@@ -196,14 +201,13 @@ export default function PlacementDetail() {
 
   const capacityFormula = useMemo(() => {
     if (assignedScreens.length === 0) return null;
-    const avgLoops = Math.round(assignedScreens.reduce((s, sc) => s + sc.loopsPerHour, 0) / assignedScreens.length);
     const hrs = Math.round(activeHours);
-    return `${assignedScreens.length} screen${assignedScreens.length !== 1 ? "s" : ""} × ${avgLoops} avg loops/hour × ${hrs} active hours = ${capacity.total.toLocaleString()} playback opportunities/day`;
-  }, [assignedScreens, capacity.total, activeHours]);
+    return `${assignedScreens.length} screen${assignedScreens.length !== 1 ? "s" : ""} × ${hrs} active hours × ${playDurationSeconds}s play duration = ${totalPlaysPerDay.toLocaleString()} plays/day`;
+  }, [assignedScreens, totalPlaysPerDay, activeHours, playDurationSeconds]);
 
-  const ownedCap = Math.round(capacity.total * owned / 100);
-  const directCap = Math.round(capacity.total * direct / 100);
-  const progCap = Math.round(capacity.total * Math.max(0, prog) / 100);
+  const ownedCap = Math.round(totalPlaysPerDay * owned / 100);
+  const directCap = Math.round(totalPlaysPerDay * direct / 100);
+  const progCap = Math.round(totalPlaysPerDay * Math.max(0, prog) / 100);
 
   const forecastItems = useMemo(() => {
     const items: { label: string; status: string; statusLabel: string }[] = [];
