@@ -2,7 +2,6 @@ import { useState, useMemo } from "react";
 import { MapPin, Search, Plus, LayoutGrid, List, MoreHorizontal, Monitor, ExternalLink, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useNavigate } from "react-router-dom";
 import PageHeader from "@/components/layout/PageHeader";
 import MixBar from "@/components/shared/MixBar";
 import StatusChip from "@/components/shared/StatusChip";
