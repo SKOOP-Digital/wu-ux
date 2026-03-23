@@ -171,11 +171,6 @@ export default function PlacementDetail() {
 
   const prog = 100 - owned - direct;
 
-  const pieData = [
-    { name: "Owned", value: owned },
-    { name: "Direct", value: direct },
-    { name: "Programmatic", value: Math.max(0, prog) },
-  ];
 
   const assignedScreens = useMemo(
     () => allScreens.filter((s) => screenIds.includes(s.id)),
