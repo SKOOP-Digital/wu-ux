@@ -5,7 +5,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import PageHeader from "@/components/layout/PageHeader";
 import MixBar from "@/components/shared/MixBar";
 import StatusChip from "@/components/shared/StatusChip";
-import ScreenSelectorModal from "@/components/shared/ScreenSelectorModal";
+
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
