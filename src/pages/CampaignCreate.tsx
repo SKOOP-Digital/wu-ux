@@ -559,10 +559,47 @@ export default function CampaignCreate() {
                   <StatusChip status="overbooked" label="Conflict" />
                 )}
               </div>
-              {!capacitySummary.fits && (
-                <div className="flex items-start gap-2 bg-red-50 border border-red-200 rounded-md px-3 py-2">
-                  <AlertTriangle size={12} className="text-red-600 mt-0.5 shrink-0" />
-                  <p className="text-[11px] text-red-700">Requested capacity exceeds available inventory.</p>
+              {!capacitySummary.fits && !conflictAcknowledged && (
+                <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 space-y-2.5">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle size={12} className="text-destructive mt-0.5 shrink-0" />
+                    <div className="space-y-1">
+                      <p className="text-[11px] font-medium text-destructive">
+                        You're requesting ~{capacitySummary.requested.toLocaleString()} plays/day but only {capacitySummary.totalAvailable.toLocaleString()}/day is available across your selected rules.
+                      </p>
+                      <p className="text-[11px] text-muted-foreground">
+                        Other campaigns have already booked the remaining capacity.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="space-y-1.5 pl-5">
+                    <button
+                      onClick={() => setStep(3)}
+                      className="block text-[11px] text-primary font-medium hover:underline"
+                    >
+                      A. Reduce your target
+                    </button>
+                    <button
+                      onClick={() => setStep(1)}
+                      className="block text-[11px] text-primary font-medium hover:underline"
+                    >
+                      B. Add more screens
+                    </button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 px-2 text-[11px] text-muted-foreground hover:text-foreground"
+                      onClick={() => setConflictAcknowledged(true)}
+                    >
+                      C. Proceed anyway
+                    </Button>
+                  </div>
+                </div>
+              )}
+              {!capacitySummary.fits && conflictAcknowledged && (
+                <div className="flex items-start gap-2 rounded-md bg-muted px-3 py-2">
+                  <AlertTriangle size={12} className="text-muted-foreground mt-0.5 shrink-0" />
+                  <p className="text-[11px] text-muted-foreground">Conflict acknowledged — proceeding with overbooking.</p>
                 </div>
               )}
             </div>
