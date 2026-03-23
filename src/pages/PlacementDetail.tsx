@@ -184,7 +184,11 @@ export default function PlacementDetail() {
                 ) : (
                   <div className="space-y-1.5">
                     {assignedScreens.map((s) => (
-                      <div key={s.id} className="flex items-center justify-between py-2.5 px-3 border border-border rounded-md">
+                      <div
+                        key={s.id}
+                        className="flex items-center justify-between py-2.5 px-3 border border-border rounded-md cursor-pointer hover:bg-secondary/40 transition-colors"
+                        onClick={() => navigate(`/screens/${s.id}?from=placement&placementId=${placement.id}`)}
+                      >
                         <div className="flex items-center gap-2.5">
                           <Monitor size={14} className="text-muted-foreground" />
                           <div>
@@ -198,12 +202,9 @@ export default function PlacementDetail() {
                             <span className={`w-1.5 h-1.5 rounded-full ${s.status === "Online" ? "bg-emerald-500" : "bg-red-400"}`} />
                             {s.status}
                           </span>
-                          <button
-                            className="text-xs text-primary flex items-center gap-1 hover:underline"
-                            onClick={() => navigate(`/screens/${s.id}?from=placement&placementId=${placement.id}`)}
-                          >
+                          <span className="text-xs text-primary flex items-center gap-1">
                             View <ExternalLink size={10} />
-                          </button>
+                          </span>
                         </div>
                       </div>
                     ))}
