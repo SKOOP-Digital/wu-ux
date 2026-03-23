@@ -604,60 +604,104 @@ export default function PlacementDetail() {
                       <MixBar owned={owned} direct={direct} programmatic={Math.max(0, prog)} height="h-3" showLabels />
                     </div>
 
-                    {/* Serving Rules — clean toggle rows */}
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-foreground">Serving Rules</label>
-
-                      <div className="rounded-lg border border-border divide-y divide-border overflow-hidden">
-                        <div className="flex items-center justify-between px-4 py-3.5">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-foreground">Category Separation</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">Prevent competing brands from appearing in the same loop</p>
+                    {/* Advanced Serving Rules — collapsible accordion */}
+                    <Collapsible open={servingRulesOpen} onOpenChange={setServingRulesOpen}>
+                      <CollapsibleTrigger className="flex items-center justify-between w-full py-3 group">
+                        <span className="text-sm font-medium text-foreground">Advanced Serving Rules</span>
+                        <ChevronDown size={16} className={`text-muted-foreground transition-transform duration-200 ${servingRulesOpen ? "rotate-180" : ""}`} />
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <div className="rounded-lg border border-border divide-y divide-border overflow-hidden">
+                          {/* Default Play Duration — first item */}
+                          <div className="flex items-center justify-between px-4 py-3.5">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground">Default Play Duration</p>
+                              <p className="text-xs text-muted-foreground mt-0.5">The standard length of one ad play on this rule. Used to calculate daily capacity.</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <SelectRoot value={defaultPlayDuration} onValueChange={setDefaultPlayDuration}>
+                                <SelectTrigger className="w-[100px] h-8 text-xs">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="10">10s</SelectItem>
+                                  <SelectItem value="15">15s</SelectItem>
+                                  <SelectItem value="30">30s</SelectItem>
+                                  <SelectItem value="60">60s</SelectItem>
+                                  <SelectItem value="custom">Custom</SelectItem>
+                                </SelectContent>
+                              </SelectRoot>
+                              {defaultPlayDuration === "custom" && (
+                                <div className="flex items-center gap-1">
+                                  <input
+                                    type="number"
+                                    min={1}
+                                    max={300}
+                                    value={customDuration}
+                                    onChange={(e) => setCustomDuration(Math.max(1, Number(e.target.value)))}
+                                    className="w-16 h-8 text-xs border border-border rounded px-2 bg-background"
+                                  />
+                                  <span className="text-xs text-muted-foreground">sec</span>
+                                </div>
+                              )}
+                            </div>
                           </div>
-                          <div className="flex items-center gap-3">
-                            {catSeparation && (
-                              <select
-                                value={catSeparationGap}
-                                onChange={(e) => setCatSeparationGap(Number(e.target.value))}
-                                className="text-xs border border-border rounded px-2 py-1 bg-background"
-                              >
-                                {[1, 2, 3, 4, 5].map((n) => (
-                                  <option key={n} value={n}>{n} slot{n > 1 ? "s" : ""} apart</option>
-                                ))}
-                              </select>
-                            )}
-                            <Switch checked={catSeparation} onCheckedChange={setCatSeparation} />
+
+                          <div className="flex items-center justify-between px-4 py-3.5">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground">Category Separation</p>
+                              <p className="text-xs text-muted-foreground mt-0.5">Prevent competing brands from appearing in the same loop</p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              {catSeparation && (
+                                <select
+                                  value={catSeparationGap}
+                                  onChange={(e) => setCatSeparationGap(Number(e.target.value))}
+                                  className="text-xs border border-border rounded px-2 py-1 bg-background"
+                                >
+                                  {[1, 2, 3, 4, 5].map((n) => (
+                                    <option key={n} value={n}>{n} slot{n > 1 ? "s" : ""} apart</option>
+                                  ))}
+                                </select>
+                              )}
+                              <Switch checked={catSeparation} onCheckedChange={setCatSeparation} />
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between px-4 py-3.5">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground">Back-to-back Prevention</p>
+                              <p className="text-xs text-muted-foreground mt-0.5">Same creative cannot play consecutively</p>
+                            </div>
+                            <Switch checked={backToBack} onCheckedChange={setBackToBack} />
+                          </div>
+
+                          <div className="flex items-center justify-between px-4 py-3.5">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground">Frequency Cap</p>
+                              <p className="text-xs text-muted-foreground mt-0.5">Maximum plays per unique creative per hour</p>
+                            </div>
+                            <select
+                              value={freqCap}
+                              onChange={(e) => setFreqCap(Number(e.target.value))}
+                              className="text-xs border border-border rounded px-2 py-1 bg-background"
+                            >
+                              {[1, 2, 3, 4, 5, 6, 8, 10].map((n) => (
+                                <option key={n} value={n}>{n} plays/hour</option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div className="flex items-center justify-between px-4 py-3.5">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground">If No Ad Available, Show:</p>
+                              <p className="text-xs text-muted-foreground mt-0.5">Fall back to owned content when programmatic has no fill</p>
+                            </div>
+                            <Switch checked={noFillFallback} onCheckedChange={setNoFillFallback} />
                           </div>
                         </div>
-
-                        <div className="flex items-center justify-between px-4 py-3.5">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-foreground">Back-to-back Prevention</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">Same creative cannot play consecutively</p>
-                          </div>
-                          <Switch checked={backToBack} onCheckedChange={setBackToBack} />
-                        </div>
-
-                        <div className="flex items-center justify-between px-4 py-3.5">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-foreground">Frequency Cap</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">Maximum plays per unique creative per hour</p>
-                          </div>
-                          <select
-                            value={freqCap}
-                            onChange={(e) => setFreqCap(Number(e.target.value))}
-                            className="text-xs border border-border rounded px-2 py-1 bg-background"
-                          >
-                            {[1, 2, 3, 4, 5, 6, 8, 10].map((n) => (
-                              <option key={n} value={n}>{n} plays/hour</option>
-                            ))}
-                          </select>
-                        </div>
-
-                        <div className="flex items-center justify-between px-4 py-3.5">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-foreground">If No Ad Available, Show:</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">Fall back to owned content when programmatic has no fill</p>
+                      </CollapsibleContent>
+                    </Collapsible>
                           </div>
                           <Switch checked={noFillFallback} onCheckedChange={setNoFillFallback} />
                         </div>
