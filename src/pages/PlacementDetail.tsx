@@ -161,7 +161,14 @@ export default function PlacementDetail() {
               {stateLabel}
             </span>
             <Button variant="outline" size="sm" onClick={() => navigate("/placements")}><ArrowLeft size={14} className="mr-1" /> Back</Button>
-            <Button size="sm">Save Changes</Button>
+            {isDraft ? (
+              <>
+                <Button variant="outline" size="sm">Save Draft</Button>
+                <Button size="sm">Publish Placement</Button>
+              </>
+            ) : (
+              <Button size="sm">Save Changes</Button>
+            )}
           </div>
         }
       />
