@@ -752,16 +752,16 @@ export default function PlacementDetail() {
                 {hasScreens && (
                   <div className="skoop-card p-5 space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
                     <p className="skoop-section-header">Capacity Usage</p>
-                    <p className="text-[11px] text-muted-foreground">Eligible playback opportunities based on selected screens and playback model</p>
+                    <p className="text-[11px] text-muted-foreground">Eligible plays based on selected screens, active hours, and play duration ({playDurationSeconds}s)</p>
                     <div className="space-y-2">
-                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} opp/day</span></div>
-                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} opp/day</span></div>
-                      <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} opp/day</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{totalPlaysPerDay.toLocaleString()} plays/day</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} plays/day</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} plays/day</span></div>
                     </div>
                     <div className="h-2 rounded-full bg-secondary overflow-hidden mt-2">
-                      <div className="h-full bg-primary rounded-full" style={{ width: `${capacity.total > 0 ? Math.round((capacity.booked / capacity.total) * 100) : 0}%` }} />
+                      <div className="h-full bg-primary rounded-full" style={{ width: `${totalPlaysPerDay > 0 ? Math.round((capacity.booked / totalPlaysPerDay) * 100) : 0}%` }} />
                     </div>
-                    <p className="text-xs text-muted-foreground tabular-nums">{capacity.total > 0 ? Math.round((capacity.booked / capacity.total) * 100) : 0}% utilised</p>
+                    <p className="text-xs text-muted-foreground tabular-nums">{totalPlaysPerDay > 0 ? Math.round((capacity.booked / totalPlaysPerDay) * 100) : 0}% utilised</p>
                   </div>
                 )}
 
