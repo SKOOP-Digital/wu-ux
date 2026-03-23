@@ -1402,23 +1402,6 @@ export default function PlacementDetail() {
                       </div>
                     )}
 
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="skoop-card p-4">
-                        <p className="text-xs text-muted-foreground">Direct Reserved</p>
-                        <p className="text-lg font-semibold tabular-nums">{existingDirectCap.toLocaleString()} plays/day</p>
-                        <p className="text-[11px] text-muted-foreground">{direct}% of total capacity</p>
-                      </div>
-                      <div className="skoop-card p-4">
-                        <p className="text-xs text-muted-foreground">Programmatic Reserved</p>
-                        <p className="text-lg font-semibold tabular-nums">{existingProgCap.toLocaleString()} plays/day</p>
-                        <p className="text-[11px] text-muted-foreground">{Math.max(0, prog)}% of total capacity</p>
-                      </div>
-                      <div className="skoop-card p-4">
-                        <p className="text-xs text-muted-foreground">Owned Reserved</p>
-                        <p className="text-lg font-semibold tabular-nums">{existingOwnedCap.toLocaleString()} plays/day</p>
-                        <p className="text-[11px] text-muted-foreground">{owned}% of total capacity</p>
-                      </div>
-                    </div>
                   </div>
                 </CollapsibleContent>
               </Collapsible>
