@@ -65,7 +65,7 @@ export default function PlacementDetail() {
   const [direct, setDirect] = useState(placement.direct);
   const [screenIds, setScreenIds] = useState<string[]>(placement.screenIds);
   const [placementName, setPlacementName] = useState(isNew ? "" : placement.name);
-  const [showScreenModal, setShowScreenModal] = useState(false);
+  
   const [screenSearch, setScreenSearch] = useState("");
   const [screenVenueFilter, setScreenVenueFilter] = useState("All");
   const [playbackModel, setPlaybackModel] = useState<"Loop" | "Ad-break">(placement.model as "Loop" | "Ad-break");
