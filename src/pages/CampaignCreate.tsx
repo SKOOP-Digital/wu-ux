@@ -496,7 +496,7 @@ export default function CampaignCreate() {
     const totalDays = startDate && endDate ? Math.max(1, Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / 86400000)) : 30;
     const totalEstimated = estimatedDailyPlays * totalDays;
     const hasConflict = capacitySummary ? !capacitySummary.fits : false;
-    const hasPendingCreatives = true; // mock
+    const hasPendingCreatives = false;
 
     const ready = !hasConflict && campaignName && (selectedRules.length > 0 || selectedTags.length > 0);
 
