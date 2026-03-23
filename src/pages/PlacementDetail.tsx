@@ -1416,7 +1416,6 @@ export default function PlacementDetail() {
               <div className="space-y-2">
                 <div className="flex justify-between text-sm"><span className="text-muted-foreground">Active Campaigns</span><span className="font-medium tabular-nums">{activeCampaigns.length}</span></div>
                 <div className="flex justify-between text-sm"><span className="text-muted-foreground">Forecasted Fill</span><span className="font-medium tabular-nums">{placement.capacityUsagePct}%</span></div>
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Projected Revenue</span><span className="font-medium tabular-nums">${isDraft ? "—" : (existingTotalPlays * 0.0032).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span></div>
               </div>
             </div>
 
