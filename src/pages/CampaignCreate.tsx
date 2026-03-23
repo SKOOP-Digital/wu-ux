@@ -194,81 +194,123 @@ export default function CampaignCreate() {
     </div>
   );
 
+  const filteredTags = AVAILABLE_TAGS.filter((t) =>
+    !selectedTags.includes(t) && t.toLowerCase().includes(tagSearch.toLowerCase())
+  );
+
   const renderStep2 = () => (
     <div className="space-y-5">
+      {/* Network Rules */}
       <div className="skoop-card p-5 space-y-4">
-        <p className="skoop-section-header">Where It Runs</p>
-        <p className="text-xs text-muted-foreground">Select one or more Network Rules to define where this campaign plays. Optionally narrow with tags.</p>
+        <p className="skoop-section-header">Network Rules</p>
+        <p className="text-xs text-muted-foreground">Select one or more Network Rules to define where this campaign plays. Optionally narrow with tags per rule.</p>
 
-        {selectedRules.map((sr) => {
-          const rule = allPlacements.find((p) => p.id === sr.id);
-          if (!rule) return null;
-          const cap = calcCapacityFromRule(rule);
-          const availPct = Math.round((cap.available / cap.total) * 100);
-          return (
-            <div key={sr.id} className="rounded-lg border border-border p-4 space-y-3">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm font-semibold text-foreground">{rule.name}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{rule.screenCount} screens · {availPct}% available</p>
-                </div>
-                <button onClick={() => removeRule(sr.id)} className="text-muted-foreground hover:text-destructive transition-colors">
-                  <X size={16} />
+        <div className="space-y-2">
+          {allPlacements.map((rule) => {
+            const isSelected = selectedRules.some((sr) => sr.id === rule.id);
+            const sr = selectedRules.find((r) => r.id === rule.id);
+            const cap = calcCapacityFromRule(rule);
+            const availPct = Math.round((cap.available / cap.total) * 100);
+            return (
+              <div key={rule.id} className="space-y-0">
+                <button
+                  onClick={() => isSelected ? removeRule(rule.id) : addRule(rule.id)}
+                  className={`w-full text-left rounded-lg border-2 p-4 transition-all ${
+                    isSelected
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-primary/30 hover:bg-secondary/30"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{rule.name}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{rule.screenCount} screens · {availPct}% available</p>
+                    </div>
+                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                      isSelected ? "bg-primary border-primary" : "border-muted-foreground/30"
+                    }`}>
+                      {isSelected && <Check size={12} className="text-primary-foreground" />}
+                    </div>
+                  </div>
                 </button>
+                {isSelected && sr && (
+                  <div className="ml-4 mt-2 mb-3 pl-4 border-l-2 border-primary/20 space-y-2">
+                    <label className="text-[11px] text-muted-foreground">Narrow to specific screens using tags</label>
+                    <div className="flex flex-wrap gap-1.5">
+                      {sr.tags.map((tag) => (
+                        <span key={tag} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                          {tag}
+                          <button onClick={() => removeTagFromRule(sr.id, tag)}><X size={10} /></button>
+                        </span>
+                      ))}
+                    </div>
+                    <Input
+                      placeholder="e.g. Bodega, Urban Panel, West Coast"
+                      className="text-xs max-w-xs"
+                      value={sr.tagInput}
+                      onChange={(e) => updateTagInput(sr.id, e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === ",") {
+                          e.preventDefault();
+                          addTagToRule(sr.id, sr.tagInput);
+                        }
+                      }}
+                    />
+                  </div>
+                )}
               </div>
-              <div>
-                <label className="text-[11px] text-muted-foreground">Narrow to specific screens using tags</label>
-                <div className="flex flex-wrap gap-1.5 mt-1.5">
-                  {sr.tags.map((tag) => (
-                    <span key={tag} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                      {tag}
-                      <button onClick={() => removeTagFromRule(sr.id, tag)}><X size={10} /></button>
-                    </span>
-                  ))}
-                </div>
-                <Input
-                  placeholder="e.g. Bodega, Urban Panel, West Coast"
-                  className="mt-1.5 text-xs"
-                  value={sr.tagInput}
-                  onChange={(e) => updateTagInput(sr.id, e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === ",") {
-                      e.preventDefault();
-                      addTagToRule(sr.id, sr.tagInput);
-                    }
-                  }}
-                />
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+      </div>
 
-        {availableRules.length > 0 && (
-          <div className="space-y-2">
-            <p className="text-xs font-medium text-muted-foreground">Available Rules</p>
-            <div className="grid grid-cols-2 gap-2">
-              {availableRules.map((rule) => {
-                const cap = calcCapacityFromRule(rule);
-                const availPct = Math.round((cap.available / cap.total) * 100);
-                return (
-                  <button
-                    key={rule.id}
-                    onClick={() => addRule(rule.id)}
-                    className="text-left rounded-lg border border-dashed border-border p-3 hover:border-primary/40 hover:bg-secondary/30 transition-colors"
-                  >
-                    <p className="text-xs font-medium text-foreground">{rule.name}</p>
-                    <p className="text-[11px] text-muted-foreground">{rule.screenCount} screens · {availPct}% avail</p>
-                  </button>
-                );
-              })}
-            </div>
+      {/* Target by Tags */}
+      <div className="skoop-card p-5 space-y-4">
+        <div className="flex items-center gap-2">
+          <Tag size={16} className="text-muted-foreground" />
+          <p className="skoop-section-header">Target by Tags</p>
+        </div>
+        <p className="text-xs text-muted-foreground">Select screen tags to target specific screens across your network. Use alongside or instead of Network Rules.</p>
+
+        <div className="flex flex-wrap gap-1.5">
+          {selectedTags.map((tag) => (
+            <span key={tag} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+              {tag}
+              <button onClick={() => setSelectedTags((prev) => prev.filter((t) => t !== tag))}><X size={10} /></button>
+            </span>
+          ))}
+        </div>
+
+        <div className="relative">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search tags..."
+            className="pl-9 text-xs"
+            value={tagSearch}
+            onChange={(e) => setTagSearch(e.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-wrap gap-1.5">
+          {filteredTags.map((tag) => (
+            <button
+              key={tag}
+              onClick={() => { setSelectedTags((prev) => [...prev, tag]); setTagSearch(""); }}
+              className="px-2.5 py-1 rounded-full border border-dashed border-border text-xs text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
+            >
+              + {tag}
+            </button>
+          ))}
+          {filteredTags.length === 0 && tagSearch && (
+            <p className="text-xs text-muted-foreground">No matching tags found</p>
+          )}
+        </div>
+
+        {selectedTags.length > 0 && (
+          <div className="flex items-center gap-2 bg-secondary rounded-md px-3 py-2">
+            <Info size={12} className="text-primary shrink-0" />
+            <p className="text-xs text-foreground font-medium tabular-nums">{tagMatchedScreens} screen{tagMatchedScreens !== 1 ? "s" : ""} match these tags</p>
           </div>
-        )}
-
-        {selectedRules.length > 0 && availableRules.length > 0 && (
-          <Button variant="outline" size="sm" onClick={() => { if (availableRules.length > 0) addRule(availableRules[0].id); }}>
-            <Plus size={14} className="mr-1" /> Add Another Rule
-          </Button>
         )}
       </div>
     </div>
