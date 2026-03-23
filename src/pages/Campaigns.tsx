@@ -23,8 +23,8 @@ function statusLabel(delivered: number, target: number, status: string) {
   if (status === "Completed") return "Completed";
   if (status === "Under-delivering") return "Under-delivering";
   const pct = target > 0 ? delivered / target : 0;
-  if (pct >= 0.95) return "Live · Complete";
   if (pct >= 0.6) return "Live · On Track";
+  return "Live · Behind Pace";
   return "Live · Behind Pace";
 }
 
