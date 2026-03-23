@@ -379,7 +379,7 @@ export default function CampaignCreate() {
       {(deliveryMode === "sov" || campaignType === "marketing") ? (
         <div className="space-y-3">
           <div className="flex justify-between text-sm"><span>% of Screen Time</span><span className="font-medium tabular-nums">{sov}%</span></div>
-          <Slider value={[sov]} onValueChange={([v]) => setSov(v)} max={50} step={1} />
+          <Slider value={[sov]} onValueChange={([v]) => { setSov(v); setConflictAcknowledged(false); }} max={50} step={1} />
           <div className="bg-secondary rounded-md p-4 space-y-2">
             <p className="text-xs font-medium text-foreground">Estimated Delivery</p>
             <div className="grid grid-cols-2 gap-3">
