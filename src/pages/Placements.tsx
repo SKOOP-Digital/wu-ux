@@ -1,11 +1,10 @@
 import { useState, useMemo } from "react";
-import { MapPin, Search, Plus, LayoutGrid, List, Trash2, Monitor, ExternalLink, Info } from "lucide-react";
+import { MapPin, Search, Plus, LayoutGrid, List, Trash2, Monitor } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import PageHeader from "@/components/layout/PageHeader";
 import MixBar from "@/components/shared/MixBar";
 import StatusChip from "@/components/shared/StatusChip";
-import DetailDrawer from "@/components/shared/DetailDrawer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -49,11 +48,8 @@ export default function Placements() {
     const idx = allPlacements.findIndex(p => p.id === id);
     if (idx !== -1) allPlacements.splice(idx, 1);
     setPlacements([...allPlacements]);
-    setDrawer(null);
     toast({ title: "Rule deleted", description: `"${name}" has been removed.` });
   };
-
-  const [drawer, setDrawer] = useState<(typeof enriched)[0] | null>(null);
 
   const filtered = enriched.filter((p) => {
     if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
@@ -65,7 +61,7 @@ export default function Placements() {
     <div>
       <PageHeader
         title="Network Rules"
-        subtitle="Define monetisable playback capacity on your screens"
+        subtitle="Control how ads run across your screen network"
         icon={<MapPin size={20} />}
         actions={
           <Button size="sm" onClick={() => navigate("/placements/new")}>
@@ -74,13 +70,6 @@ export default function Placements() {
         }
       />
       <div className="p-8 space-y-4">
-        <div className="flex items-start gap-3 bg-primary/5 border border-primary/10 rounded-lg px-4 py-3">
-          <MapPin size={16} className="text-primary mt-0.5 shrink-0" />
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            <span className="font-medium text-foreground">Network Rules</span> define how ads run on selected screens. Each rule maps to one or more screens and controls the content split between <span className="font-medium">Owned</span> (your content), <span className="font-medium">Direct</span> (booked campaigns), and <span className="font-medium">Programmatic</span> (automated ads).
-          </p>
-        </div>
-
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="relative">
@@ -121,7 +110,7 @@ export default function Placements() {
               </thead>
               <tbody>
                 {filtered.map((p) => (
-                  <tr key={p.id} className="skoop-table-row cursor-pointer" onClick={() => setDrawer(p)}>
+                  <tr key={p.id} className="skoop-table-row cursor-pointer" onClick={() => navigate(`/placements/${p.id}`)}>
                     <td className="skoop-table-cell font-medium text-foreground">{p.name}</td>
                     <td className="skoop-table-cell">
                       <div className="flex items-center gap-1.5 text-muted-foreground">
@@ -133,7 +122,9 @@ export default function Placements() {
                       </div>
                     </td>
                     <td className="skoop-table-cell"><StatusChip status={p.model.toLowerCase()} label={p.model} /></td>
-                    <td className="skoop-table-cell"><MixBar owned={p.owned} direct={p.direct} programmatic={p.prog} /></td>
+                    <td className="skoop-table-cell">
+                      <MixBar owned={p.owned} direct={p.direct} programmatic={p.prog} showHoverTooltip />
+                    </td>
                     <td className="skoop-table-cell text-muted-foreground text-xs">{p.dayparts}</td>
                     <td className="skoop-table-cell text-right">
                       <div className="text-sm tabular-nums font-medium">{p.capacityPct}%</div>
@@ -164,7 +155,7 @@ export default function Placements() {
         ) : (
           <div className="grid grid-cols-3 gap-4">
             {filtered.map((p) => (
-              <div key={p.id} className="skoop-card p-5 cursor-pointer hover:shadow-sm transition-shadow" onClick={() => setDrawer(p)}>
+              <div key={p.id} className="skoop-card p-5 cursor-pointer hover:shadow-sm transition-shadow" onClick={() => navigate(`/placements/${p.id}`)}>
                 <div className="flex items-center justify-between mb-2">
                   <StatusChip status={p.status.toLowerCase().replace(" ", "-")} label={p.status} />
                   <StatusChip status={p.model.toLowerCase()} label={p.model} />
@@ -184,81 +175,6 @@ export default function Placements() {
           </div>
         )}
       </div>
-
-      <DetailDrawer open={!!drawer} onClose={() => setDrawer(null)} title="Network Rule Details">
-        {drawer && (
-          <div className="space-y-6">
-            <div>
-              <h3 className="font-semibold text-foreground">{drawer.name}</h3>
-              <p className="text-[11px] text-muted-foreground mt-1">Defines how ads run on selected screens</p>
-            </div>
-
-            <div className="space-y-2">
-              <p className="skoop-section-header">Screens in this Rule</p>
-              <p className="text-[11px] text-muted-foreground">These screens will display campaigns assigned to this rule</p>
-              <div className="flex items-center gap-2 bg-secondary/60 rounded-md px-3 py-2">
-                <Monitor size={14} className="text-primary" />
-                <div className="flex-1">
-                  <span className="text-sm font-medium">{drawer.screens} screen{drawer.screens !== 1 ? "s" : ""}</span>
-                  <span className="text-xs text-muted-foreground ml-1">· {drawer.venueLabel}</span>
-                </div>
-                <button
-                  className="text-xs text-primary flex items-center gap-1 hover:underline"
-                  onClick={() => { setDrawer(null); navigate(`/placements/${drawer.id}`); }}
-                >
-                  View Screens <ExternalLink size={10} />
-                </button>
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <p className="skoop-section-header">Status</p>
-              <StatusChip status={drawer.status.toLowerCase().replace(" ", "-")} label={drawer.status} />
-            </div>
-
-            <div className="space-y-2">
-              <p className="skoop-section-header">Content Split</p>
-              <p className="text-[11px] text-muted-foreground">
-                <span className="font-medium text-foreground">Owned:</span> Your content &nbsp;·&nbsp;
-                <span className="font-medium text-foreground">Direct:</span> Booked campaigns &nbsp;·&nbsp;
-                <span className="font-medium text-foreground">Programmatic:</span> Automated ads
-              </p>
-              <MixBar owned={drawer.owned} direct={drawer.direct} programmatic={drawer.prog} height="h-3" showLabels />
-            </div>
-
-            <div className="space-y-2">
-              <p className="skoop-section-header">Capacity Usage</p>
-              <p className="text-[11px] text-muted-foreground mb-2">Eligible playback opportunities based on loop duration</p>
-              <div className="grid grid-cols-3 gap-3">
-                <div className="bg-secondary/60 rounded-md px-3 py-2">
-                  <p className="text-[10px] text-muted-foreground">Total</p>
-                  <p className="text-sm font-semibold tabular-nums">{drawer.capacitySlots.total.toLocaleString()}</p>
-                  <p className="text-[10px] text-muted-foreground">opp/day</p>
-                </div>
-                <div className="bg-secondary/60 rounded-md px-3 py-2">
-                  <p className="text-[10px] text-muted-foreground">Booked</p>
-                  <p className="text-sm font-semibold tabular-nums">{drawer.capacitySlots.booked.toLocaleString()}</p>
-                  <p className="text-[10px] text-muted-foreground">opp/day</p>
-                </div>
-                <div className="bg-secondary/60 rounded-md px-3 py-2">
-                  <p className="text-[10px] text-muted-foreground">Available</p>
-                  <p className="text-sm font-semibold tabular-nums text-primary">{drawer.capacitySlots.available.toLocaleString()}</p>
-                  <p className="text-[10px] text-muted-foreground">opp/day</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div><p className="text-xs text-muted-foreground">Model</p><p className="text-sm font-medium">{drawer.model}</p></div>
-              <div><p className="text-xs text-muted-foreground">Active Hours</p><p className="text-sm font-medium">{drawer.dayparts}</p></div>
-            </div>
-
-            <div className="border-t border-border pt-4">
-              <Button size="sm" className="w-full" onClick={() => { setDrawer(null); navigate(`/placements/${drawer.id}`); }}>View Full Details</Button>
-            </div>
-          </div>
-        )}
-      </DetailDrawer>
     </div>
   );
 }
