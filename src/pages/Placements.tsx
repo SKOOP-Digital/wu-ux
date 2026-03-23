@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { MapPin, Search, Plus, LayoutGrid, List, MoreHorizontal, Monitor, ExternalLink, Info } from "lucide-react";
+import { MapPin, Search, Plus, LayoutGrid, List, Trash2, Monitor, ExternalLink, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import PageHeader from "@/components/layout/PageHeader";
