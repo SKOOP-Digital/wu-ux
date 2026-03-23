@@ -75,6 +75,7 @@ export default function PlacementDetail() {
   const [section1Open, setSection1Open] = useState(false);
   const [section2Open, setSection2Open] = useState(false);
   const [section3Open, setSection3Open] = useState(false);
+  const [showCampaigns, setShowCampaigns] = useState(false);
 
   const [catSeparation, setCatSeparation] = useState(true);
   const [catSeparationGap, setCatSeparationGap] = useState(2);
