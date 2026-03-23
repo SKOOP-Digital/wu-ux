@@ -592,7 +592,7 @@ export default function PlacementDetail() {
                         <div>
                           <div className="flex justify-between text-sm mb-1">
                             <span>Programmatic</span>
-                            <span className="tabular-nums font-medium">{Math.max(0, prog)}%{hasScreens ? ` · ${progCap.toLocaleString()} playback opportunities/day` : ""}</span>
+                            <span className="tabular-nums font-medium">{Math.max(0, prog)}%{hasScreens ? ` · ${progCap.toLocaleString()} plays/day` : ""}</span>
                           </div>
                           <div className="h-2 rounded-full bg-secondary overflow-hidden">
                             <div className="h-full bg-skoop-purple rounded-full transition-all" style={{ width: `${Math.max(0, prog)}%` }} />
