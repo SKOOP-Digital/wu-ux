@@ -184,7 +184,11 @@ export default function PlacementDetail() {
                 ) : (
                   <div className="space-y-1.5">
                     {assignedScreens.map((s) => (
-                      <div key={s.id} className="flex items-center justify-between py-2.5 px-3 border border-border rounded-md">
+                      <div
+                        key={s.id}
+                        className="flex items-center justify-between py-2.5 px-3 border border-border rounded-md cursor-pointer hover:bg-secondary/40 transition-colors"
+                        onClick={() => navigate(`/screens/${s.id}?from=placement&placementId=${placement.id}`)}
+                      >
                         <div className="flex items-center gap-2.5">
                           <Monitor size={14} className="text-muted-foreground" />
                           <div>
@@ -193,17 +197,14 @@ export default function PlacementDetail() {
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
-                          <span className="text-xs text-muted-foreground tabular-nums">{(s.loopsPerHour * 16).toLocaleString()} opp/day</span>
+                          <span className="text-xs text-muted-foreground tabular-nums">{(s.loopsPerHour * 16).toLocaleString()} playback opportunities/day</span>
                           <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${s.status === "Online" ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"}`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${s.status === "Online" ? "bg-emerald-500" : "bg-red-400"}`} />
                             {s.status}
                           </span>
-                          <button
-                            className="text-xs text-primary flex items-center gap-1 hover:underline"
-                            onClick={() => navigate(`/screens/${s.id}?from=placement&placementId=${placement.id}`)}
-                          >
+                          <span className="text-xs text-primary flex items-center gap-1">
                             View <ExternalLink size={10} />
-                          </button>
+                          </span>
                         </div>
                       </div>
                     ))}
@@ -221,11 +222,11 @@ export default function PlacementDetail() {
               </div>
               <div className="skoop-card p-5 space-y-3">
                 <p className="skoop-section-header">Capacity Usage</p>
-                <p className="text-[11px] text-muted-foreground">Eligible playback opportunities based on loop duration across {assignedScreens.length} screen{assignedScreens.length !== 1 ? "s" : ""}</p>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} opp/day</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} opp/day</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} opp/day</span></div>
+                 <p className="text-[11px] text-muted-foreground">Eligible playback opportunities based on selected screens and playback model</p>
+                 <div className="space-y-2">
+                   <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} playback opportunities/day</span></div>
+                   <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} playback opportunities/day</span></div>
+                   <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} playback opportunities/day</span></div>
                 </div>
                 <div className="h-2 rounded-full bg-secondary overflow-hidden mt-2">
                   <div className="h-full bg-primary rounded-full" style={{ width: `${capacity.total > 0 ? Math.round((capacity.booked / capacity.total) * 100) : 0}%` }} />
@@ -313,11 +314,11 @@ export default function PlacementDetail() {
             <div className="space-y-4">
               <div className="skoop-card p-5 space-y-3">
                 <p className="skoop-section-header">Capacity Usage</p>
-                <p className="text-[11px] text-muted-foreground">Eligible playback opportunities based on loop duration</p>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} opp/day</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} opp/day</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} opp/day</span></div>
+                 <p className="text-[11px] text-muted-foreground">Eligible playback opportunities based on selected screens and playback model</p>
+                 <div className="space-y-2">
+                   <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} playback opportunities/day</span></div>
+                   <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} playback opportunities/day</span></div>
+                   <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} playback opportunities/day</span></div>
                 </div>
                 <div className="h-2 rounded-full bg-secondary overflow-hidden mt-2">
                   <div className="h-full bg-primary rounded-full" style={{ width: `${capacity.total > 0 ? Math.round((capacity.booked / capacity.total) * 100) : 0}%` }} />
@@ -326,9 +327,9 @@ export default function PlacementDetail() {
               </div>
               <div className="skoop-card p-5 space-y-2">
                 <p className="skoop-section-header">Capacity by Type</p>
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Owned ({owned}%)</span><span className="tabular-nums font-medium">{ownedCap.toLocaleString()} opp/day</span></div>
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Direct ({direct}%)</span><span className="tabular-nums font-medium">{directCap.toLocaleString()} opp/day</span></div>
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Programmatic ({Math.max(0, prog)}%)</span><span className="tabular-nums font-medium">{progCap.toLocaleString()} opp/day</span></div>
+                 <div className="flex justify-between text-sm"><span className="text-muted-foreground">Owned ({owned}%)</span><span className="tabular-nums font-medium">{ownedCap.toLocaleString()} playback opportunities/day</span></div>
+                 <div className="flex justify-between text-sm"><span className="text-muted-foreground">Direct ({direct}%)</span><span className="tabular-nums font-medium">{directCap.toLocaleString()} playback opportunities/day</span></div>
+                 <div className="flex justify-between text-sm"><span className="text-muted-foreground">Programmatic ({Math.max(0, prog)}%)</span><span className="tabular-nums font-medium">{progCap.toLocaleString()} playback opportunities/day</span></div>
               </div>
             </div>
           </div>

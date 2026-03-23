@@ -59,6 +59,8 @@ export default function ScreenSelectorModal({ open, onClose, selectedIds, onSave
   const selectedScreens = allScreens.filter((s) => selected.includes(s.id));
   const totalCapacity = selectedScreens.reduce((sum, s) => sum + s.loopsPerHour * 16, 0);
 
+  const offlineCount = selectedScreens.filter((s) => s.status === "Offline").length;
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
@@ -67,6 +69,11 @@ export default function ScreenSelectorModal({ open, onClose, selectedIds, onSave
           <DialogDescription>
             Select which screens belong to this ad placement. Capacity will be recalculated based on selection.
           </DialogDescription>
+          <div className="flex items-center justify-between pt-1">
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {selected.length} selected screen{selected.length !== 1 ? "s" : ""} · {totalCapacity.toLocaleString()} playback opportunities/day
+            </span>
+          </div>
         </DialogHeader>
 
         <div className="flex items-center gap-3 mt-2">
@@ -94,11 +101,20 @@ export default function ScreenSelectorModal({ open, onClose, selectedIds, onSave
             <button onClick={toggleAll} className="text-xs text-primary hover:underline font-medium">
               {filtered.every((s) => selected.includes(s.id)) ? "Deselect all" : "Select all in this venue"}
             </button>
+            {selected.length > 0 && (
+              <button onClick={() => setSelected([])} className="text-xs text-muted-foreground hover:text-destructive hover:underline font-medium">
+                Clear selection
+              </button>
+            )}
           </div>
-          <span className="text-xs text-muted-foreground tabular-nums">
-            {selected.length} screen{selected.length !== 1 ? "s" : ""} selected · {totalCapacity.toLocaleString()} opp/day
-          </span>
         </div>
+
+        {offlineCount > 0 && (
+          <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-amber-50 border border-amber-200 text-xs text-amber-700">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+            Offline screens reduce effective live capacity
+          </div>
+        )}
 
         <div className="flex-1 overflow-y-auto space-y-1 min-h-0 max-h-[40vh] pr-1">
           {filtered.map((s) => {
@@ -115,7 +131,7 @@ export default function ScreenSelectorModal({ open, onClose, selectedIds, onSave
                 <Monitor size={14} className="text-muted-foreground shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{s.name}</p>
-                  <p className="text-xs text-muted-foreground">{s.venue} · {s.resolution} · {s.orientation} · {dailyCap.toLocaleString()} opp/day</p>
+                  <p className="text-xs text-muted-foreground">{s.venue} · {s.resolution} · {s.orientation} · {dailyCap.toLocaleString()} playback opportunities/day</p>
                 </div>
                 <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${
                   s.status === "Online" ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"
@@ -134,7 +150,7 @@ export default function ScreenSelectorModal({ open, onClose, selectedIds, onSave
         <DialogFooter className="mt-4">
           <Button variant="outline" onClick={onClose}>Cancel</Button>
           <Button onClick={() => { onSave(selected); onClose(); }}>
-            <Check size={14} className="mr-1" /> Save ({selected.length} screens · {totalCapacity.toLocaleString()} opp/day)
+            <Check size={14} className="mr-1" /> Save ({selected.length} screens · {totalCapacity.toLocaleString()} playback opportunities/day)
           </Button>
         </DialogFooter>
       </DialogContent>
