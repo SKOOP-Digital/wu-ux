@@ -85,7 +85,7 @@ export default function PlaybackMix() {
             <AlertTriangle size={14} className="text-skoop-amber" />
             <p className="skoop-section-header">What-if Simulator</p>
           </div>
-          <p className="text-sm text-muted-foreground">Adjust programmatic fill to see how the playback mix shifts. When programmatic has no fill, owned content backfills the gap.</p>
+          <p className="text-sm text-muted-foreground">Adjust programmatic fill to see how the playback mix shifts. When programmatic has no fill, marketing content backfills the gap.</p>
           <div>
             <div className="flex justify-between text-sm mb-2">
               <span>Programmatic Fill Level</span>
