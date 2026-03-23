@@ -660,7 +660,10 @@ export default function CampaignCreate() {
             <div className="flex justify-between mt-8">
               <Button variant="outline" size="sm" onClick={prev} disabled={step === 0}><ArrowLeft size={14} className="mr-1" /> Previous</Button>
               {!isLastStep ? (
-                <Button size="sm" onClick={next} disabled={step === 0 && !campaignType}>Next <ArrowRight size={14} className="ml-1" /></Button>
+                <Button size="sm" onClick={next} disabled={step === 0 && !campaignType}>
+                  {capacitySummary && !capacitySummary.fits && step >= 3 && <AlertTriangle size={14} className="mr-1" />}
+                  Next <ArrowRight size={14} className="ml-1" />
+                </Button>
               ) : (
                 <Button
                   size="sm"
