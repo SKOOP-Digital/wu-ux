@@ -66,6 +66,9 @@ export default function PlacementDetail() {
   const [defaultPlayDuration, setDefaultPlayDuration] = useState<string>("15");
   const [customDuration, setCustomDuration] = useState<number>(20);
   const [servingRulesOpen, setServingRulesOpen] = useState(false);
+  const [section1Open, setSection1Open] = useState(false);
+  const [section2Open, setSection2Open] = useState(false);
+  const [section3Open, setSection3Open] = useState(false);
 
   const [catSeparation, setCatSeparation] = useState(true);
   const [catSeparationGap, setCatSeparationGap] = useState(2);
@@ -295,415 +298,455 @@ export default function PlacementDetail() {
           <div className="p-8">
             <div className="grid grid-cols-3 gap-8">
               {/* Main content — single scroll */}
-              <div className="col-span-2 space-y-10">
+              <div className="col-span-2 space-y-5">
 
-                {/* ===== SECTION 1: Rule Name + Screens ===== */}
-                <section>
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary text-xs font-semibold">1</span>
-                    <div>
-                      <h2 className="text-sm font-semibold text-foreground">Name & Screens</h2>
-                      <p className="text-xs text-muted-foreground">Give your rule a name and choose which screens it applies to</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-5">
-                    {/* Rule Name */}
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-foreground">Rule Name</label>
-                      <input
-                        type="text"
-                        value={placementName}
-                        onChange={(e) => setPlacementName(e.target.value)}
-                        placeholder="e.g. Lobby Screens — Main Loop"
-                        className="w-full text-sm border border-border rounded-md px-3 py-2.5 bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                      />
-                      {placementName.trim() === "" && (
-                        <p className="text-xs text-amber-600 flex items-center gap-1"><AlertTriangle size={12} /> Required to publish</p>
-                      )}
-                    </div>
-
-                    {/* Inline Screen Picker */}
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <label className="text-sm font-medium text-foreground">Screens</label>
-                          <p className="text-xs text-muted-foreground mt-0.5">Select which screens this rule applies to</p>
-                        </div>
-                        {screenIds.length > 0 && (
-                          <span className="text-xs text-muted-foreground tabular-nums">
-                            {screenIds.length} selected · {totalPlaysPerDay.toLocaleString()} plays/day
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        <div className="relative flex-1">
-                          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                          <Input
-                            placeholder="Search screens or locations…"
-                            value={screenSearch}
-                            onChange={(e) => setScreenSearch(e.target.value)}
-                            className="pl-9 h-9 text-sm"
-                          />
-                        </div>
-                        <div className="flex gap-1">
-                          {screenVenues.map(v => (
-                            <button
-                              key={v}
-                              onClick={() => setScreenVenueFilter(v)}
-                              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
-                                screenVenueFilter === v ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:bg-accent"
-                              }`}
-                            >
-                              {v}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-3 px-1">
-                        <button onClick={selectAllFiltered} className="text-xs text-primary hover:underline font-medium">
-                          {filteredScreens.every(s => screenIds.includes(s.id)) && filteredScreens.length > 0 ? "Deselect all" : "Select all"}
-                        </button>
-                        {screenIds.length > 0 && (
-                          <button onClick={() => setScreenIds([])} className="text-xs text-muted-foreground hover:text-destructive hover:underline font-medium">
-                            Clear selection
-                          </button>
-                        )}
-                      </div>
-
-
-                      <div className="border border-border rounded-lg overflow-hidden max-h-[320px] overflow-y-auto">
-                        {filteredScreens.map(s => {
-                          const isSelected = screenIds.includes(s.id);
-                          const dailyPlays = calcPlaysPerDay(s);
-                          return (
-                            <label
-                              key={s.id}
-                              className={`flex items-center gap-3 py-2.5 px-3 cursor-pointer transition-colors border-b border-border last:border-0 ${
-                                isSelected ? "bg-primary/5" : "hover:bg-secondary/50"
-                              }`}
-                            >
-                              <Checkbox checked={isSelected} onCheckedChange={() => toggleScreen(s.id)} />
-                              <Monitor size={14} className="text-muted-foreground shrink-0" />
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium truncate">{s.name}</p>
-                                <p className="text-xs text-muted-foreground">{s.venue} · {s.resolution} · {s.orientation}</p>
-                              </div>
-                              <span className="text-xs text-muted-foreground tabular-nums">{dailyPlays.toLocaleString()} plays/day</span>
-                            </label>
-                          );
-                        })}
-                        {filteredScreens.length === 0 && (
-                          <div className="text-center py-8 text-sm text-muted-foreground">No screens match your search</div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </section>
-
-                <div className="border-t border-border" />
-
-                {/* ===== SECTION 2: How Ads Play + Active Hours ===== */}
-                <section>
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary text-xs font-semibold">2</span>
-                    <div>
-                      <h2 className="text-sm font-semibold text-foreground">Schedule</h2>
-                      <p className="text-xs text-muted-foreground">Choose how ads play and when they're active</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-5">
-                    {/* How Ads Play toggle */}
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-foreground">How Ads Play</label>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => setPlaybackModel("Loop")}
-                          className={`flex-1 px-4 py-3 rounded-lg border text-sm font-medium text-left transition-colors ${
-                            playbackModel === "Loop"
-                              ? "border-primary bg-primary/5 text-primary"
-                              : "border-border bg-background text-muted-foreground hover:bg-secondary/50"
-                          }`}
-                        >
-                          <p className="font-medium">{playbackModel === "Loop" ? "✓ " : ""}Continuous Loop</p>
-                          <p className="text-xs mt-0.5 font-normal opacity-70">Content plays in a repeating loop</p>
-                        </button>
-                        <button
-                          onClick={() => setPlaybackModel("Ad-break")}
-                          className={`flex-1 px-4 py-3 rounded-lg border text-sm font-medium text-left transition-colors ${
-                            playbackModel === "Ad-break"
-                              ? "border-primary bg-primary/5 text-primary"
-                              : "border-border bg-background text-muted-foreground hover:bg-secondary/50"
-                          }`}
-                        >
-                          <p className="font-medium">{playbackModel === "Ad-break" ? "✓ " : ""}Ad Breaks</p>
-                          <p className="text-xs mt-0.5 font-normal opacity-70">Ads play in scheduled break windows</p>
-                        </button>
-                      </div>
-                    </div>
-
-                    {capacityFormula && (
-                      <div className="flex items-start gap-3 bg-primary/5 border border-primary/10 rounded-lg px-4 py-3">
-                        <Info size={14} className="text-primary mt-0.5 shrink-0" />
-                        <div>
-                          <p className="text-xs font-medium text-foreground">How capacity is calculated</p>
-                          <p className="text-[11px] text-muted-foreground mt-0.5 tabular-nums">{capacityFormula}</p>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Active Hours */}
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <label className="text-sm font-medium text-foreground">Active Hours</label>
-                          <p className="text-xs text-muted-foreground mt-0.5">Campaigns can only run during these time windows</p>
-                        </div>
-                        <Button variant="outline" size="sm" onClick={addDaypart}>
-                          <Plus size={13} className="mr-1" /> Add Time Window
-                        </Button>
-                      </div>
-
-                      {/* Visual timeline */}
-                      <div className="flex h-8 rounded-md overflow-hidden border border-border">
-                        {dayparts.map((dp) => {
-                          const [sh] = dp.start.split(":").map(Number);
-                          const [eh] = dp.end.split(":").map(Number);
-                          let hours = eh - sh;
-                          if (hours <= 0) hours += 24;
-                          return (
-                            <div
-                              key={dp.id}
-                              className={`flex items-center justify-center text-[10px] font-medium border-r border-border last:border-0 ${dp.active ? "bg-primary/10 text-primary" : "bg-secondary text-muted-foreground"}`}
-                              style={{ flex: hours }}
-                            >
-                              {formatTime(dp.start).replace(":00", "").toLowerCase()}
-                            </div>
-                          );
-                        })}
-                      </div>
-                      <div className="flex justify-between text-[10px] text-muted-foreground">
-                        <span>{dayparts.length > 0 ? formatTime(dayparts[0].start) : ""}</span>
-                        <span>{dayparts.length > 0 ? formatTime(dayparts[dayparts.length - 1].end) : ""}</span>
-                      </div>
-
-                      <div className="space-y-2">
-                        {dayparts.map((dp) => (
-                          <div key={dp.id} className="flex items-center justify-between py-3 px-4 rounded-md bg-secondary/50">
-                            <div className="flex items-center gap-3 flex-1 min-w-0">
-                              <Switch
-                                checked={dp.active}
-                                onCheckedChange={(v) => updateDaypart(dp.id, "active", v)}
-                              />
-                              <input
-                                type="text"
-                                value={dp.name}
-                                onChange={(e) => updateDaypart(dp.id, "name", e.target.value)}
-                                className="text-sm font-medium bg-transparent border-b border-transparent hover:border-border focus:border-primary focus:outline-none w-28"
-                              />
-                              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                <input
-                                  type="time"
-                                  value={dp.start}
-                                  onChange={(e) => updateDaypart(dp.id, "start", e.target.value)}
-                                  className="bg-background border border-border rounded px-1.5 py-1 text-xs w-[90px]"
-                                />
-                                <span>–</span>
-                                <input
-                                  type="time"
-                                  value={dp.end}
-                                  onChange={(e) => updateDaypart(dp.id, "end", e.target.value)}
-                                  className="bg-background border border-border rounded px-1.5 py-1 text-xs w-[90px]"
-                                />
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <StatusChip status={dp.active ? "active" : "paused"} label={dp.active ? "Active" : "Inactive"} />
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
-                                onClick={() => removeDaypart(dp.id)}
-                              >
-                                ×
-                              </Button>
-                            </div>
+                {/* ===== SECTION 1: Name & Screens ===== */}
+                {(() => {
+                  const s1Complete = placementName.trim().length > 0 && screenIds.length > 0;
+                  const s1Summary = s1Complete
+                    ? `${placementName} · ${screenIds.length} screen${screenIds.length !== 1 ? "s" : ""}`
+                    : placementName.trim() ? `${placementName} · No screens assigned` : "No name set · No screens assigned";
+                  return (
+                    <Collapsible open={section1Open} onOpenChange={setSection1Open}>
+                      <CollapsibleTrigger className={`w-full rounded-lg border transition-colors ${s1Complete ? "border-l-[3px] border-l-primary border-y-border border-r-border bg-background" : "border-l-[3px] border-l-amber-400 border-y-border border-r-border bg-amber-50/30"}`}>
+                        <div className="flex items-center gap-3 px-5 py-4">
+                          <span className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-semibold shrink-0 ${s1Complete ? "bg-primary text-primary-foreground" : "border border-muted-foreground/30 text-muted-foreground"}`}>1</span>
+                          <span className="text-base mr-2">📺</span>
+                          <div className="flex-1 text-left min-w-0">
+                            <p className="text-sm font-semibold text-foreground">Name & Screens</p>
+                            <p className="text-xs text-muted-foreground truncate">{s1Summary}</p>
                           </div>
-                        ))}
-                      </div>
-
-                      <div className="flex items-start gap-2 bg-primary/5 border border-primary/10 rounded-md px-3 py-2">
-                        <Info size={13} className="text-primary mt-0.5 shrink-0" />
-                        <p className="text-[11px] text-muted-foreground">Currently <span className="font-medium text-foreground">{Math.round(activeHours)} active hours/day</span> across {dayparts.filter(d => d.active).length} time windows.</p>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-
-                <div className="border-t border-border" />
-
-                {/* ===== SECTION 3: Content Split + Serving Rules ===== */}
-                <section>
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary text-xs font-semibold">3</span>
-                    <div>
-                      <h2 className="text-sm font-semibold text-foreground">Content Split & Rules</h2>
-                      <p className="text-xs text-muted-foreground">Set the ratio between content types and configure serving behaviour</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-6">
-                    {/* Content Split */}
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2">
-                        <label className="text-sm font-medium text-foreground">Content Split</label>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Info size={14} className="text-muted-foreground cursor-help" />
-                          </TooltipTrigger>
-                          <TooltipContent side="right" className="max-w-[240px]">
-                            <p className="text-xs leading-relaxed">
-                              <strong>Owned</strong> — Your own brand content<br />
-                              <strong>Direct</strong> — Booked campaigns<br />
-                              <strong>Programmatic</strong> — Automated ads
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </div>
-
-                      <div className="space-y-4">
-                        <div>
-                          <div className="flex justify-between text-sm mb-1">
-                            <span>Owned</span>
-                            <span className="tabular-nums font-medium">{owned}%{hasScreens ? ` · ${ownedCap.toLocaleString()} plays/day` : ""}</span>
-                          </div>
-                          <Slider value={[owned]} onValueChange={([v]) => { if (v + direct <= 100) setOwned(v); }} max={100} step={5} className="[&_[role=slider]]:bg-skoop-slate" />
+                          <ChevronDown size={16} className={`text-muted-foreground transition-transform duration-200 shrink-0 ${section1Open ? "rotate-180" : ""}`} />
                         </div>
-                        <div>
-                          <div className="flex justify-between text-sm mb-1">
-                            <span>Direct</span>
-                            <span className="tabular-nums font-medium">{direct}%{hasScreens ? ` · ${directCap.toLocaleString()} plays/day` : ""}</span>
-                          </div>
-                          <Slider value={[direct]} onValueChange={([v]) => { if (owned + v <= 100) setDirect(v); }} max={100} step={5} className="[&_[role=slider]]:bg-skoop-blue" />
-                        </div>
-                        <div>
-                          <div className="flex justify-between text-sm mb-1">
-                            <span>Programmatic</span>
-                            <span className="tabular-nums font-medium">{Math.max(0, prog)}%{hasScreens ? ` · ${progCap.toLocaleString()} plays/day` : ""}</span>
-                          </div>
-                          <div className="h-2 rounded-full bg-secondary overflow-hidden">
-                            <div className="h-full bg-skoop-purple rounded-full transition-all" style={{ width: `${Math.max(0, prog)}%` }} />
-                          </div>
-                          <p className="text-xs text-muted-foreground mt-1">Auto-calculated from remaining allocation</p>
-                        </div>
-                      </div>
-
-                      <MixBar owned={owned} direct={direct} programmatic={Math.max(0, prog)} height="h-3" showLabels />
-                    </div>
-
-                    {/* Advanced Serving Rules — collapsible accordion */}
-                    <Collapsible open={servingRulesOpen} onOpenChange={setServingRulesOpen}>
-                      <CollapsibleTrigger className="flex items-center justify-between w-full py-3 group">
-                        <span className="text-sm font-medium text-foreground">Advanced Serving Rules</span>
-                        <ChevronDown size={16} className={`text-muted-foreground transition-transform duration-200 ${servingRulesOpen ? "rotate-180" : ""}`} />
                       </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <div className="rounded-lg border border-border divide-y divide-border overflow-hidden">
-                          {/* Default Play Duration — first item */}
-                          <div className="flex items-center justify-between px-4 py-3.5">
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-foreground">Default Play Duration</p>
-                              <p className="text-xs text-muted-foreground mt-0.5">The standard length of one ad play on this rule. Used to calculate daily capacity.</p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <SelectRoot value={defaultPlayDuration} onValueChange={setDefaultPlayDuration}>
-                                <SelectTrigger className="w-[100px] h-8 text-xs">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="10">10s</SelectItem>
-                                  <SelectItem value="15">15s</SelectItem>
-                                  <SelectItem value="30">30s</SelectItem>
-                                  <SelectItem value="60">60s</SelectItem>
-                                  <SelectItem value="custom">Custom</SelectItem>
-                                </SelectContent>
-                              </SelectRoot>
-                              {defaultPlayDuration === "custom" && (
-                                <div className="flex items-center gap-1">
-                                  <input
-                                    type="number"
-                                    min={1}
-                                    max={300}
-                                    value={customDuration}
-                                    onChange={(e) => setCustomDuration(Math.max(1, Number(e.target.value)))}
-                                    className="w-16 h-8 text-xs border border-border rounded px-2 bg-background"
-                                  />
-                                  <span className="text-xs text-muted-foreground">sec</span>
-                                </div>
-                              )}
-                            </div>
+                      <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                        <div className="px-5 pb-5 pt-2 space-y-5">
+                          {/* Rule Name */}
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">Rule Name</label>
+                            <input
+                              type="text"
+                              value={placementName}
+                              onChange={(e) => setPlacementName(e.target.value)}
+                              placeholder="e.g. Lobby Screens — Main Loop"
+                              className="w-full text-sm border border-border rounded-md px-3 py-2.5 bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                            />
+                            {placementName.trim() === "" && (
+                              <p className="text-xs text-amber-600 flex items-center gap-1"><AlertTriangle size={12} /> Required to publish</p>
+                            )}
                           </div>
 
-                          <div className="flex items-center justify-between px-4 py-3.5">
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-foreground">Category Separation</p>
-                              <p className="text-xs text-muted-foreground mt-0.5">Prevent competing brands from appearing in the same loop</p>
+                          {/* Inline Screen Picker */}
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <label className="text-sm font-medium text-foreground">Screens</label>
+                                <p className="text-xs text-muted-foreground mt-0.5">Select which screens this rule applies to</p>
+                              </div>
+                              {screenIds.length > 0 && (
+                                <span className="text-xs text-muted-foreground tabular-nums">
+                                  {screenIds.length} selected · {totalPlaysPerDay.toLocaleString()} plays/day
+                                </span>
+                              )}
                             </div>
+
                             <div className="flex items-center gap-3">
-                              {catSeparation && (
-                                <select
-                                  value={catSeparationGap}
-                                  onChange={(e) => setCatSeparationGap(Number(e.target.value))}
-                                  className="text-xs border border-border rounded px-2 py-1 bg-background"
-                                >
-                                  {[1, 2, 3, 4, 5].map((n) => (
-                                    <option key={n} value={n}>{n} slot{n > 1 ? "s" : ""} apart</option>
-                                  ))}
-                                </select>
+                              <div className="relative flex-1">
+                                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                                <Input
+                                  placeholder="Search screens or locations…"
+                                  value={screenSearch}
+                                  onChange={(e) => setScreenSearch(e.target.value)}
+                                  className="pl-9 h-9 text-sm"
+                                />
+                              </div>
+                              <div className="flex gap-1">
+                                {screenVenues.map(v => (
+                                  <button
+                                    key={v}
+                                    onClick={(e) => { e.stopPropagation(); setScreenVenueFilter(v); }}
+                                    className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
+                                      screenVenueFilter === v ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:bg-accent"
+                                    }`}
+                                  >
+                                    {v}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-3 px-1">
+                              <button onClick={selectAllFiltered} className="text-xs text-primary hover:underline font-medium">
+                                {filteredScreens.every(s => screenIds.includes(s.id)) && filteredScreens.length > 0 ? "Deselect all" : "Select all"}
+                              </button>
+                              {screenIds.length > 0 && (
+                                <button onClick={() => setScreenIds([])} className="text-xs text-muted-foreground hover:text-destructive hover:underline font-medium">
+                                  Clear selection
+                                </button>
                               )}
-                              <Switch checked={catSeparation} onCheckedChange={setCatSeparation} />
                             </div>
-                          </div>
 
-                          <div className="flex items-center justify-between px-4 py-3.5">
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-foreground">Back-to-back Prevention</p>
-                              <p className="text-xs text-muted-foreground mt-0.5">Same creative cannot play consecutively</p>
+                            <div className="border border-border rounded-lg overflow-hidden max-h-[320px] overflow-y-auto">
+                              {filteredScreens.map(s => {
+                                const isSelected = screenIds.includes(s.id);
+                                const dailyPlays = calcPlaysPerDay(s);
+                                return (
+                                  <label
+                                    key={s.id}
+                                    className={`flex items-center gap-3 py-2.5 px-3 cursor-pointer transition-colors border-b border-border last:border-0 ${
+                                      isSelected ? "bg-primary/5" : "hover:bg-secondary/50"
+                                    }`}
+                                  >
+                                    <Checkbox checked={isSelected} onCheckedChange={() => toggleScreen(s.id)} />
+                                    <Monitor size={14} className="text-muted-foreground shrink-0" />
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-sm font-medium truncate">{s.name}</p>
+                                      <p className="text-xs text-muted-foreground">{s.venue} · {s.resolution} · {s.orientation}</p>
+                                    </div>
+                                    <span className="text-xs text-muted-foreground tabular-nums">{dailyPlays.toLocaleString()} plays/day</span>
+                                  </label>
+                                );
+                              })}
+                              {filteredScreens.length === 0 && (
+                                <div className="text-center py-8 text-sm text-muted-foreground">No screens match your search</div>
+                              )}
                             </div>
-                            <Switch checked={backToBack} onCheckedChange={setBackToBack} />
-                          </div>
-
-                          <div className="flex items-center justify-between px-4 py-3.5">
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-foreground">Frequency Cap</p>
-                              <p className="text-xs text-muted-foreground mt-0.5">Maximum plays per unique creative per hour</p>
-                            </div>
-                            <select
-                              value={freqCap}
-                              onChange={(e) => setFreqCap(Number(e.target.value))}
-                              className="text-xs border border-border rounded px-2 py-1 bg-background"
-                            >
-                              {[1, 2, 3, 4, 5, 6, 8, 10].map((n) => (
-                                <option key={n} value={n}>{n} plays/hour</option>
-                              ))}
-                            </select>
-                          </div>
-
-                          <div className="flex items-center justify-between px-4 py-3.5">
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-foreground">If No Ad Available, Show:</p>
-                              <p className="text-xs text-muted-foreground mt-0.5">Fall back to owned content when programmatic has no fill</p>
-                            </div>
-                            <Switch checked={noFillFallback} onCheckedChange={setNoFillFallback} />
                           </div>
                         </div>
                       </CollapsibleContent>
                     </Collapsible>
-                  </div>
-                </section>
+                  );
+                })()}
+
+                {/* ===== SECTION 2: Schedule ===== */}
+                {(() => {
+                  const activeDaypartCount = dayparts.filter(d => d.active).length;
+                  const s2Complete = activeDaypartCount > 0;
+                  const s2Summary = s2Complete
+                    ? `${playbackModel === "Loop" ? "Continuous Loop" : "Ad Breaks"} · ${Math.round(activeHours)} active hours/day`
+                    : "Not configured yet";
+                  return (
+                    <Collapsible open={section2Open} onOpenChange={setSection2Open}>
+                      <CollapsibleTrigger className={`w-full rounded-lg border transition-colors ${s2Complete ? "border-l-[3px] border-l-primary border-y-border border-r-border bg-background" : "border-l-[3px] border-l-amber-400 border-y-border border-r-border bg-amber-50/30"}`}>
+                        <div className="flex items-center gap-3 px-5 py-4">
+                          <span className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-semibold shrink-0 ${s2Complete ? "bg-primary text-primary-foreground" : "border border-muted-foreground/30 text-muted-foreground"}`}>2</span>
+                          <span className="text-base mr-2">🕐</span>
+                          <div className="flex-1 text-left min-w-0">
+                            <p className="text-sm font-semibold text-foreground">Schedule</p>
+                            <p className="text-xs text-muted-foreground truncate">{s2Summary}</p>
+                          </div>
+                          <ChevronDown size={16} className={`text-muted-foreground transition-transform duration-200 shrink-0 ${section2Open ? "rotate-180" : ""}`} />
+                        </div>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                        <div className="px-5 pb-5 pt-2 space-y-5">
+                          {/* How Ads Play toggle */}
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">How Ads Play</label>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => setPlaybackModel("Loop")}
+                                className={`flex-1 px-4 py-3 rounded-lg border text-sm font-medium text-left transition-colors ${
+                                  playbackModel === "Loop"
+                                    ? "border-primary bg-primary/5 text-primary"
+                                    : "border-border bg-background text-muted-foreground hover:bg-secondary/50"
+                                }`}
+                              >
+                                <p className="font-medium">{playbackModel === "Loop" ? "✓ " : ""}Continuous Loop</p>
+                                <p className="text-xs mt-0.5 font-normal opacity-70">Content plays in a repeating loop</p>
+                              </button>
+                              <button
+                                onClick={() => setPlaybackModel("Ad-break")}
+                                className={`flex-1 px-4 py-3 rounded-lg border text-sm font-medium text-left transition-colors ${
+                                  playbackModel === "Ad-break"
+                                    ? "border-primary bg-primary/5 text-primary"
+                                    : "border-border bg-background text-muted-foreground hover:bg-secondary/50"
+                                }`}
+                              >
+                                <p className="font-medium">{playbackModel === "Ad-break" ? "✓ " : ""}Ad Breaks</p>
+                                <p className="text-xs mt-0.5 font-normal opacity-70">Ads play in scheduled break windows</p>
+                              </button>
+                            </div>
+                          </div>
+
+                          {capacityFormula && (
+                            <div className="flex items-start gap-3 bg-primary/5 border border-primary/10 rounded-lg px-4 py-3">
+                              <Info size={14} className="text-primary mt-0.5 shrink-0" />
+                              <div>
+                                <p className="text-xs font-medium text-foreground">How capacity is calculated</p>
+                                <p className="text-[11px] text-muted-foreground mt-0.5 tabular-nums">{capacityFormula}</p>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Active Hours */}
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <label className="text-sm font-medium text-foreground">Active Hours</label>
+                                <p className="text-xs text-muted-foreground mt-0.5">Campaigns can only run during these time windows</p>
+                              </div>
+                              <Button variant="outline" size="sm" onClick={addDaypart}>
+                                <Plus size={13} className="mr-1" /> Add Time Window
+                              </Button>
+                            </div>
+
+                            {/* Visual timeline */}
+                            <div className="flex h-8 rounded-md overflow-hidden border border-border">
+                              {dayparts.map((dp) => {
+                                const [sh] = dp.start.split(":").map(Number);
+                                const [eh] = dp.end.split(":").map(Number);
+                                let hours = eh - sh;
+                                if (hours <= 0) hours += 24;
+                                return (
+                                  <div
+                                    key={dp.id}
+                                    className={`flex items-center justify-center text-[10px] font-medium border-r border-border last:border-0 ${dp.active ? "bg-primary/10 text-primary" : "bg-secondary text-muted-foreground"}`}
+                                    style={{ flex: hours }}
+                                  >
+                                    {formatTime(dp.start).replace(":00", "").toLowerCase()}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                            <div className="flex justify-between text-[10px] text-muted-foreground">
+                              <span>{dayparts.length > 0 ? formatTime(dayparts[0].start) : ""}</span>
+                              <span>{dayparts.length > 0 ? formatTime(dayparts[dayparts.length - 1].end) : ""}</span>
+                            </div>
+
+                            <div className="space-y-2">
+                              {dayparts.map((dp) => (
+                                <div key={dp.id} className="flex items-center justify-between py-3 px-4 rounded-md bg-secondary/50">
+                                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                                    <Switch
+                                      checked={dp.active}
+                                      onCheckedChange={(v) => updateDaypart(dp.id, "active", v)}
+                                    />
+                                    <input
+                                      type="text"
+                                      value={dp.name}
+                                      onChange={(e) => updateDaypart(dp.id, "name", e.target.value)}
+                                      className="text-sm font-medium bg-transparent border-b border-transparent hover:border-border focus:border-primary focus:outline-none w-28"
+                                    />
+                                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                      <input
+                                        type="time"
+                                        value={dp.start}
+                                        onChange={(e) => updateDaypart(dp.id, "start", e.target.value)}
+                                        className="bg-background border border-border rounded px-1.5 py-1 text-xs w-[90px]"
+                                      />
+                                      <span>–</span>
+                                      <input
+                                        type="time"
+                                        value={dp.end}
+                                        onChange={(e) => updateDaypart(dp.id, "end", e.target.value)}
+                                        className="bg-background border border-border rounded px-1.5 py-1 text-xs w-[90px]"
+                                      />
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <StatusChip status={dp.active ? "active" : "paused"} label={dp.active ? "Active" : "Inactive"} />
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
+                                      onClick={() => removeDaypart(dp.id)}
+                                    >
+                                      ×
+                                    </Button>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+
+                            <div className="flex items-start gap-2 bg-primary/5 border border-primary/10 rounded-md px-3 py-2">
+                              <Info size={13} className="text-primary mt-0.5 shrink-0" />
+                              <p className="text-[11px] text-muted-foreground">Currently <span className="font-medium text-foreground">{Math.round(activeHours)} active hours/day</span> across {dayparts.filter(d => d.active).length} time windows.</p>
+                            </div>
+                          </div>
+                        </div>
+                      </CollapsibleContent>
+                    </Collapsible>
+                  );
+                })()}
+
+                {/* ===== SECTION 3: Content Split & Rules ===== */}
+                {(() => {
+                  const s3Summary = `Owned ${owned}% · Direct ${direct}% · Programmatic ${Math.max(0, prog)}%`;
+                  return (
+                    <Collapsible open={section3Open} onOpenChange={setSection3Open}>
+                      <CollapsibleTrigger className="w-full rounded-lg border border-l-[3px] border-l-primary border-y-border border-r-border bg-background transition-colors">
+                        <div className="flex items-center gap-3 px-5 py-4">
+                          <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary text-primary-foreground text-xs font-semibold shrink-0">3</span>
+                          <span className="text-base mr-2">📊</span>
+                          <div className="flex-1 text-left min-w-0">
+                            <p className="text-sm font-semibold text-foreground">Content Split & Rules</p>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              {/* Mini inline bar */}
+                              <div className="flex h-2 w-24 rounded-full overflow-hidden">
+                                <div className="bg-skoop-slate" style={{ width: `${owned}%` }} />
+                                <div className="bg-skoop-blue" style={{ width: `${direct}%` }} />
+                                <div className="bg-skoop-purple" style={{ width: `${Math.max(0, prog)}%` }} />
+                              </div>
+                              <p className="text-xs text-muted-foreground truncate">{s3Summary}</p>
+                            </div>
+                          </div>
+                          <ChevronDown size={16} className={`text-muted-foreground transition-transform duration-200 shrink-0 ${section3Open ? "rotate-180" : ""}`} />
+                        </div>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                        <div className="px-5 pb-5 pt-2 space-y-6">
+                          {/* Content Split */}
+                          <div className="space-y-4">
+                            <div className="flex items-center gap-2">
+                              <label className="text-sm font-medium text-foreground">Content Split</label>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Info size={14} className="text-muted-foreground cursor-help" />
+                                </TooltipTrigger>
+                                <TooltipContent side="right" className="max-w-[240px]">
+                                  <p className="text-xs leading-relaxed">
+                                    <strong>Owned</strong> — Your own brand content<br />
+                                    <strong>Direct</strong> — Booked campaigns<br />
+                                    <strong>Programmatic</strong> — Automated ads
+                                  </p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </div>
+
+                            <div className="space-y-4">
+                              <div>
+                                <div className="flex justify-between text-sm mb-1">
+                                  <span>Owned</span>
+                                  <span className="tabular-nums font-medium">{owned}%{hasScreens ? ` · ${ownedCap.toLocaleString()} plays/day` : ""}</span>
+                                </div>
+                                <Slider value={[owned]} onValueChange={([v]) => { if (v + direct <= 100) setOwned(v); }} max={100} step={5} className="[&_[role=slider]]:bg-skoop-slate" />
+                              </div>
+                              <div>
+                                <div className="flex justify-between text-sm mb-1">
+                                  <span>Direct</span>
+                                  <span className="tabular-nums font-medium">{direct}%{hasScreens ? ` · ${directCap.toLocaleString()} plays/day` : ""}</span>
+                                </div>
+                                <Slider value={[direct]} onValueChange={([v]) => { if (owned + v <= 100) setDirect(v); }} max={100} step={5} className="[&_[role=slider]]:bg-skoop-blue" />
+                              </div>
+                              <div>
+                                <div className="flex justify-between text-sm mb-1">
+                                  <span>Programmatic</span>
+                                  <span className="tabular-nums font-medium">{Math.max(0, prog)}%{hasScreens ? ` · ${progCap.toLocaleString()} plays/day` : ""}</span>
+                                </div>
+                                <div className="h-2 rounded-full bg-secondary overflow-hidden">
+                                  <div className="h-full bg-skoop-purple rounded-full transition-all" style={{ width: `${Math.max(0, prog)}%` }} />
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-1">Auto-calculated from remaining allocation</p>
+                              </div>
+                            </div>
+
+                            <MixBar owned={owned} direct={direct} programmatic={Math.max(0, prog)} height="h-3" showLabels />
+                          </div>
+
+                          {/* Advanced Serving Rules — nested collapsible */}
+                          <Collapsible open={servingRulesOpen} onOpenChange={setServingRulesOpen}>
+                            <CollapsibleTrigger className="flex items-center justify-between w-full py-3 group">
+                              <span className="text-sm font-medium text-foreground">Advanced Serving Rules</span>
+                              <ChevronDown size={16} className={`text-muted-foreground transition-transform duration-200 ${servingRulesOpen ? "rotate-180" : ""}`} />
+                            </CollapsibleTrigger>
+                            <CollapsibleContent>
+                              <div className="rounded-lg border border-border divide-y divide-border overflow-hidden">
+                                {/* Default Play Duration */}
+                                <div className="flex items-center justify-between px-4 py-3.5">
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium text-foreground">Default Play Duration</p>
+                                    <p className="text-xs text-muted-foreground mt-0.5">The standard length of one ad play on this rule. Used to calculate daily capacity.</p>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <SelectRoot value={defaultPlayDuration} onValueChange={setDefaultPlayDuration}>
+                                      <SelectTrigger className="w-[100px] h-8 text-xs">
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="10">10s</SelectItem>
+                                        <SelectItem value="15">15s</SelectItem>
+                                        <SelectItem value="30">30s</SelectItem>
+                                        <SelectItem value="60">60s</SelectItem>
+                                        <SelectItem value="custom">Custom</SelectItem>
+                                      </SelectContent>
+                                    </SelectRoot>
+                                    {defaultPlayDuration === "custom" && (
+                                      <div className="flex items-center gap-1">
+                                        <input
+                                          type="number"
+                                          min={1}
+                                          max={300}
+                                          value={customDuration}
+                                          onChange={(e) => setCustomDuration(Math.max(1, Number(e.target.value)))}
+                                          className="w-16 h-8 text-xs border border-border rounded px-2 bg-background"
+                                        />
+                                        <span className="text-xs text-muted-foreground">sec</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+
+                                <div className="flex items-center justify-between px-4 py-3.5">
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium text-foreground">Category Separation</p>
+                                    <p className="text-xs text-muted-foreground mt-0.5">Prevent competing brands from appearing in the same loop</p>
+                                  </div>
+                                  <div className="flex items-center gap-3">
+                                    {catSeparation && (
+                                      <select
+                                        value={catSeparationGap}
+                                        onChange={(e) => setCatSeparationGap(Number(e.target.value))}
+                                        className="text-xs border border-border rounded px-2 py-1 bg-background"
+                                      >
+                                        {[1, 2, 3, 4, 5].map((n) => (
+                                          <option key={n} value={n}>{n} slot{n > 1 ? "s" : ""} apart</option>
+                                        ))}
+                                      </select>
+                                    )}
+                                    <Switch checked={catSeparation} onCheckedChange={setCatSeparation} />
+                                  </div>
+                                </div>
+
+                                <div className="flex items-center justify-between px-4 py-3.5">
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium text-foreground">Back-to-back Prevention</p>
+                                    <p className="text-xs text-muted-foreground mt-0.5">Same creative cannot play consecutively</p>
+                                  </div>
+                                  <Switch checked={backToBack} onCheckedChange={setBackToBack} />
+                                </div>
+
+                                <div className="flex items-center justify-between px-4 py-3.5">
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium text-foreground">Frequency Cap</p>
+                                    <p className="text-xs text-muted-foreground mt-0.5">Maximum plays per unique creative per hour</p>
+                                  </div>
+                                  <select
+                                    value={freqCap}
+                                    onChange={(e) => setFreqCap(Number(e.target.value))}
+                                    className="text-xs border border-border rounded px-2 py-1 bg-background"
+                                  >
+                                    {[1, 2, 3, 4, 5, 6, 8, 10].map((n) => (
+                                      <option key={n} value={n}>{n} plays/hour</option>
+                                    ))}
+                                  </select>
+                                </div>
+
+                                <div className="flex items-center justify-between px-4 py-3.5">
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium text-foreground">If No Ad Available, Show:</p>
+                                    <p className="text-xs text-muted-foreground mt-0.5">Fall back to owned content when programmatic has no fill</p>
+                                  </div>
+                                  <Switch checked={noFillFallback} onCheckedChange={setNoFillFallback} />
+                                </div>
+                              </div>
+                            </CollapsibleContent>
+                          </Collapsible>
+                        </div>
+                      </CollapsibleContent>
+                    </Collapsible>
+                  );
+                })()}
               </div>
 
               {/* ===== RIGHT PANEL ===== */}
