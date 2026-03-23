@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Megaphone, ArrowLeft, ArrowRight, Check, Info, AlertTriangle, Briefcase, Home, Plus, X, Upload, Tag, Search } from "lucide-react";
+import { Megaphone, ArrowLeft, ArrowRight, Check, Info, AlertTriangle, Briefcase, Home, Plus, X, Upload, Tag, Search, Trash2 } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StatusChip from "@/components/shared/StatusChip";
 import { Button } from "@/components/ui/button";
@@ -29,6 +29,14 @@ interface SelectedRule {
   tagInput: string;
 }
 
+interface Creative {
+  id: string;
+  name: string;
+  type: string;
+  size: string;
+  file: File;
+}
+
 const DAYPARTS = ["Morning", "Midday", "Afternoon", "Evening", "Late Night"];
 
 export default function CampaignCreate() {
@@ -54,6 +62,32 @@ export default function CampaignCreate() {
   const [deliveryMode, setDeliveryMode] = useState<"sov" | "total">("sov");
   const [sov, setSov] = useState(15);
   const [totalPlays, setTotalPlays] = useState(5000);
+
+  // Step 5 — Creatives
+  const [creatives, setCreatives] = useState<Creative[]>([]);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    const newCreatives: Creative[] = Array.from(files).map((file) => {
+      const ext = file.name.split(".").pop()?.toLowerCase() || "";
+      let type = "File";
+      if (["mp4", "mov", "webm", "avi"].includes(ext)) type = "Video";
+      else if (["jpg", "jpeg", "png", "gif", "webp", "svg"].includes(ext)) type = "Image";
+      else if (ext === "zip" || ext === "html") type = "HTML5";
+      return {
+        id: crypto.randomUUID(),
+        name: file.name,
+        type,
+        size: file.size < 1024 * 1024 ? `${(file.size / 1024).toFixed(0)} KB` : `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
+        file,
+      };
+    });
+    setCreatives((prev) => [...prev, ...newCreatives]);
+    e.target.value = "";
+  };
+
+  const removeCreative = (id: string) => setCreatives((prev) => prev.filter((c) => c.id !== id));
 
   const toggleDay = (d: string) => setActiveDays((prev) => prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]);
   const toggleDaypart = (d: string) => setActiveDayparts((prev) => prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]);
@@ -421,26 +455,36 @@ export default function CampaignCreate() {
   const renderStep5 = () => (
     <div className="skoop-card p-5 space-y-4">
       <p className="skoop-section-header">Creatives</p>
-      <p className="text-xs text-muted-foreground">Attach media assets for this campaign. Creatives must be approved before launch.</p>
-      <div className="grid grid-cols-3 gap-4">
-        {[
-          { name: "Summer_Hero_16x9.mp4", type: "Video", status: "Approved", duration: "15s", dimensions: "1920×1080" },
-          { name: "Brand_Logo_Static.jpg", type: "Image", status: "Approved", duration: "10s", dimensions: "1920×1080" },
-          { name: "Promo_HTML5.zip", type: "HTML5", status: "Pending", duration: "15s", dimensions: "1080×1920" },
-        ].map((c) => (
-          <div key={c.name} className="rounded-lg border border-border overflow-hidden">
-            <div className="h-28 bg-secondary flex items-center justify-center text-muted-foreground text-xs">
-              <Upload size={16} className="mr-1.5" /> {c.type} Preview
+      <p className="text-xs text-muted-foreground">Upload media assets for this campaign (Video, Image, or HTML5).</p>
+
+      {creatives.length > 0 && (
+        <div className="grid grid-cols-3 gap-4">
+          {creatives.map((c) => (
+            <div key={c.id} className="rounded-lg border border-border overflow-hidden group relative">
+              <div className="h-28 bg-secondary flex items-center justify-center text-muted-foreground text-xs">
+                <Upload size={16} className="mr-1.5" /> {c.type}
+              </div>
+              <div className="p-3 space-y-1">
+                <p className="text-xs font-medium truncate">{c.name}</p>
+                <p className="text-[11px] text-muted-foreground">{c.type} · {c.size}</p>
+              </div>
+              <button
+                onClick={() => removeCreative(c.id)}
+                className="absolute top-2 right-2 w-6 h-6 rounded-full bg-background/80 border border-border flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10 hover:text-destructive"
+              >
+                <Trash2 size={12} />
+              </button>
             </div>
-            <div className="p-3 space-y-1">
-              <p className="text-xs font-medium truncate">{c.name}</p>
-              <p className="text-[11px] text-muted-foreground">{c.duration} · {c.dimensions}</p>
-              <div className="mt-1.5"><StatusChip status={c.status.toLowerCase()} label={c.status} /></div>
-            </div>
-          </div>
-        ))}
-      </div>
-      <Button variant="outline" size="sm"><Plus size={14} className="mr-1" /> Add Creative</Button>
+          ))}
+        </div>
+      )}
+
+      <label className="inline-flex items-center gap-1 cursor-pointer">
+        <Button variant="outline" size="sm" asChild>
+          <span><Plus size={14} className="mr-1" /> Add Creative</span>
+        </Button>
+        <input type="file" multiple accept="video/*,image/*,.zip,.html" className="hidden" onChange={handleFileUpload} />
+      </label>
     </div>
   );
 
@@ -453,7 +497,7 @@ export default function CampaignCreate() {
     const totalDays = startDate && endDate ? Math.max(1, Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / 86400000)) : 30;
     const totalEstimated = estimatedDailyPlays * totalDays;
     const hasConflict = capacitySummary ? !capacitySummary.fits : false;
-    const hasPendingCreatives = true; // mock
+    const hasPendingCreatives = false;
 
     const ready = !hasConflict && campaignName && (selectedRules.length > 0 || selectedTags.length > 0);
 
@@ -490,7 +534,7 @@ export default function CampaignCreate() {
             <div><p className="text-xs text-muted-foreground">Schedule</p><p className="text-sm font-medium">{startDate || "—"} → {endDate || "—"}</p></div>
             <div><p className="text-xs text-muted-foreground">Active Days</p><p className="text-sm font-medium">{activeDays.join(", ")}</p></div>
             <div><p className="text-xs text-muted-foreground">Delivery Target</p><p className="text-sm font-medium tabular-nums">{deliveryMode === "sov" || campaignType === "marketing" ? `${sov}% screen time` : `${totalPlays.toLocaleString()} total plays`}</p></div>
-            <div><p className="text-xs text-muted-foreground">Creatives</p><p className="text-sm font-medium">3 assets (2 approved, 1 pending)</p></div>
+            <div><p className="text-xs text-muted-foreground">Creatives</p><p className="text-sm font-medium">{creatives.length} asset{creatives.length !== 1 ? "s" : ""} uploaded</p></div>
           </div>
         </div>
 
