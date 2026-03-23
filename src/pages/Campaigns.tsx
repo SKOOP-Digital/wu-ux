@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Megaphone, Search, Plus, MoreHorizontal, MapPin } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useNavigate } from "react-router-dom";
 import PageHeader from "@/components/layout/PageHeader";
 import StatusChip from "@/components/shared/StatusChip";
@@ -56,13 +57,16 @@ export default function Campaigns() {
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <Input placeholder="Search campaigns…" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 w-64 h-9 text-sm" />
           </div>
-          <div className="flex gap-1 flex-wrap">
-            {statusFilters.map((f) => (
-              <button key={f} onClick={() => setFilter(f)} className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${filter === f ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:bg-accent"}`}>
-                {f}
-              </button>
-            ))}
-          </div>
+          <Select value={filter} onValueChange={setFilter}>
+            <SelectTrigger className="w-44 h-9 text-sm">
+              <SelectValue placeholder="Filter status" />
+            </SelectTrigger>
+            <SelectContent>
+              {statusFilters.map((f) => (
+                <SelectItem key={f} value={f}>{f}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="skoop-card overflow-hidden">
