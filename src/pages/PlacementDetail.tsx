@@ -60,7 +60,7 @@ export default function PlacementDetail() {
   const stateLabel = isDraft ? (isNew ? "New Rule" : "Draft Rule") : "Live Rule";
   const stateColor = isDraft ? "bg-skoop-amber-light text-skoop-amber" : "bg-skoop-aqua-light text-skoop-aqua";
 
-  const [section, setSection] = useState("Screens");
+  
   const [owned, setOwned] = useState(placement.owned);
   const [direct, setDirect] = useState(placement.direct);
   const [screenIds, setScreenIds] = useState<string[]>(placement.screenIds);
