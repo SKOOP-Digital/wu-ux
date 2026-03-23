@@ -1,4 +1,4 @@
-import { MapPin, ArrowLeft, Monitor, ExternalLink, AlertTriangle, Info, ChevronRight, Pencil, Plus, CheckCircle2, Search } from "lucide-react";
+import { MapPin, ArrowLeft, Monitor, ExternalLink, AlertTriangle, Info, ChevronRight, Pencil, Plus, CheckCircle2, Search, ChevronDown } from "lucide-react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
@@ -12,6 +12,8 @@ import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Select as SelectRoot, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb";
 import { allScreens } from "@/data/screens";
 import { allPlacements, calcCapacity } from "@/data/placements";
@@ -61,6 +63,9 @@ export default function PlacementDetail() {
   const [screenSearch, setScreenSearch] = useState("");
   const [screenVenueFilter, setScreenVenueFilter] = useState("All");
   const [playbackModel, setPlaybackModel] = useState<"Loop" | "Ad-break">(placement.model as "Loop" | "Ad-break");
+  const [defaultPlayDuration, setDefaultPlayDuration] = useState<string>("15");
+  const [customDuration, setCustomDuration] = useState<number>(20);
+  const [servingRulesOpen, setServingRulesOpen] = useState(false);
 
   const [catSeparation, setCatSeparation] = useState(true);
   const [catSeparationGap, setCatSeparationGap] = useState(2);
@@ -107,6 +112,16 @@ export default function PlacementDetail() {
     }, 0);
   }, [dayparts]);
 
+  const playDurationSeconds = useMemo(() => {
+    if (defaultPlayDuration === "custom") return customDuration;
+    return Number(defaultPlayDuration);
+  }, [defaultPlayDuration, customDuration]);
+
+  const calcPlaysPerDay = (screen: { loopsPerHour: number }) => {
+    const totalSeconds = screen.loopsPerHour * 60 * activeHours;
+    return Math.floor(totalSeconds / playDurationSeconds);
+  };
+
   const canPublish = screenIds.length > 0 && placementName.trim().length > 0 && dayparts.some(d => d.active);
 
   const handlePublish = () => {
@@ -151,6 +166,11 @@ export default function PlacementDetail() {
     [screenIds]
   );
 
+  const totalPlaysPerDay = useMemo(() => {
+    if (screenIds.length === 0) return 0;
+    return assignedScreens.reduce((sum, s) => sum + calcPlaysPerDay(s), 0);
+  }, [screenIds, assignedScreens, playDurationSeconds, activeHours]);
+
   const capacity = useMemo(
     () => calcCapacity(screenIds, allScreens),
     [screenIds]
@@ -181,14 +201,13 @@ export default function PlacementDetail() {
 
   const capacityFormula = useMemo(() => {
     if (assignedScreens.length === 0) return null;
-    const avgLoops = Math.round(assignedScreens.reduce((s, sc) => s + sc.loopsPerHour, 0) / assignedScreens.length);
     const hrs = Math.round(activeHours);
-    return `${assignedScreens.length} screen${assignedScreens.length !== 1 ? "s" : ""} × ${avgLoops} avg loops/hour × ${hrs} active hours = ${capacity.total.toLocaleString()} playback opportunities/day`;
-  }, [assignedScreens, capacity.total, activeHours]);
+    return `${assignedScreens.length} screen${assignedScreens.length !== 1 ? "s" : ""} × ${hrs} active hours × ${playDurationSeconds}s play duration = ${totalPlaysPerDay.toLocaleString()} plays/day`;
+  }, [assignedScreens, totalPlaysPerDay, activeHours, playDurationSeconds]);
 
-  const ownedCap = Math.round(capacity.total * owned / 100);
-  const directCap = Math.round(capacity.total * direct / 100);
-  const progCap = Math.round(capacity.total * Math.max(0, prog) / 100);
+  const ownedCap = Math.round(totalPlaysPerDay * owned / 100);
+  const directCap = Math.round(totalPlaysPerDay * direct / 100);
+  const progCap = Math.round(totalPlaysPerDay * Math.max(0, prog) / 100);
 
   const forecastItems = useMemo(() => {
     const items: { label: string; status: string; statusLabel: string }[] = [];
@@ -313,7 +332,7 @@ export default function PlacementDetail() {
                         </div>
                         {screenIds.length > 0 && (
                           <span className="text-xs text-muted-foreground tabular-nums">
-                            {screenIds.length} selected · {capacity.total.toLocaleString()} playback opportunities/day
+                            {screenIds.length} selected · {totalPlaysPerDay.toLocaleString()} plays/day
                           </span>
                         )}
                       </div>
@@ -358,7 +377,7 @@ export default function PlacementDetail() {
                       <div className="border border-border rounded-lg overflow-hidden max-h-[320px] overflow-y-auto">
                         {filteredScreens.map(s => {
                           const isSelected = screenIds.includes(s.id);
-                          const dailyCap = s.loopsPerHour * 16;
+                          const dailyPlays = calcPlaysPerDay(s);
                           return (
                             <label
                               key={s.id}
@@ -372,7 +391,7 @@ export default function PlacementDetail() {
                                 <p className="text-sm font-medium truncate">{s.name}</p>
                                 <p className="text-xs text-muted-foreground">{s.venue} · {s.resolution} · {s.orientation}</p>
                               </div>
-                              <span className="text-xs text-muted-foreground tabular-nums">{dailyCap.toLocaleString()} opp/day</span>
+                              <span className="text-xs text-muted-foreground tabular-nums">{dailyPlays.toLocaleString()} plays/day</span>
                             </label>
                           );
                         })}
@@ -559,21 +578,21 @@ export default function PlacementDetail() {
                         <div>
                           <div className="flex justify-between text-sm mb-1">
                             <span>Owned</span>
-                            <span className="tabular-nums font-medium">{owned}%{hasScreens ? ` · ${ownedCap.toLocaleString()} playback opportunities/day` : ""}</span>
+                            <span className="tabular-nums font-medium">{owned}%{hasScreens ? ` · ${ownedCap.toLocaleString()} plays/day` : ""}</span>
                           </div>
                           <Slider value={[owned]} onValueChange={([v]) => { if (v + direct <= 100) setOwned(v); }} max={100} step={5} className="[&_[role=slider]]:bg-skoop-slate" />
                         </div>
                         <div>
                           <div className="flex justify-between text-sm mb-1">
                             <span>Direct</span>
-                            <span className="tabular-nums font-medium">{direct}%{hasScreens ? ` · ${directCap.toLocaleString()} playback opportunities/day` : ""}</span>
+                            <span className="tabular-nums font-medium">{direct}%{hasScreens ? ` · ${directCap.toLocaleString()} plays/day` : ""}</span>
                           </div>
                           <Slider value={[direct]} onValueChange={([v]) => { if (owned + v <= 100) setDirect(v); }} max={100} step={5} className="[&_[role=slider]]:bg-skoop-blue" />
                         </div>
                         <div>
                           <div className="flex justify-between text-sm mb-1">
                             <span>Programmatic</span>
-                            <span className="tabular-nums font-medium">{Math.max(0, prog)}%{hasScreens ? ` · ${progCap.toLocaleString()} playback opportunities/day` : ""}</span>
+                            <span className="tabular-nums font-medium">{Math.max(0, prog)}%{hasScreens ? ` · ${progCap.toLocaleString()} plays/day` : ""}</span>
                           </div>
                           <div className="h-2 rounded-full bg-secondary overflow-hidden">
                             <div className="h-full bg-skoop-purple rounded-full transition-all" style={{ width: `${Math.max(0, prog)}%` }} />
@@ -585,65 +604,104 @@ export default function PlacementDetail() {
                       <MixBar owned={owned} direct={direct} programmatic={Math.max(0, prog)} height="h-3" showLabels />
                     </div>
 
-                    {/* Serving Rules — clean toggle rows */}
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-foreground">Serving Rules</label>
-
-                      <div className="rounded-lg border border-border divide-y divide-border overflow-hidden">
-                        <div className="flex items-center justify-between px-4 py-3.5">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-foreground">Category Separation</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">Prevent competing brands from appearing in the same loop</p>
+                    {/* Advanced Serving Rules — collapsible accordion */}
+                    <Collapsible open={servingRulesOpen} onOpenChange={setServingRulesOpen}>
+                      <CollapsibleTrigger className="flex items-center justify-between w-full py-3 group">
+                        <span className="text-sm font-medium text-foreground">Advanced Serving Rules</span>
+                        <ChevronDown size={16} className={`text-muted-foreground transition-transform duration-200 ${servingRulesOpen ? "rotate-180" : ""}`} />
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <div className="rounded-lg border border-border divide-y divide-border overflow-hidden">
+                          {/* Default Play Duration — first item */}
+                          <div className="flex items-center justify-between px-4 py-3.5">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground">Default Play Duration</p>
+                              <p className="text-xs text-muted-foreground mt-0.5">The standard length of one ad play on this rule. Used to calculate daily capacity.</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <SelectRoot value={defaultPlayDuration} onValueChange={setDefaultPlayDuration}>
+                                <SelectTrigger className="w-[100px] h-8 text-xs">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="10">10s</SelectItem>
+                                  <SelectItem value="15">15s</SelectItem>
+                                  <SelectItem value="30">30s</SelectItem>
+                                  <SelectItem value="60">60s</SelectItem>
+                                  <SelectItem value="custom">Custom</SelectItem>
+                                </SelectContent>
+                              </SelectRoot>
+                              {defaultPlayDuration === "custom" && (
+                                <div className="flex items-center gap-1">
+                                  <input
+                                    type="number"
+                                    min={1}
+                                    max={300}
+                                    value={customDuration}
+                                    onChange={(e) => setCustomDuration(Math.max(1, Number(e.target.value)))}
+                                    className="w-16 h-8 text-xs border border-border rounded px-2 bg-background"
+                                  />
+                                  <span className="text-xs text-muted-foreground">sec</span>
+                                </div>
+                              )}
+                            </div>
                           </div>
-                          <div className="flex items-center gap-3">
-                            {catSeparation && (
-                              <select
-                                value={catSeparationGap}
-                                onChange={(e) => setCatSeparationGap(Number(e.target.value))}
-                                className="text-xs border border-border rounded px-2 py-1 bg-background"
-                              >
-                                {[1, 2, 3, 4, 5].map((n) => (
-                                  <option key={n} value={n}>{n} slot{n > 1 ? "s" : ""} apart</option>
-                                ))}
-                              </select>
-                            )}
-                            <Switch checked={catSeparation} onCheckedChange={setCatSeparation} />
+
+                          <div className="flex items-center justify-between px-4 py-3.5">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground">Category Separation</p>
+                              <p className="text-xs text-muted-foreground mt-0.5">Prevent competing brands from appearing in the same loop</p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              {catSeparation && (
+                                <select
+                                  value={catSeparationGap}
+                                  onChange={(e) => setCatSeparationGap(Number(e.target.value))}
+                                  className="text-xs border border-border rounded px-2 py-1 bg-background"
+                                >
+                                  {[1, 2, 3, 4, 5].map((n) => (
+                                    <option key={n} value={n}>{n} slot{n > 1 ? "s" : ""} apart</option>
+                                  ))}
+                                </select>
+                              )}
+                              <Switch checked={catSeparation} onCheckedChange={setCatSeparation} />
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between px-4 py-3.5">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground">Back-to-back Prevention</p>
+                              <p className="text-xs text-muted-foreground mt-0.5">Same creative cannot play consecutively</p>
+                            </div>
+                            <Switch checked={backToBack} onCheckedChange={setBackToBack} />
+                          </div>
+
+                          <div className="flex items-center justify-between px-4 py-3.5">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground">Frequency Cap</p>
+                              <p className="text-xs text-muted-foreground mt-0.5">Maximum plays per unique creative per hour</p>
+                            </div>
+                            <select
+                              value={freqCap}
+                              onChange={(e) => setFreqCap(Number(e.target.value))}
+                              className="text-xs border border-border rounded px-2 py-1 bg-background"
+                            >
+                              {[1, 2, 3, 4, 5, 6, 8, 10].map((n) => (
+                                <option key={n} value={n}>{n} plays/hour</option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div className="flex items-center justify-between px-4 py-3.5">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground">If No Ad Available, Show:</p>
+                              <p className="text-xs text-muted-foreground mt-0.5">Fall back to owned content when programmatic has no fill</p>
+                            </div>
+                            <Switch checked={noFillFallback} onCheckedChange={setNoFillFallback} />
                           </div>
                         </div>
-
-                        <div className="flex items-center justify-between px-4 py-3.5">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-foreground">Back-to-back Prevention</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">Same creative cannot play consecutively</p>
-                          </div>
-                          <Switch checked={backToBack} onCheckedChange={setBackToBack} />
-                        </div>
-
-                        <div className="flex items-center justify-between px-4 py-3.5">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-foreground">Frequency Cap</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">Maximum plays per unique creative per hour</p>
-                          </div>
-                          <select
-                            value={freqCap}
-                            onChange={(e) => setFreqCap(Number(e.target.value))}
-                            className="text-xs border border-border rounded px-2 py-1 bg-background"
-                          >
-                            {[1, 2, 3, 4, 5, 6, 8, 10].map((n) => (
-                              <option key={n} value={n}>{n} plays/hour</option>
-                            ))}
-                          </select>
-                        </div>
-
-                        <div className="flex items-center justify-between px-4 py-3.5">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-foreground">If No Ad Available, Show:</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">Fall back to owned content when programmatic has no fill</p>
-                          </div>
-                          <Switch checked={noFillFallback} onCheckedChange={setNoFillFallback} />
-                        </div>
-                      </div>
-                    </div>
+                      </CollapsibleContent>
+                    </Collapsible>
                   </div>
                 </section>
               </div>
@@ -678,7 +736,7 @@ export default function PlacementDetail() {
                     <p className="skoop-section-header">Draft Summary</p>
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm"><span className="text-muted-foreground">Screens</span><span className="font-medium tabular-nums">{screenIds.length}</span></div>
-                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Capacity</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} opp/day</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Capacity</span><span className="font-medium tabular-nums">{totalPlaysPerDay.toLocaleString()} plays/day</span></div>
                       <div className="flex justify-between text-sm"><span className="text-muted-foreground">Content Split</span><span className="font-medium tabular-nums">{owned}/{direct}/{Math.max(0, prog)}</span></div>
                       <div className="flex justify-between text-sm"><span className="text-muted-foreground">Active Hours</span><span className="font-medium tabular-nums">{dayparts.filter(d => d.active).length} windows</span></div>
                     </div>
@@ -689,16 +747,16 @@ export default function PlacementDetail() {
                 {hasScreens && (
                   <div className="skoop-card p-5 space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
                     <p className="skoop-section-header">Capacity Usage</p>
-                    <p className="text-[11px] text-muted-foreground">Eligible playback opportunities based on selected screens and playback model</p>
+                    <p className="text-[11px] text-muted-foreground">Eligible plays based on selected screens, active hours, and play duration ({playDurationSeconds}s)</p>
                     <div className="space-y-2">
-                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} opp/day</span></div>
-                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} opp/day</span></div>
-                      <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} opp/day</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{totalPlaysPerDay.toLocaleString()} plays/day</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} plays/day</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} plays/day</span></div>
                     </div>
                     <div className="h-2 rounded-full bg-secondary overflow-hidden mt-2">
-                      <div className="h-full bg-primary rounded-full" style={{ width: `${capacity.total > 0 ? Math.round((capacity.booked / capacity.total) * 100) : 0}%` }} />
+                      <div className="h-full bg-primary rounded-full" style={{ width: `${totalPlaysPerDay > 0 ? Math.round((capacity.booked / totalPlaysPerDay) * 100) : 0}%` }} />
                     </div>
-                    <p className="text-xs text-muted-foreground tabular-nums">{capacity.total > 0 ? Math.round((capacity.booked / capacity.total) * 100) : 0}% utilised</p>
+                    <p className="text-xs text-muted-foreground tabular-nums">{totalPlaysPerDay > 0 ? Math.round((capacity.booked / totalPlaysPerDay) * 100) : 0}% utilised</p>
                   </div>
                 )}
 
@@ -706,9 +764,9 @@ export default function PlacementDetail() {
                 {hasScreens && (
                   <div className="skoop-card p-5 space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                     <p className="skoop-section-header">Capacity by Type</p>
-                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Owned ({owned}%)</span><span className="tabular-nums font-medium">{ownedCap.toLocaleString()} opp/day</span></div>
-                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Direct ({direct}%)</span><span className="tabular-nums font-medium">{directCap.toLocaleString()} opp/day</span></div>
-                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Programmatic ({Math.max(0, prog)}%)</span><span className="tabular-nums font-medium">{progCap.toLocaleString()} opp/day</span></div>
+                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Owned ({owned}%)</span><span className="tabular-nums font-medium">{ownedCap.toLocaleString()} plays/day</span></div>
+                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Direct ({direct}%)</span><span className="tabular-nums font-medium">{directCap.toLocaleString()} plays/day</span></div>
+                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Programmatic ({Math.max(0, prog)}%)</span><span className="tabular-nums font-medium">{progCap.toLocaleString()} plays/day</span></div>
                   </div>
                 )}
               </div>
