@@ -475,6 +475,16 @@ export default function CampaignCreate() {
                 {rulesText.length === 0 && <p className="text-sm text-muted-foreground">None selected</p>}
               </div>
             </div>
+            {selectedTags.length > 0 && (
+              <div className="col-span-2">
+                <p className="text-xs text-muted-foreground">Target Tags</p>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {selectedTags.map((tag) => (
+                    <span key={tag} className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">{tag}</span>
+                  ))}
+                </div>
+              </div>
+            )}
             <div><p className="text-xs text-muted-foreground">Screens</p><p className="text-sm font-medium tabular-nums">{capacitySummary?.totalScreens.toLocaleString() || 0}</p></div>
             <div><p className="text-xs text-muted-foreground">Schedule</p><p className="text-sm font-medium">{startDate || "—"} → {endDate || "—"}</p></div>
             <div><p className="text-xs text-muted-foreground">Active Days</p><p className="text-sm font-medium">{activeDays.join(", ")}</p></div>
