@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Megaphone, ArrowLeft, ArrowRight, Check, Info, AlertTriangle, Briefcase, Home, Plus, X, Upload } from "lucide-react";
+import { Megaphone, ArrowLeft, ArrowRight, Check, Info, AlertTriangle, Briefcase, Home, Plus, X, Upload, Tag, Search } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StatusChip from "@/components/shared/StatusChip";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb";
 import { allPlacements, calcPlaysPerDay, calcCapacityFromRule } from "@/data/placements";
+import { allScreens } from "@/data/screens";
+
+const AVAILABLE_TAGS = ["Lobby", "Drive-Thru", "Food Court", "Elevator", "Parking", "Northeast Region", "West Coast", "Urban Panel", "Bodega", "Concourse", "Premium", "High Traffic"];
 
 type CampaignType = "direct" | "marketing" | "";
 
@@ -37,6 +40,8 @@ export default function CampaignCreate() {
 
   // Step 2 — Where It Runs
   const [selectedRules, setSelectedRules] = useState<SelectedRule[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [tagSearch, setTagSearch] = useState("");
 
   // Step 3 — Schedule
   const [startDate, setStartDate] = useState("");
@@ -55,9 +60,18 @@ export default function CampaignCreate() {
   const next = () => setStep((s) => Math.min(s + 1, STEPS.length - 1));
   const prev = () => setStep((s) => Math.max(s - 1, 0));
 
-  // Capacity calculations across all selected rules
+  // Mock: count screens matching selected tags
+  const tagMatchedScreens = useMemo(() => {
+    if (selectedTags.length === 0) return 0;
+    // Simple mock: match screens whose name or venue contains any selected tag (case-insensitive)
+    return allScreens.filter((s) =>
+      selectedTags.some((tag) => s.name.toLowerCase().includes(tag.toLowerCase()) || s.venue.toLowerCase().includes(tag.toLowerCase()))
+    ).length;
+  }, [selectedTags]);
+
+  // Capacity calculations across all selected rules + tags
   const capacitySummary = useMemo(() => {
-    if (selectedRules.length === 0) return null;
+    if (selectedRules.length === 0 && selectedTags.length === 0) return null;
     let totalScreens = 0;
     let totalAvailable = 0;
     let totalCapacity = 0;
@@ -69,6 +83,14 @@ export default function CampaignCreate() {
       totalAvailable += cap.available;
       totalCapacity += cap.total;
     });
+    // Add tag-matched screens (mock capacity: 30 loops/hr × 16 active hrs = 480 plays/day per screen, 70% available)
+    if (selectedTags.length > 0) {
+      const tagScreens = tagMatchedScreens;
+      const tagCapPerScreen = 480;
+      totalScreens += tagScreens;
+      totalCapacity += tagScreens * tagCapPerScreen;
+      totalAvailable += Math.round(tagScreens * tagCapPerScreen * 0.7);
+    }
     const availablePct = totalCapacity > 0 ? Math.round((totalAvailable / totalCapacity) * 100) : 0;
 
     let requested = 0;
@@ -83,7 +105,7 @@ export default function CampaignCreate() {
       : 0;
 
     return { totalScreens, totalAvailable, totalCapacity, availablePct, requested, fits, dailyPacing };
-  }, [selectedRules, deliveryMode, sov, totalPlays, startDate, endDate]);
+  }, [selectedRules, selectedTags, tagMatchedScreens, deliveryMode, sov, totalPlays, startDate, endDate]);
 
   const estimatedDailyPlays = useMemo(() => {
     if (!capacitySummary) return 0;
@@ -119,7 +141,7 @@ export default function CampaignCreate() {
     );
   };
 
-  const availableRules = allPlacements.filter((p) => !selectedRules.find((sr) => sr.id === p.id));
+  
 
   // ── STEP RENDERERS ──
 
@@ -172,81 +194,123 @@ export default function CampaignCreate() {
     </div>
   );
 
+  const filteredTags = AVAILABLE_TAGS.filter((t) =>
+    !selectedTags.includes(t) && t.toLowerCase().includes(tagSearch.toLowerCase())
+  );
+
   const renderStep2 = () => (
     <div className="space-y-5">
+      {/* Network Rules */}
       <div className="skoop-card p-5 space-y-4">
-        <p className="skoop-section-header">Where It Runs</p>
-        <p className="text-xs text-muted-foreground">Select one or more Network Rules to define where this campaign plays. Optionally narrow with tags.</p>
+        <p className="skoop-section-header">Network Rules</p>
+        <p className="text-xs text-muted-foreground">Select one or more Network Rules to define where this campaign plays. Optionally narrow with tags per rule.</p>
 
-        {selectedRules.map((sr) => {
-          const rule = allPlacements.find((p) => p.id === sr.id);
-          if (!rule) return null;
-          const cap = calcCapacityFromRule(rule);
-          const availPct = Math.round((cap.available / cap.total) * 100);
-          return (
-            <div key={sr.id} className="rounded-lg border border-border p-4 space-y-3">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm font-semibold text-foreground">{rule.name}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{rule.screenCount} screens · {availPct}% available</p>
-                </div>
-                <button onClick={() => removeRule(sr.id)} className="text-muted-foreground hover:text-destructive transition-colors">
-                  <X size={16} />
+        <div className="space-y-2">
+          {allPlacements.map((rule) => {
+            const isSelected = selectedRules.some((sr) => sr.id === rule.id);
+            const sr = selectedRules.find((r) => r.id === rule.id);
+            const cap = calcCapacityFromRule(rule);
+            const availPct = Math.round((cap.available / cap.total) * 100);
+            return (
+              <div key={rule.id} className="space-y-0">
+                <button
+                  onClick={() => isSelected ? removeRule(rule.id) : addRule(rule.id)}
+                  className={`w-full text-left rounded-lg border-2 p-4 transition-all ${
+                    isSelected
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-primary/30 hover:bg-secondary/30"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{rule.name}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{rule.screenCount} screens · {availPct}% available</p>
+                    </div>
+                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                      isSelected ? "bg-primary border-primary" : "border-muted-foreground/30"
+                    }`}>
+                      {isSelected && <Check size={12} className="text-primary-foreground" />}
+                    </div>
+                  </div>
                 </button>
+                {isSelected && sr && (
+                  <div className="ml-4 mt-2 mb-3 pl-4 border-l-2 border-primary/20 space-y-2">
+                    <label className="text-[11px] text-muted-foreground">Narrow to specific screens using tags</label>
+                    <div className="flex flex-wrap gap-1.5">
+                      {sr.tags.map((tag) => (
+                        <span key={tag} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                          {tag}
+                          <button onClick={() => removeTagFromRule(sr.id, tag)}><X size={10} /></button>
+                        </span>
+                      ))}
+                    </div>
+                    <Input
+                      placeholder="e.g. Bodega, Urban Panel, West Coast"
+                      className="text-xs max-w-xs"
+                      value={sr.tagInput}
+                      onChange={(e) => updateTagInput(sr.id, e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === ",") {
+                          e.preventDefault();
+                          addTagToRule(sr.id, sr.tagInput);
+                        }
+                      }}
+                    />
+                  </div>
+                )}
               </div>
-              <div>
-                <label className="text-[11px] text-muted-foreground">Narrow to specific screens using tags</label>
-                <div className="flex flex-wrap gap-1.5 mt-1.5">
-                  {sr.tags.map((tag) => (
-                    <span key={tag} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                      {tag}
-                      <button onClick={() => removeTagFromRule(sr.id, tag)}><X size={10} /></button>
-                    </span>
-                  ))}
-                </div>
-                <Input
-                  placeholder="e.g. Bodega, Urban Panel, West Coast"
-                  className="mt-1.5 text-xs"
-                  value={sr.tagInput}
-                  onChange={(e) => updateTagInput(sr.id, e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === ",") {
-                      e.preventDefault();
-                      addTagToRule(sr.id, sr.tagInput);
-                    }
-                  }}
-                />
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+      </div>
 
-        {availableRules.length > 0 && (
-          <div className="space-y-2">
-            <p className="text-xs font-medium text-muted-foreground">Available Rules</p>
-            <div className="grid grid-cols-2 gap-2">
-              {availableRules.map((rule) => {
-                const cap = calcCapacityFromRule(rule);
-                const availPct = Math.round((cap.available / cap.total) * 100);
-                return (
-                  <button
-                    key={rule.id}
-                    onClick={() => addRule(rule.id)}
-                    className="text-left rounded-lg border border-dashed border-border p-3 hover:border-primary/40 hover:bg-secondary/30 transition-colors"
-                  >
-                    <p className="text-xs font-medium text-foreground">{rule.name}</p>
-                    <p className="text-[11px] text-muted-foreground">{rule.screenCount} screens · {availPct}% avail</p>
-                  </button>
-                );
-              })}
-            </div>
+      {/* Target by Tags */}
+      <div className="skoop-card p-5 space-y-4">
+        <div className="flex items-center gap-2">
+          <Tag size={16} className="text-muted-foreground" />
+          <p className="skoop-section-header">Target by Tags</p>
+        </div>
+        <p className="text-xs text-muted-foreground">Select screen tags to target specific screens across your network. Use alongside or instead of Network Rules.</p>
+
+        <div className="flex flex-wrap gap-1.5">
+          {selectedTags.map((tag) => (
+            <span key={tag} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+              {tag}
+              <button onClick={() => setSelectedTags((prev) => prev.filter((t) => t !== tag))}><X size={10} /></button>
+            </span>
+          ))}
+        </div>
+
+        <div className="relative">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search tags..."
+            className="pl-9 text-xs"
+            value={tagSearch}
+            onChange={(e) => setTagSearch(e.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-wrap gap-1.5">
+          {filteredTags.map((tag) => (
+            <button
+              key={tag}
+              onClick={() => { setSelectedTags((prev) => [...prev, tag]); setTagSearch(""); }}
+              className="px-2.5 py-1 rounded-full border border-dashed border-border text-xs text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
+            >
+              + {tag}
+            </button>
+          ))}
+          {filteredTags.length === 0 && tagSearch && (
+            <p className="text-xs text-muted-foreground">No matching tags found</p>
+          )}
+        </div>
+
+        {selectedTags.length > 0 && (
+          <div className="flex items-center gap-2 bg-secondary rounded-md px-3 py-2">
+            <Info size={12} className="text-primary shrink-0" />
+            <p className="text-xs text-foreground font-medium tabular-nums">{tagMatchedScreens} screen{tagMatchedScreens !== 1 ? "s" : ""} match these tags</p>
           </div>
-        )}
-
-        {selectedRules.length > 0 && availableRules.length > 0 && (
-          <Button variant="outline" size="sm" onClick={() => { if (availableRules.length > 0) addRule(availableRules[0].id); }}>
-            <Plus size={14} className="mr-1" /> Add Another Rule
-          </Button>
         )}
       </div>
     </div>
@@ -390,7 +454,7 @@ export default function CampaignCreate() {
     const hasConflict = capacitySummary ? !capacitySummary.fits : false;
     const hasPendingCreatives = true; // mock
 
-    const ready = !hasConflict && campaignName && selectedRules.length > 0;
+    const ready = !hasConflict && campaignName && (selectedRules.length > 0 || selectedTags.length > 0);
 
     return (
       <div className="space-y-4">
@@ -411,6 +475,16 @@ export default function CampaignCreate() {
                 {rulesText.length === 0 && <p className="text-sm text-muted-foreground">None selected</p>}
               </div>
             </div>
+            {selectedTags.length > 0 && (
+              <div className="col-span-2">
+                <p className="text-xs text-muted-foreground">Target Tags</p>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {selectedTags.map((tag) => (
+                    <span key={tag} className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">{tag}</span>
+                  ))}
+                </div>
+              </div>
+            )}
             <div><p className="text-xs text-muted-foreground">Screens</p><p className="text-sm font-medium tabular-nums">{capacitySummary?.totalScreens.toLocaleString() || 0}</p></div>
             <div><p className="text-xs text-muted-foreground">Schedule</p><p className="text-sm font-medium">{startDate || "—"} → {endDate || "—"}</p></div>
             <div><p className="text-xs text-muted-foreground">Active Days</p><p className="text-sm font-medium">{activeDays.join(", ")}</p></div>
@@ -460,7 +534,7 @@ export default function CampaignCreate() {
 
   // Right panel — capacity summary (visible on steps 1–5)
   const renderCapacityPanel = () => {
-    if (!capacitySummary || selectedRules.length === 0) return null;
+    if (!capacitySummary || (selectedRules.length === 0 && selectedTags.length === 0)) return null;
     return (
       <div className="w-72 shrink-0 space-y-4">
         <div className="skoop-card p-5 space-y-3 sticky top-8">
