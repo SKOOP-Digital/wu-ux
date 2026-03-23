@@ -578,7 +578,7 @@ export default function PlacementDetail() {
                         <div>
                           <div className="flex justify-between text-sm mb-1">
                             <span>Owned</span>
-                            <span className="tabular-nums font-medium">{owned}%{hasScreens ? ` · ${ownedCap.toLocaleString()} playback opportunities/day` : ""}</span>
+                            <span className="tabular-nums font-medium">{owned}%{hasScreens ? ` · ${ownedCap.toLocaleString()} plays/day` : ""}</span>
                           </div>
                           <Slider value={[owned]} onValueChange={([v]) => { if (v + direct <= 100) setOwned(v); }} max={100} step={5} className="[&_[role=slider]]:bg-skoop-slate" />
                         </div>
