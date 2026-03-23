@@ -1,4 +1,4 @@
-import { MapPin, ArrowLeft, Monitor, ExternalLink, AlertTriangle, Info, ChevronRight, Pencil, Plus, CheckCircle2, Search, ChevronDown } from "lucide-react";
+import { MapPin, ArrowLeft, Monitor, AlertTriangle, Info, Plus, CheckCircle2, Search, ChevronDown } from "lucide-react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
