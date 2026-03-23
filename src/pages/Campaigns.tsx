@@ -11,7 +11,7 @@ import { Progress } from "@/components/ui/progress";
 const campaigns = [
   { id: "1", name: "Pepsi Q2 Push", type: "Direct", advertiser: "PepsiCo", dates: "Apr 1 – Jun 30", goal: "SoV 40%", delivered: 3200, target: 5000, status: "Live" },
   { id: "2", name: "Nike Spring", type: "Direct", advertiser: "Nike", dates: "Mar 1 – May 31", goal: "5,000 plays", delivered: 3100, target: 5000, status: "Live" },
-  { id: "3", name: "WU Brand Awareness", type: "Owned", advertiser: "Western Union", dates: "Jan 1 – Dec 31", goal: "SoV 50%", delivered: 48000, target: 50000, status: "Live" },
+  { id: "3", name: "WU Brand Awareness", type: "Marketing", advertiser: "Western Union", dates: "Jan 1 – Dec 31", goal: "SoV 50%", delivered: 48000, target: 50000, status: "Live" },
   { id: "4", name: "Coca-Cola Summer", type: "Direct", advertiser: "Coca-Cola", dates: "May 1 – Aug 31", goal: "SoV 20%", delivered: 0, target: 4000, status: "Scheduled" },
   { id: "5", name: "WU Remittance Promo", type: "Direct", advertiser: "Western Union", dates: "Mar 1 – Mar 31", goal: "3,000 plays", delivered: 1200, target: 3000, status: "Under-delivering" },
 ];

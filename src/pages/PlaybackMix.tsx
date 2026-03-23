@@ -95,7 +95,7 @@ export default function PlaybackMix() {
           </div>
           {simProgFill < 50 && (
             <div className="bg-skoop-amber-light border border-skoop-amber/20 rounded-md p-3 text-xs text-skoop-amber">
-              ⚠ With programmatic fill at {simProgFill}%, owned content will backfill {Math.round((100 - simProgFill) / 100 * 20)}% of the programmatic allocation.
+              ⚠ With programmatic fill at {simProgFill}%, marketing content will backfill {Math.round((100 - simProgFill) / 100 * 20)}% of the programmatic allocation.
             </div>
           )}
         </div>

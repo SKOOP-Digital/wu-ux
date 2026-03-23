@@ -15,7 +15,7 @@ const playlistItems = [
   { id: "6", section: "Programmatic Slots", name: "Programmatic Slot — 10s", type: "Programmatic", duration: "10s", daypart: "Peak", campaign: "Programmatic", priority: "Low", delivery: "Fill" },
 ];
 
-const sections = ["Owned Content Pool", "Direct Campaigns", "Programmatic Slots"];
+const sections = ["Marketing Content Pool", "Direct Campaigns", "Programmatic Slots"];
 
 const contentLibrary = ["Media", "AI Image Generator", "Menu Builder", "Zones", "Timer", "Clock", "Weather", "Youtube", "Website", "Templates", "RSS Feed", "KIOSK"];
 

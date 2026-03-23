@@ -26,7 +26,7 @@ import { toast } from "@/hooks/use-toast";
 const mockCampaigns = [
   { id: "1", name: "Nike Summer Push", type: "Direct", target: "5,000 plays", delivered: "3,100", pct: 62, status: "Live" },
   { id: "2", name: "Coca-Cola Lobby Spots", type: "Direct", target: "SoV 15%", delivered: "1,800", pct: 72, status: "Under-delivering" },
-  { id: "3", name: "Brand Awareness — Q1", type: "Owned", target: "SoV 50%", delivered: "48,000", pct: 96, status: "Live" },
+  { id: "3", name: "Brand Awareness — Q1", type: "Marketing", target: "SoV 50%", delivered: "48,000", pct: 96, status: "Live" },
 ];
 
 export default function PlacementDetail() {
