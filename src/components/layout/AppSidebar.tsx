@@ -1,7 +1,7 @@
 import { NavLink, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, MapPin, Megaphone, Radio, Shuffle, FileCheck,
-  DollarSign, FileText, Settings, Monitor, Image, ListVideo, BarChart3
+  Settings, Monitor, Image, ListVideo, BarChart3
 } from "lucide-react";
 
 const mainNav = [
@@ -18,8 +18,6 @@ const monetNav = [
   { icon: Radio, label: "Programmatic", to: "/programmatic" },
   { icon: Shuffle, label: "Playback Mix", to: "/playback-mix" },
   { icon: FileCheck, label: "Proof of Play", to: "/proof-of-play" },
-  { icon: DollarSign, label: "Revenue", to: "/revenue" },
-  { icon: FileText, label: "Orders", to: "/orders" },
   { icon: Settings, label: "Settings", to: "/settings" },
 ];
 

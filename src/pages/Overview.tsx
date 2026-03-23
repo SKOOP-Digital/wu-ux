@@ -1,4 +1,4 @@
-import { LayoutDashboard, Plus, MapPin, Megaphone, Radio, Download, AlertTriangle, TrendingUp, DollarSign, Monitor, Play, ArrowRight } from "lucide-react";
+import { LayoutDashboard, Plus, MapPin, Megaphone, Radio, Download, AlertTriangle, TrendingUp, Monitor, Play, ArrowRight } from "lucide-react";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import PageHeader from "@/components/layout/PageHeader";
 import KPICard from "@/components/shared/KPICard";

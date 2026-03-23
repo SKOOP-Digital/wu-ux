@@ -12,7 +12,7 @@ import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbS
 
 type CampaignType = "direct" | "owned" | "programmatic" | "";
 
-const STEPS_DIRECT = ["Campaign Details", "Schedule", "How Much It Plays", "Creatives", "Pricing & Billing", "Review & Launch"];
+const STEPS_DIRECT = ["Campaign Details", "Schedule", "How Much It Plays", "Creatives", "Review & Launch"];
 const STEPS_OWNED = ["Campaign Details", "Schedule", "How Much It Plays", "Assets & Launch"];
 const STEPS_PROGRAMMATIC = ["Campaign Details", "Active Hours", "Launch"];
 
@@ -30,7 +30,6 @@ export default function CampaignCreate() {
   const [ownedPct, setOwnedPct] = useState(50);
   const [deliveryMode, setDeliveryMode] = useState<"sov" | "pph">("sov");
   const [selectedPlacement, setSelectedPlacement] = useState("");
-  const [pricingModel, setPricingModel] = useState("");
   const [activeDays, setActiveDays] = useState<string[]>(["Mon", "Tue", "Wed", "Thu", "Fri"]);
 
   const steps = useMemo(() => {
@@ -54,12 +53,11 @@ export default function CampaignCreate() {
   };
 
   const typeCards: { type: CampaignType; icon: typeof Briefcase; label: string; desc: string }[] = [
-    { type: "direct", icon: Briefcase, label: "Direct Ad", desc: "Booked campaigns with advertisers — full delivery rules, creatives, and billing" },
+    { type: "direct", icon: Briefcase, label: "Direct Ad", desc: "Booked campaigns with advertisers — full delivery rules, creatives, and scheduling" },
     { type: "owned", icon: Home, label: "In-House Content", desc: "Your own brand content with guaranteed screen time — simplified setup" },
     { type: "programmatic", icon: Radio, label: "Programmatic", desc: "Automated ads via demand partners — minimal configuration needed" },
   ];
 
-  // Capacity panel data
   const capacityPanel = useMemo(() => {
     if (!selectedPl) return null;
     const total = selectedPl.availableDaily;
@@ -75,11 +73,8 @@ export default function CampaignCreate() {
     return { total, bucketCap, booked, available, estimate, fits };
   }, [selectedPl, campaignType, estimatedDailyPlays, ownedPct]);
 
-  // ====== Render current step based on campaign type ======
-
   const renderStep0 = () => (
     <div className="space-y-5">
-      {/* Type selection cards — always first and prominent */}
       <div className="skoop-card p-5 space-y-4">
         <p className="skoop-section-header">Campaign Type</p>
         <p className="text-xs text-muted-foreground">Choose the type of campaign. This determines what steps you'll configure.</p>
@@ -106,7 +101,6 @@ export default function CampaignCreate() {
         </div>
       </div>
 
-      {/* Campaign details fields */}
       <div className="skoop-card p-5 space-y-4">
         <p className="skoop-section-header">Campaign Details</p>
         <p className="text-xs text-muted-foreground">Campaigns define what content runs and how it is delivered across your network rules.</p>
@@ -142,7 +136,7 @@ export default function CampaignCreate() {
           </div>
           <div>
             <p className="text-xs text-muted-foreground mb-1">Available direct inventory</p>
-            <p className="text-sm font-semibold tabular-nums text-primary">{Math.round(selectedPl.availableDaily * selectedPl.direct / 100).toLocaleString()} opportunities/day</p>
+            <p className="text-sm font-semibold tabular-nums text-primary">{Math.round(selectedPl.availableDaily * selectedPl.direct / 100).toLocaleString()} plays/day</p>
           </div>
           <MixBar owned={selectedPl.owned} direct={selectedPl.direct} programmatic={selectedPl.prog} showLabels />
         </div>
@@ -206,21 +200,21 @@ export default function CampaignCreate() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <p className="text-[11px] text-muted-foreground">Eligible rule capacity</p>
-                <p className="text-sm font-medium tabular-nums">{placementLoopsPerHour} opportunities/hour</p>
+                <p className="text-sm font-medium tabular-nums">{placementLoopsPerHour} plays/hour</p>
               </div>
               <div>
                 <p className="text-[11px] text-muted-foreground">Estimated campaign share</p>
-                <p className="text-sm font-medium tabular-nums">~{estimatedPlaysPerHour} opportunities/hour</p>
+                <p className="text-sm font-medium tabular-nums">~{estimatedPlaysPerHour} plays/hour</p>
               </div>
               <div>
                 <p className="text-[11px] text-muted-foreground">Estimated daily delivery</p>
-                <p className="text-sm font-medium tabular-nums">~{estimatedDailyPlays.toLocaleString()} opportunities/day</p>
+                <p className="text-sm font-medium tabular-nums">~{estimatedDailyPlays.toLocaleString()} plays/day</p>
               </div>
             </div>
             <div className="flex items-start gap-2 mt-2 pt-2 border-t border-border">
               <Info size={12} className="text-primary mt-0.5 shrink-0" />
               <p className="text-[11px] text-muted-foreground">
-                {sov}% share of voice × {placementLoopsPerHour} opp/hour = ~{estimatedPlaysPerHour} opp/hour × 16 active hours = ~{estimatedDailyPlays.toLocaleString()} opp/day
+                {sov}% share of voice × {placementLoopsPerHour} plays/hour = ~{estimatedPlaysPerHour} plays/hour × 16 active hours = ~{estimatedDailyPlays.toLocaleString()} plays/day
               </p>
             </div>
           </div>
@@ -256,7 +250,7 @@ export default function CampaignCreate() {
         <Slider value={[ownedPct]} onValueChange={([v]) => setOwnedPct(v)} max={100} step={5} />
         {selectedPl && (
           <div className="bg-secondary rounded-md p-3">
-            <p className="text-xs text-muted-foreground">~{Math.round(selectedPl.availableDaily * ownedPct / 100).toLocaleString()} playback opportunities/day at {ownedPct}% of total capacity</p>
+            <p className="text-xs text-muted-foreground">~{Math.round(selectedPl.availableDaily * ownedPct / 100).toLocaleString()} plays/day at {ownedPct}% of total capacity</p>
           </div>
         )}
       </div>
@@ -292,49 +286,6 @@ export default function CampaignCreate() {
     </div>
   );
 
-  const renderPricing = () => (
-    <div className="skoop-card p-5 space-y-4">
-      <p className="skoop-section-header">Pricing & Billing</p>
-      <p className="text-xs text-muted-foreground">Define how this campaign is priced and billed.</p>
-      <div className="space-y-3">
-        <div><label className="text-xs text-muted-foreground">Pricing Model</label>
-          <Select value={pricingModel} onValueChange={setPricingModel}>
-            <SelectTrigger className="mt-1"><SelectValue placeholder="Select model" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="cpp">Cost per Play (CPP)</SelectItem>
-              <SelectItem value="cpm">CPM (per 1,000 impressions)</SelectItem>
-              <SelectItem value="flat">Flat Fee</SelectItem>
-              <SelectItem value="sov">Share of Voice Package</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <label className="text-xs text-muted-foreground">
-            {pricingModel === "cpp" ? "Rate per Play" : pricingModel === "cpm" ? "Rate per 1,000 Impressions" : pricingModel === "flat" ? "Booking Value" : "Rate"}
-          </label>
-          <div className="flex items-center gap-2 mt-1">
-            <span className="text-sm text-muted-foreground">$</span>
-            <Input placeholder={pricingModel === "cpp" ? "0.10" : pricingModel === "cpm" ? "12.00" : "5,000"} className="w-40" />
-            <span className="text-xs text-muted-foreground">AUD</span>
-          </div>
-        </div>
-        {pricingModel === "cpp" && (
-          <div className="bg-secondary/60 rounded-md p-3">
-            <p className="text-xs text-muted-foreground">Projected revenue: ~{estimatedDailyPlays.toLocaleString()} plays/day × 31 days × $0.10 = <span className="font-medium text-foreground">${(estimatedDailyPlays * 31 * 0.1).toLocaleString(undefined, { maximumFractionDigits: 0 })}</span></p>
-          </div>
-        )}
-        <div>
-          <label className="text-xs text-muted-foreground">Revenue Split</label>
-          <div className="grid grid-cols-2 gap-3 mt-1">
-            <div><p className="text-[11px] text-muted-foreground mb-1">Skoop Share</p><Input placeholder="70%" className="w-full" /></div>
-            <div><p className="text-[11px] text-muted-foreground mb-1">Partner Share</p><Input placeholder="30%" className="w-full" /></div>
-          </div>
-        </div>
-        <div><label className="text-xs text-muted-foreground">Billing Notes</label><Input placeholder="e.g. Net 30, invoice monthly" className="mt-1" /></div>
-      </div>
-    </div>
-  );
-
   const renderReview = () => (
     <div className="space-y-4">
       <div className="skoop-card p-5 space-y-4">
@@ -351,26 +302,20 @@ export default function CampaignCreate() {
           <div><p className="text-xs text-muted-foreground">Active Days</p><p className="text-sm font-medium">{activeDays.join(", ")}</p></div>
           <div><p className="text-xs text-muted-foreground">Delivery Target</p><p className="text-sm font-medium tabular-nums">{campaignType === "owned" ? `${ownedPct}% screen time` : `SoV ${sov}%`}</p></div>
           {campaignType === "direct" && (
-            <>
-              <div><p className="text-xs text-muted-foreground">Creatives</p><p className="text-sm font-medium">3 assets (2 approved)</p></div>
-              <div><p className="text-xs text-muted-foreground">Pricing</p><p className="text-sm font-medium">{pricingModel === "cpp" ? "Cost per Play" : pricingModel === "cpm" ? "CPM" : pricingModel === "flat" ? "Flat Fee" : "—"}</p></div>
-            </>
+            <div><p className="text-xs text-muted-foreground">Creatives</p><p className="text-sm font-medium">3 assets (2 approved)</p></div>
           )}
         </div>
       </div>
       <div className="skoop-card p-5 space-y-3">
         <p className="skoop-section-header">Estimated Delivery</p>
         <div className="grid grid-cols-2 gap-4">
-          <div><p className="text-xs text-muted-foreground">Total estimated opportunities</p><p className="text-sm font-medium tabular-nums">~{(estimatedDailyPlays * 31).toLocaleString()}</p></div>
-          <div><p className="text-xs text-muted-foreground">Per day estimate</p><p className="text-sm font-medium tabular-nums">~{estimatedDailyPlays.toLocaleString()} opp/day</p></div>
+          <div><p className="text-xs text-muted-foreground">Total estimated plays</p><p className="text-sm font-medium tabular-nums">~{(estimatedDailyPlays * 31).toLocaleString()}</p></div>
+          <div><p className="text-xs text-muted-foreground">Per day estimate</p><p className="text-sm font-medium tabular-nums">~{estimatedDailyPlays.toLocaleString()} plays/day</p></div>
           <div><p className="text-xs text-muted-foreground">Inventory Fit</p><StatusChip status="healthy" label="Compatible" /></div>
           <div><p className="text-xs text-muted-foreground">Conflicts</p><p className="text-sm font-medium text-muted-foreground">None detected</p></div>
         </div>
         <div className="bg-secondary/50 rounded-md p-3 space-y-1 mt-2">
           <p className="text-xs text-muted-foreground">• Consumes ~{campaignType === "owned" ? ownedPct : sov}% of eligible rule inventory</p>
-          {campaignType === "direct" && (
-            <p className="text-xs text-muted-foreground">• Estimated revenue: ${(estimatedDailyPlays * 31 * 0.1).toLocaleString(undefined, { maximumFractionDigits: 0 })} at CPP $0.10</p>
-          )}
           <p className="text-xs text-muted-foreground">• No under-delivery risk detected</p>
         </div>
       </div>
@@ -398,15 +343,13 @@ export default function CampaignCreate() {
     </div>
   );
 
-  // Map step index to render function based on campaign type
   const renderCurrentStep = () => {
     if (campaignType === "direct") {
       if (step === 0) return renderStep0();
       if (step === 1) return renderSchedule();
       if (step === 2) return renderDeliveryDirect();
       if (step === 3) return renderCreatives();
-      if (step === 4) return renderPricing();
-      if (step === 5) return renderReview();
+      if (step === 4) return renderReview();
     } else if (campaignType === "owned") {
       if (step === 0) return renderStep0();
       if (step === 1) return renderSchedule();
@@ -475,11 +418,9 @@ export default function CampaignCreate() {
 
       <div className="p-8">
         <div className="flex gap-6">
-          {/* Main content */}
           <div className="flex-1 max-w-3xl">
             {renderCurrentStep()}
 
-            {/* Navigation */}
             <div className="flex justify-between mt-8">
               <Button variant="outline" size="sm" onClick={prev} disabled={step === 0}><ArrowLeft size={14} className="mr-1" /> Previous</Button>
               {!isLastStep ? (
@@ -490,7 +431,6 @@ export default function CampaignCreate() {
             </div>
           </div>
 
-          {/* Right-side capacity indicator panel */}
           {selectedPl && capacityPanel && (
             <div className="w-72 shrink-0 space-y-4">
               <div className="skoop-card p-5 space-y-3 sticky top-8">
