@@ -66,6 +66,9 @@ export default function PlacementDetail() {
   const [defaultPlayDuration, setDefaultPlayDuration] = useState<string>("15");
   const [customDuration, setCustomDuration] = useState<number>(20);
   const [servingRulesOpen, setServingRulesOpen] = useState(false);
+  const [section1Open, setSection1Open] = useState(false);
+  const [section2Open, setSection2Open] = useState(false);
+  const [section3Open, setSection3Open] = useState(false);
 
   const [catSeparation, setCatSeparation] = useState(true);
   const [catSeparationGap, setCatSeparationGap] = useState(2);
