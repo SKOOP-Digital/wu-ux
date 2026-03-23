@@ -29,6 +29,14 @@ interface SelectedRule {
   tagInput: string;
 }
 
+interface Creative {
+  id: string;
+  name: string;
+  type: string;
+  size: string;
+  file: File;
+}
+
 const DAYPARTS = ["Morning", "Midday", "Afternoon", "Evening", "Late Night"];
 
 export default function CampaignCreate() {
