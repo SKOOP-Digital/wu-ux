@@ -147,8 +147,9 @@ export default function PlacementDetail() {
   const capacityFormula = useMemo(() => {
     if (assignedScreens.length === 0) return null;
     const avgLoops = Math.round(assignedScreens.reduce((s, sc) => s + sc.loopsPerHour, 0) / assignedScreens.length);
-    return `${assignedScreens.length} screen${assignedScreens.length !== 1 ? "s" : ""} × ${avgLoops} avg loops/hour × 16 active hours = ${capacity.total.toLocaleString()} playback opportunities/day`;
-  }, [assignedScreens, capacity.total]);
+    const hrs = Math.round(activeHours);
+    return `${assignedScreens.length} screen${assignedScreens.length !== 1 ? "s" : ""} × ${avgLoops} avg loops/hour × ${hrs} active hours = ${capacity.total.toLocaleString()} playback opportunities/day`;
+  }, [assignedScreens, capacity.total, activeHours]);
 
   const ownedCap = Math.round(capacity.total * owned / 100);
   const directCap = Math.round(capacity.total * direct / 100);
