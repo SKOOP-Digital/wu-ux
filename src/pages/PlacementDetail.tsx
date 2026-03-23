@@ -259,7 +259,7 @@ export default function PlacementDetail() {
 
       <div className="p-8">
         {/* ======= WHERE IT RUNS ======= */}
-        {section === "Where it runs" && (
+        {section === "Screens" && (
           <div className="grid grid-cols-3 gap-6">
             <div className="col-span-2 space-y-6">
               {isNew && (
