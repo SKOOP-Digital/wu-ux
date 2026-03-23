@@ -43,7 +43,7 @@ export default function MixBar({ owned, direct, programmatic, height = "h-2", sh
       {showLabels && (
         <div className="flex gap-4 mt-2">
           <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <span className="w-2 h-2 rounded-full bg-skoop-slate" /> Owned {owned}%
+            <span className="w-2 h-2 rounded-full bg-skoop-slate" /> Marketing {owned}%
           </span>
           <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <span className="w-2 h-2 rounded-full bg-skoop-blue" /> Direct {direct}%
