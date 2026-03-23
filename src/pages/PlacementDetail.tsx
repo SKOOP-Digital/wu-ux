@@ -399,7 +399,7 @@ export default function PlacementDetail() {
         )}
 
         {/* ======= HOW IT RUNS ======= */}
-        {section === "How it runs" && (
+        {section === "Schedule" && (
           <div className="grid grid-cols-3 gap-6">
             <div className="col-span-2 space-y-6">
               <div className="skoop-card p-5 space-y-4">
