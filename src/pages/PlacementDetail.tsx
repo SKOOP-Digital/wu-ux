@@ -333,23 +333,46 @@ export default function PlacementDetail() {
             </div>
 
             <div className="space-y-4">
-              <div className="skoop-card p-5 space-y-3">
-                <p className="skoop-section-header">Summary</p>
-                {isDraft ? (
-                  <>
-                    <div><p className="text-xs text-muted-foreground">Active Campaigns</p><p className="text-lg font-semibold tabular-nums text-muted-foreground">0</p></div>
-                    <div><p className="text-xs text-muted-foreground">Forecasted Fill</p><p className="text-lg font-semibold tabular-nums text-muted-foreground">—</p></div>
-                    <div><p className="text-xs text-muted-foreground">Projected Revenue</p><p className="text-lg font-semibold tabular-nums text-muted-foreground">—</p></div>
-                    <p className="text-[11px] text-muted-foreground">This placement is in draft state. Forecasts will appear once campaigns are assigned.</p>
-                  </>
-                ) : (
-                  <>
-                    <div><p className="text-xs text-muted-foreground">Active Campaigns</p><p className="text-lg font-semibold tabular-nums">{mockCampaigns.length}</p></div>
-                    <div><p className="text-xs text-muted-foreground">Forecasted Fill</p><p className="text-lg font-semibold tabular-nums">88%</p></div>
-                    <div><p className="text-xs text-muted-foreground">Projected Revenue</p><p className="text-lg font-semibold tabular-nums">$4,820</p></div>
-                  </>
-                )}
-              </div>
+              {isNew ? (
+                <>
+                  <div className="skoop-card p-5 space-y-3">
+                    <p className="skoop-section-header">Publish Readiness</p>
+                    <p className="text-[11px] text-muted-foreground">Complete these steps to publish this placement</p>
+                    <div className="space-y-2.5 mt-1">
+                      {[
+                        { label: "Placement name", done: placementName.trim().length > 0 },
+                        { label: "Screens assigned", done: screenIds.length > 0 },
+                        { label: "Dayparts configured", done: dayparts.some(d => d.active) },
+                        { label: "Playback mix set", done: true },
+                      ].map((item) => (
+                        <div key={item.label} className="flex items-center gap-2 text-sm">
+                          <CheckCircle2 size={14} className={item.done ? "text-emerald-500" : "text-muted-foreground/40"} />
+                          <span className={item.done ? "text-foreground" : "text-muted-foreground"}>{item.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="pt-2 border-t border-border mt-3">
+                      <p className="text-xs text-muted-foreground">Status: <span className="font-medium text-foreground">{canPublish ? "Ready to publish" : "Not ready"}</span></p>
+                    </div>
+                  </div>
+                  <div className="skoop-card p-5 space-y-3">
+                    <p className="skoop-section-header">Draft Summary</p>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Screens</span><span className="font-medium tabular-nums">{screenIds.length}</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Capacity</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} opp/day</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Playback Mix</span><span className="font-medium tabular-nums">{owned}/{direct}/{Math.max(0, prog)}</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Active Dayparts</span><span className="font-medium tabular-nums">{dayparts.filter(d => d.active).length}</span></div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="skoop-card p-5 space-y-3">
+                  <p className="skoop-section-header">Summary</p>
+                  <div><p className="text-xs text-muted-foreground">Active Campaigns</p><p className="text-lg font-semibold tabular-nums">{mockCampaigns.length}</p></div>
+                  <div><p className="text-xs text-muted-foreground">Forecasted Fill</p><p className="text-lg font-semibold tabular-nums">88%</p></div>
+                  <div><p className="text-xs text-muted-foreground">Projected Revenue</p><p className="text-lg font-semibold tabular-nums">$4,820</p></div>
+                </div>
+              )}
               <div className="skoop-card p-5 space-y-3">
                 <p className="skoop-section-header">Capacity Usage</p>
                  <p className="text-[11px] text-muted-foreground">Eligible playback opportunities based on selected screens and playback model</p>
