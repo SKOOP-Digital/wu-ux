@@ -585,7 +585,7 @@ export default function PlacementDetail() {
                         <div>
                           <div className="flex justify-between text-sm mb-1">
                             <span>Direct</span>
-                            <span className="tabular-nums font-medium">{direct}%{hasScreens ? ` · ${directCap.toLocaleString()} playback opportunities/day` : ""}</span>
+                            <span className="tabular-nums font-medium">{direct}%{hasScreens ? ` · ${directCap.toLocaleString()} plays/day` : ""}</span>
                           </div>
                           <Slider value={[direct]} onValueChange={([v]) => { if (owned + v <= 100) setDirect(v); }} max={100} step={5} className="[&_[role=slider]]:bg-skoop-blue" />
                         </div>
