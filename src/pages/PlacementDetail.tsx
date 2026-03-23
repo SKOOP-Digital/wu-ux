@@ -64,6 +64,45 @@ export default function PlacementDetail() {
   const [noFillFallback, setNoFillFallback] = useState(true);
   const [editingRules, setEditingRules] = useState(false);
 
+  // Editable dayparts state
+  const [dayparts, setDayparts] = useState([
+    { id: "dp-1", name: "Morning", start: "06:00", end: "11:00", active: true },
+    { id: "dp-2", name: "Midday", start: "11:00", end: "14:00", active: true },
+    { id: "dp-3", name: "Afternoon", start: "14:00", end: "17:00", active: true },
+    { id: "dp-4", name: "Evening", start: "17:00", end: "21:00", active: true },
+    { id: "dp-5", name: "Late Night", start: "21:00", end: "00:00", active: false },
+  ]);
+
+  const addDaypart = () => {
+    const id = `dp-${Date.now()}`;
+    setDayparts(prev => [...prev, { id, name: "New Daypart", start: "09:00", end: "17:00", active: true }]);
+  };
+
+  const removeDaypart = (id: string) => {
+    setDayparts(prev => prev.filter(dp => dp.id !== id));
+  };
+
+  const updateDaypart = (id: string, field: string, value: string | boolean) => {
+    setDayparts(prev => prev.map(dp => dp.id === id ? { ...dp, [field]: value } : dp));
+  };
+
+  const formatTime = (t: string) => {
+    const [h, m] = t.split(":").map(Number);
+    const suffix = h >= 12 ? "PM" : "AM";
+    const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+    return `${h12}:${m.toString().padStart(2, "0")} ${suffix}`;
+  };
+
+  const activeHours = useMemo(() => {
+    return dayparts.filter(dp => dp.active).reduce((sum, dp) => {
+      const [sh, sm] = dp.start.split(":").map(Number);
+      const [eh, em] = dp.end.split(":").map(Number);
+      let hours = (eh * 60 + em - sh * 60 - sm) / 60;
+      if (hours <= 0) hours += 24;
+      return sum + hours;
+    }, 0);
+  }, [dayparts]);
+
   const prog = 100 - owned - direct;
 
   const pieData = [
@@ -108,8 +147,9 @@ export default function PlacementDetail() {
   const capacityFormula = useMemo(() => {
     if (assignedScreens.length === 0) return null;
     const avgLoops = Math.round(assignedScreens.reduce((s, sc) => s + sc.loopsPerHour, 0) / assignedScreens.length);
-    return `${assignedScreens.length} screen${assignedScreens.length !== 1 ? "s" : ""} × ${avgLoops} avg loops/hour × 16 active hours = ${capacity.total.toLocaleString()} playback opportunities/day`;
-  }, [assignedScreens, capacity.total]);
+    const hrs = Math.round(activeHours);
+    return `${assignedScreens.length} screen${assignedScreens.length !== 1 ? "s" : ""} × ${avgLoops} avg loops/hour × ${hrs} active hours = ${capacity.total.toLocaleString()} playback opportunities/day`;
+  }, [assignedScreens, capacity.total, activeHours]);
 
   const ownedCap = Math.round(capacity.total * owned / 100);
   const directCap = Math.round(capacity.total * direct / 100);
@@ -317,50 +357,105 @@ export default function PlacementDetail() {
               )}
 
               <div className="skoop-card p-5">
-                <p className="skoop-section-header mb-1">Daypart Schedule</p>
-                <p className="text-xs text-muted-foreground mb-2">Controls when this placement is active. Only these dayparts are available for campaigns on this placement.</p>
+                <div className="flex items-center justify-between mb-1">
+                  <p className="skoop-section-header">Placement Daypart Availability</p>
+                  {isDraft && (
+                    <Button variant="outline" size="sm" onClick={addDaypart}>
+                      <Plus size={13} className="mr-1" /> Add Daypart
+                    </Button>
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground mb-1">These are the time windows in which campaigns may run on this placement</p>
+                <p className="text-[11px] text-muted-foreground/70 mb-3">Campaigns created later can select all or a subset of these placement dayparts</p>
 
+                {/* Visual timeline */}
                 <div className="mb-4">
                   <div className="flex h-8 rounded-md overflow-hidden border border-border">
-                    {[
-                      { label: "6am", hours: 5, active: true },
-                      { label: "11am", hours: 3, active: true },
-                      { label: "2pm", hours: 3, active: true },
-                      { label: "5pm", hours: 4, active: true },
-                      { label: "9pm", hours: 3, active: false },
-                    ].map((dp, i) => (
-                      <div
-                        key={i}
-                        className={`flex items-center justify-center text-[10px] font-medium border-r border-border last:border-0 ${dp.active ? "bg-primary/10 text-primary" : "bg-secondary text-muted-foreground"}`}
-                        style={{ flex: dp.hours }}
-                      >
-                        {dp.label}
-                      </div>
-                    ))}
+                    {dayparts.map((dp) => {
+                      const [sh] = dp.start.split(":").map(Number);
+                      const [eh] = dp.end.split(":").map(Number);
+                      let hours = eh - sh;
+                      if (hours <= 0) hours += 24;
+                      return (
+                        <div
+                          key={dp.id}
+                          className={`flex items-center justify-center text-[10px] font-medium border-r border-border last:border-0 ${dp.active ? "bg-primary/10 text-primary" : "bg-secondary text-muted-foreground"}`}
+                          style={{ flex: hours }}
+                        >
+                          {formatTime(dp.start).replace(":00", "").toLowerCase()}
+                        </div>
+                      );
+                    })}
                   </div>
                   <div className="flex justify-between mt-1 text-[10px] text-muted-foreground">
-                    <span>6:00 AM</span>
-                    <span>12:00 AM</span>
+                    <span>{dayparts.length > 0 ? formatTime(dayparts[0].start) : ""}</span>
+                    <span>{dayparts.length > 0 ? formatTime(dayparts[dayparts.length - 1].end) : ""}</span>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  {[
-                    { name: "Morning", time: "6:00 AM – 11:00 AM", active: true },
-                    { name: "Midday", time: "11:00 AM – 2:00 PM", active: true },
-                    { name: "Afternoon", time: "2:00 PM – 5:00 PM", active: true },
-                    { name: "Evening", time: "5:00 PM – 9:00 PM", active: true },
-                    { name: "Late Night", time: "9:00 PM – 12:00 AM", active: false },
-                  ].map((dp) => (
-                    <div key={dp.name} className="flex items-center justify-between py-3 px-4 rounded-md bg-secondary/50">
-                      <div>
-                        <p className="text-sm font-medium">{dp.name}</p>
-                        <p className="text-xs text-muted-foreground">{dp.time}</p>
-                      </div>
-                      <StatusChip status={dp.active ? "active" : "paused"} label={dp.active ? "Active" : "Inactive"} />
+                  {dayparts.map((dp) => (
+                    <div key={dp.id} className="flex items-center justify-between py-3 px-4 rounded-md bg-secondary/50">
+                      {isDraft ? (
+                        <>
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <Switch
+                              checked={dp.active}
+                              onCheckedChange={(v) => updateDaypart(dp.id, "active", v)}
+                            />
+                            <input
+                              type="text"
+                              value={dp.name}
+                              onChange={(e) => updateDaypart(dp.id, "name", e.target.value)}
+                              className="text-sm font-medium bg-transparent border-b border-transparent hover:border-border focus:border-primary focus:outline-none w-28"
+                            />
+                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                              <input
+                                type="time"
+                                value={dp.start}
+                                onChange={(e) => updateDaypart(dp.id, "start", e.target.value)}
+                                className="bg-background border border-border rounded px-1.5 py-1 text-xs w-[90px]"
+                              />
+                              <span>–</span>
+                              <input
+                                type="time"
+                                value={dp.end}
+                                onChange={(e) => updateDaypart(dp.id, "end", e.target.value)}
+                                className="bg-background border border-border rounded px-1.5 py-1 text-xs w-[90px]"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <StatusChip status={dp.active ? "active" : "paused"} label={dp.active ? "Active" : "Inactive"} />
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
+                              onClick={() => removeDaypart(dp.id)}
+                            >
+                              ×
+                            </Button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div>
+                            <p className="text-sm font-medium">{dp.name}</p>
+                            <p className="text-xs text-muted-foreground">{formatTime(dp.start)} – {formatTime(dp.end)}</p>
+                          </div>
+                          <StatusChip status={dp.active ? "active" : "paused"} label={dp.active ? "Active" : "Inactive"} />
+                        </>
+                      )}
                     </div>
                   ))}
                 </div>
+
+                {isDraft && (
+                  <div className="flex items-start gap-2 mt-3 bg-primary/5 border border-primary/10 rounded-md px-3 py-2">
+                    <Info size={13} className="text-primary mt-0.5 shrink-0" />
+                    <p className="text-[11px] text-muted-foreground">Active hours affect capacity calculations. Currently <span className="font-medium text-foreground">{Math.round(activeHours)} active hours/day</span> across {dayparts.filter(d => d.active).length} dayparts.</p>
+                  </div>
+                )}
               </div>
             </div>
 
