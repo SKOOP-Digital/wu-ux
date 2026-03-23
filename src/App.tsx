@@ -12,7 +12,6 @@ import CampaignCreate from "./pages/CampaignCreate";
 import ProgrammaticSlots from "./pages/ProgrammaticSlots";
 import PlaybackMix from "./pages/PlaybackMix";
 import ProofOfPlay from "./pages/ProofOfPlay";
-import RevenueReports from "./pages/RevenueReports";
 import OrdersBilling from "./pages/OrdersBilling";
 import SettingsPage from "./pages/SettingsPage";
 import PlaylistEditor from "./pages/PlaylistEditor";
