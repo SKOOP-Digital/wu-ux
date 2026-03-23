@@ -454,26 +454,36 @@ export default function CampaignCreate() {
   const renderStep5 = () => (
     <div className="skoop-card p-5 space-y-4">
       <p className="skoop-section-header">Creatives</p>
-      <p className="text-xs text-muted-foreground">Attach media assets for this campaign. Creatives must be approved before launch.</p>
-      <div className="grid grid-cols-3 gap-4">
-        {[
-          { name: "Summer_Hero_16x9.mp4", type: "Video", status: "Approved", duration: "15s", dimensions: "1920×1080" },
-          { name: "Brand_Logo_Static.jpg", type: "Image", status: "Approved", duration: "10s", dimensions: "1920×1080" },
-          { name: "Promo_HTML5.zip", type: "HTML5", status: "Pending", duration: "15s", dimensions: "1080×1920" },
-        ].map((c) => (
-          <div key={c.name} className="rounded-lg border border-border overflow-hidden">
-            <div className="h-28 bg-secondary flex items-center justify-center text-muted-foreground text-xs">
-              <Upload size={16} className="mr-1.5" /> {c.type} Preview
+      <p className="text-xs text-muted-foreground">Upload media assets for this campaign (Video, Image, or HTML5).</p>
+
+      {creatives.length > 0 && (
+        <div className="grid grid-cols-3 gap-4">
+          {creatives.map((c) => (
+            <div key={c.id} className="rounded-lg border border-border overflow-hidden group relative">
+              <div className="h-28 bg-secondary flex items-center justify-center text-muted-foreground text-xs">
+                <Upload size={16} className="mr-1.5" /> {c.type}
+              </div>
+              <div className="p-3 space-y-1">
+                <p className="text-xs font-medium truncate">{c.name}</p>
+                <p className="text-[11px] text-muted-foreground">{c.type} · {c.size}</p>
+              </div>
+              <button
+                onClick={() => removeCreative(c.id)}
+                className="absolute top-2 right-2 w-6 h-6 rounded-full bg-background/80 border border-border flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10 hover:text-destructive"
+              >
+                <Trash2 size={12} />
+              </button>
             </div>
-            <div className="p-3 space-y-1">
-              <p className="text-xs font-medium truncate">{c.name}</p>
-              <p className="text-[11px] text-muted-foreground">{c.duration} · {c.dimensions}</p>
-              <div className="mt-1.5"><StatusChip status={c.status.toLowerCase()} label={c.status} /></div>
-            </div>
-          </div>
-        ))}
-      </div>
-      <Button variant="outline" size="sm"><Plus size={14} className="mr-1" /> Add Creative</Button>
+          ))}
+        </div>
+      )}
+
+      <label className="inline-flex items-center gap-1 cursor-pointer">
+        <Button variant="outline" size="sm" asChild>
+          <span><Plus size={14} className="mr-1" /> Add Creative</span>
+        </Button>
+        <input type="file" multiple accept="video/*,image/*,.zip,.html" className="hidden" onChange={handleFileUpload} />
+      </label>
     </div>
   );
 
