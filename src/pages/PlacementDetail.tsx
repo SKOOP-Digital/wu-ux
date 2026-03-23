@@ -253,6 +253,23 @@ export default function PlacementDetail() {
         {section === "Where it runs" && (
           <div className="grid grid-cols-3 gap-6">
             <div className="col-span-2 space-y-6">
+              {/* Placement Name — editable for new */}
+              {isNew && (
+                <div className="skoop-card p-5 space-y-3">
+                  <p className="skoop-section-header">Placement Name</p>
+                  <input
+                    type="text"
+                    value={placementName}
+                    onChange={(e) => setPlacementName(e.target.value)}
+                    placeholder="e.g. Lobby Screens — Main Loop"
+                    className="w-full text-sm border border-border rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                  />
+                  {placementName.trim() === "" && (
+                    <p className="text-xs text-amber-600 flex items-center gap-1"><AlertTriangle size={12} /> A placement name is required to publish</p>
+                  )}
+                </div>
+              )}
+
               <div className="skoop-card p-5 space-y-4">
                 <p className="skoop-section-header">Placement Scope</p>
                 <p className="text-xs text-muted-foreground">This ad placement is linked to screens at specific venues. All screens below will display content from campaigns assigned to this placement.</p>
