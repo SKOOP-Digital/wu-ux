@@ -81,7 +81,7 @@ export default function Campaigns() {
             <tbody>
               {filtered.map((c) => {
                 const pct = c.target > 0 ? Math.round((c.delivered / c.target) * 100) : 0;
-                const pacing = pacingLabel(c.delivered, c.target, c.status);
+                const fullStatus = statusLabel(c.delivered, c.target, c.status);
                 return (
                   <tr key={c.id} className="skoop-table-row cursor-pointer" onClick={() => navigate(`/campaigns/${c.id}`)}>
                     <td className="skoop-table-cell font-medium text-foreground">
@@ -94,12 +94,9 @@ export default function Campaigns() {
                     <td className="skoop-table-cell text-muted-foreground text-xs whitespace-nowrap">{c.dates}</td>
                     <td className="skoop-table-cell text-xs text-muted-foreground">{c.goal}</td>
                     <td className="skoop-table-cell">
-                      <div className="flex items-center gap-2">
-                        <Progress value={pct} className="h-1.5 flex-1" />
-                        <span className="text-xs text-muted-foreground whitespace-nowrap">{pacing}</span>
-                      </div>
+                      <Progress value={pct} className="h-1.5" />
                     </td>
-                    <td className="skoop-table-cell"><StatusChip status={c.status.toLowerCase().replace(" ", "-")} label={c.status} /></td>
+                    <td className="skoop-table-cell"><StatusChip status={c.status.toLowerCase().replace(" ", "-")} label={fullStatus} /></td>
                   </tr>
                 );
               })}
