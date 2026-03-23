@@ -50,7 +50,7 @@ export default function PlaybackMix() {
                 <MixBar owned={simOwned} direct={v.actualDirect} programmatic={Math.max(0, simProg)} height="h-3" />
                 <div className="grid grid-cols-3 gap-4 mt-4">
                   <div className="text-center">
-                    <p className="text-xs text-muted-foreground mb-1">Owned</p>
+                    <p className="text-xs text-muted-foreground mb-1">Marketing</p>
                     <p className="text-lg font-semibold tabular-nums">{simOwned}%</p>
                     <p className="text-[10px] text-muted-foreground">Target: {v.targetOwned}%</p>
                     <p className={`text-[10px] font-medium tabular-nums ${driftOwned > 0 ? "text-skoop-blue" : driftOwned < 0 ? "text-skoop-risk" : "text-muted-foreground"}`}>
