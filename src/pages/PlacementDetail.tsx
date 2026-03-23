@@ -314,11 +314,11 @@ export default function PlacementDetail() {
             <div className="space-y-4">
               <div className="skoop-card p-5 space-y-3">
                 <p className="skoop-section-header">Capacity Usage</p>
-                <p className="text-[11px] text-muted-foreground">Eligible playback opportunities based on loop duration</p>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} opp/day</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} opp/day</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} opp/day</span></div>
+                 <p className="text-[11px] text-muted-foreground">Eligible playback opportunities based on selected screens and playback model</p>
+                 <div className="space-y-2">
+                   <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} playback opportunities/day</span></div>
+                   <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} playback opportunities/day</span></div>
+                   <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} playback opportunities/day</span></div>
                 </div>
                 <div className="h-2 rounded-full bg-secondary overflow-hidden mt-2">
                   <div className="h-full bg-primary rounded-full" style={{ width: `${capacity.total > 0 ? Math.round((capacity.booked / capacity.total) * 100) : 0}%` }} />
