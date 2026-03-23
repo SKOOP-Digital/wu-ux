@@ -18,14 +18,14 @@ const campaigns = [
 
 const statusFilters = ["All", "Live", "Scheduled", "Draft", "Under-delivering", "Completed", "At Risk"];
 
-function pacingLabel(delivered: number, target: number, status: string) {
-  if (status === "Scheduled") return "Not started";
-  if (status === "Completed") return "Complete";
+function statusLabel(delivered: number, target: number, status: string) {
+  if (status === "Scheduled") return "Scheduled";
+  if (status === "Completed") return "Completed";
+  if (status === "Under-delivering") return "Under-delivering";
   const pct = target > 0 ? delivered / target : 0;
-  if (pct >= 0.95) return "Complete";
-  if (pct >= 0.6) return "On Track";
-  if (pct >= 0.4) return "Behind Pace";
-  return "Behind Pace";
+  if (pct >= 0.95) return "Live · Complete";
+  if (pct >= 0.6) return "Live · On Track";
+  return "Live · Behind Pace";
 }
 
 export default function Campaigns() {
