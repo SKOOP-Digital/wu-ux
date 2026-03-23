@@ -152,7 +152,7 @@ export default function PlacementDetail() {
       direct,
       prog: Math.max(0, 100 - owned - direct),
       dayparts: dayparts.filter(d => d.active).map(d => d.name).join(", ") || "All Day",
-      activeHours: totalActiveHours,
+      activeHours: activeHours,
       status: "Healthy",
       screenCount: screenIds.length,
       screenIds: [...screenIds],
