@@ -702,11 +702,6 @@ export default function PlacementDetail() {
                         </div>
                       </CollapsibleContent>
                     </Collapsible>
-                          </div>
-                          <Switch checked={noFillFallback} onCheckedChange={setNoFillFallback} />
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </section>
               </div>
