@@ -1,4 +1,4 @@
-import { MapPin, ArrowLeft, Monitor, ExternalLink, AlertTriangle, Info, ChevronRight, Pencil, Plus, CheckCircle2 } from "lucide-react";
+import { MapPin, ArrowLeft, Monitor, ExternalLink, AlertTriangle, Info, ChevronRight, Pencil, Plus, CheckCircle2, Search } from "lucide-react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
@@ -9,12 +9,14 @@ import ScreenSelectorModal from "@/components/shared/ScreenSelectorModal";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb";
 import { allScreens } from "@/data/screens";
 import { allPlacements, calcCapacity } from "@/data/placements";
 import { toast } from "@/hooks/use-toast";
 
-const SECTIONS_NEW = ["Screens", "Schedule", "Mix"];
 const SECTIONS_EXISTING = ["Screens", "Schedule", "Mix", "Active Campaigns"];
 const PIE_COLORS = ["hsl(215,16%,47%)", "hsl(210,100%,50%)", "hsl(262,80%,60%)"];
 
@@ -56,6 +58,9 @@ export default function PlacementDetail() {
   const [screenIds, setScreenIds] = useState<string[]>(placement.screenIds);
   const [placementName, setPlacementName] = useState(isNew ? "" : placement.name);
   const [showScreenModal, setShowScreenModal] = useState(false);
+  const [screenSearch, setScreenSearch] = useState("");
+  const [screenVenueFilter, setScreenVenueFilter] = useState("All");
+  const [playbackModel, setPlaybackModel] = useState<"Loop" | "Ad-break">(placement.model as "Loop" | "Ad-break");
 
   const [catSeparation, setCatSeparation] = useState(true);
   const [catSeparationGap, setCatSeparationGap] = useState(2);
@@ -74,7 +79,7 @@ export default function PlacementDetail() {
 
   const addDaypart = () => {
     const dpId = `dp-${Date.now()}`;
-    setDayparts(prev => [...prev, { id: dpId, name: "New Daypart", start: "09:00", end: "17:00", active: true }]);
+    setDayparts(prev => [...prev, { id: dpId, name: "New Window", start: "09:00", end: "17:00", active: true }]);
   };
 
   const removeDaypart = (dpId: string) => {
@@ -106,7 +111,7 @@ export default function PlacementDetail() {
 
   const handlePublish = () => {
     if (!canPublish) {
-      toast({ title: "Cannot publish", description: "Assign screens, set a name, and configure at least one active daypart.", variant: "destructive" });
+      toast({ title: "Cannot publish", description: "Assign screens, set a name, and configure at least one active time window.", variant: "destructive" });
       return;
     }
     const newId = `pl-${Date.now()}`;
@@ -116,7 +121,7 @@ export default function PlacementDetail() {
       name: placementName,
       scope: screenIds.length === 1 ? "Screen" : "Group",
       venue: venues[0] || "",
-      model: "Loop",
+      model: playbackModel,
       owned,
       direct,
       prog: Math.max(0, 100 - owned - direct),
@@ -203,6 +208,530 @@ export default function PlacementDetail() {
 
   const activeCampaigns = isDraft ? [] : mockCampaigns;
 
+  // Inline screen picker data
+  const screenVenues = useMemo(() => {
+    const set = new Set(allScreens.map(s => s.venue));
+    return ["All", ...Array.from(set)];
+  }, []);
+
+  const filteredScreens = useMemo(() => {
+    return allScreens.filter(s => {
+      if (screenSearch && !s.name.toLowerCase().includes(screenSearch.toLowerCase()) && !s.venue.toLowerCase().includes(screenSearch.toLowerCase())) return false;
+      if (screenVenueFilter !== "All" && s.venue !== screenVenueFilter) return false;
+      return true;
+    });
+  }, [screenSearch, screenVenueFilter]);
+
+  const toggleScreen = (sid: string) => {
+    setScreenIds(prev => prev.includes(sid) ? prev.filter(x => x !== sid) : [...prev, sid]);
+  };
+
+  const selectAllFiltered = () => {
+    const ids = filteredScreens.map(s => s.id);
+    const allSelected = ids.every(id => screenIds.includes(id));
+    if (allSelected) {
+      setScreenIds(prev => prev.filter(id => !ids.includes(id)));
+    } else {
+      setScreenIds(prev => [...new Set([...prev, ...ids])]);
+    }
+  };
+
+  const hasScreens = screenIds.length > 0;
+
+  // ===== NEW PLACEMENT: single scrolling page =====
+  if (isNew) {
+    return (
+      <TooltipProvider>
+        <div>
+          <div className="px-8 pt-4 pb-0">
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild><Link to="/placements">Network Rules</Link></BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>New Rule</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+
+          <PageHeader
+            title="New Rule"
+            subtitle="Define how ads run on selected screens"
+            icon={<MapPin size={20} />}
+            actions={
+              <div className="flex items-center gap-2">
+                <span className={`inline-flex items-center px-2.5 py-1 rounded text-[11px] font-medium ${stateColor}`}>
+                  {stateLabel}
+                </span>
+                <Button variant="outline" size="sm" onClick={() => navigate("/placements")}><ArrowLeft size={14} className="mr-1" /> Back</Button>
+                <Button variant="outline" size="sm" onClick={handleSaveDraft}>Save Draft</Button>
+                <Button size="sm" onClick={handlePublish} disabled={!canPublish}>Publish Rule</Button>
+              </div>
+            }
+          />
+
+          <div className="p-8">
+            <div className="grid grid-cols-3 gap-8">
+              {/* Main content — single scroll */}
+              <div className="col-span-2 space-y-10">
+
+                {/* ===== SECTION 1: Rule Name + Screens ===== */}
+                <section>
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary text-xs font-semibold">1</span>
+                    <div>
+                      <h2 className="text-sm font-semibold text-foreground">Name & Screens</h2>
+                      <p className="text-xs text-muted-foreground">Give your rule a name and choose which screens it applies to</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-5">
+                    {/* Rule Name */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-foreground">Rule Name</label>
+                      <input
+                        type="text"
+                        value={placementName}
+                        onChange={(e) => setPlacementName(e.target.value)}
+                        placeholder="e.g. Lobby Screens — Main Loop"
+                        className="w-full text-sm border border-border rounded-md px-3 py-2.5 bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                      />
+                      {placementName.trim() === "" && (
+                        <p className="text-xs text-amber-600 flex items-center gap-1"><AlertTriangle size={12} /> Required to publish</p>
+                      )}
+                    </div>
+
+                    {/* Inline Screen Picker */}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <label className="text-sm font-medium text-foreground">Screens</label>
+                          <p className="text-xs text-muted-foreground mt-0.5">Select which screens this rule applies to</p>
+                        </div>
+                        {screenIds.length > 0 && (
+                          <span className="text-xs text-muted-foreground tabular-nums">
+                            {screenIds.length} selected · {capacity.total.toLocaleString()} playback opportunities/day
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <div className="relative flex-1">
+                          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                          <Input
+                            placeholder="Search screens or locations…"
+                            value={screenSearch}
+                            onChange={(e) => setScreenSearch(e.target.value)}
+                            className="pl-9 h-9 text-sm"
+                          />
+                        </div>
+                        <div className="flex gap-1">
+                          {screenVenues.map(v => (
+                            <button
+                              key={v}
+                              onClick={() => setScreenVenueFilter(v)}
+                              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
+                                screenVenueFilter === v ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:bg-accent"
+                              }`}
+                            >
+                              {v}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 px-1">
+                        <button onClick={selectAllFiltered} className="text-xs text-primary hover:underline font-medium">
+                          {filteredScreens.every(s => screenIds.includes(s.id)) && filteredScreens.length > 0 ? "Deselect all" : "Select all"}
+                        </button>
+                        {screenIds.length > 0 && (
+                          <button onClick={() => setScreenIds([])} className="text-xs text-muted-foreground hover:text-destructive hover:underline font-medium">
+                            Clear selection
+                          </button>
+                        )}
+                      </div>
+
+                      {filteredScreens.some(s => screenIds.includes(s.id) && s.status === "Offline") && (
+                        <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-amber-50 border border-amber-200 text-xs text-amber-700">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+                          Offline screens reduce effective live capacity
+                        </div>
+                      )}
+
+                      <div className="border border-border rounded-lg overflow-hidden max-h-[320px] overflow-y-auto">
+                        {filteredScreens.map(s => {
+                          const isSelected = screenIds.includes(s.id);
+                          const dailyCap = s.loopsPerHour * 16;
+                          return (
+                            <label
+                              key={s.id}
+                              className={`flex items-center gap-3 py-2.5 px-3 cursor-pointer transition-colors border-b border-border last:border-0 ${
+                                isSelected ? "bg-primary/5" : "hover:bg-secondary/50"
+                              }`}
+                            >
+                              <Checkbox checked={isSelected} onCheckedChange={() => toggleScreen(s.id)} />
+                              <Monitor size={14} className="text-muted-foreground shrink-0" />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium truncate">{s.name}</p>
+                                <p className="text-xs text-muted-foreground">{s.venue} · {s.resolution} · {s.orientation}</p>
+                              </div>
+                              <span className="text-xs text-muted-foreground tabular-nums">{dailyCap.toLocaleString()} opp/day</span>
+                              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${
+                                s.status === "Online" ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"
+                              }`}>
+                                <span className={`w-1 h-1 rounded-full ${s.status === "Online" ? "bg-emerald-500" : "bg-red-400"}`} />
+                                {s.status}
+                              </span>
+                            </label>
+                          );
+                        })}
+                        {filteredScreens.length === 0 && (
+                          <div className="text-center py-8 text-sm text-muted-foreground">No screens match your search</div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <div className="border-t border-border" />
+
+                {/* ===== SECTION 2: How Ads Play + Active Hours ===== */}
+                <section>
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary text-xs font-semibold">2</span>
+                    <div>
+                      <h2 className="text-sm font-semibold text-foreground">Schedule</h2>
+                      <p className="text-xs text-muted-foreground">Choose how ads play and when they're active</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-5">
+                    {/* How Ads Play toggle */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-foreground">How Ads Play</label>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => setPlaybackModel("Loop")}
+                          className={`flex-1 px-4 py-3 rounded-lg border text-sm font-medium text-left transition-colors ${
+                            playbackModel === "Loop"
+                              ? "border-primary bg-primary/5 text-primary"
+                              : "border-border bg-background text-muted-foreground hover:bg-secondary/50"
+                          }`}
+                        >
+                          <p className="font-medium">{playbackModel === "Loop" ? "✓ " : ""}Continuous Loop</p>
+                          <p className="text-xs mt-0.5 font-normal opacity-70">Content plays in a repeating loop</p>
+                        </button>
+                        <button
+                          onClick={() => setPlaybackModel("Ad-break")}
+                          className={`flex-1 px-4 py-3 rounded-lg border text-sm font-medium text-left transition-colors ${
+                            playbackModel === "Ad-break"
+                              ? "border-primary bg-primary/5 text-primary"
+                              : "border-border bg-background text-muted-foreground hover:bg-secondary/50"
+                          }`}
+                        >
+                          <p className="font-medium">{playbackModel === "Ad-break" ? "✓ " : ""}Ad Breaks</p>
+                          <p className="text-xs mt-0.5 font-normal opacity-70">Ads play in scheduled break windows</p>
+                        </button>
+                      </div>
+                    </div>
+
+                    {capacityFormula && (
+                      <div className="flex items-start gap-3 bg-primary/5 border border-primary/10 rounded-lg px-4 py-3">
+                        <Info size={14} className="text-primary mt-0.5 shrink-0" />
+                        <div>
+                          <p className="text-xs font-medium text-foreground">How capacity is calculated</p>
+                          <p className="text-[11px] text-muted-foreground mt-0.5 tabular-nums">{capacityFormula}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Active Hours */}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <label className="text-sm font-medium text-foreground">Active Hours</label>
+                          <p className="text-xs text-muted-foreground mt-0.5">Campaigns can only run during these time windows</p>
+                        </div>
+                        <Button variant="outline" size="sm" onClick={addDaypart}>
+                          <Plus size={13} className="mr-1" /> Add Time Window
+                        </Button>
+                      </div>
+
+                      {/* Visual timeline */}
+                      <div className="flex h-8 rounded-md overflow-hidden border border-border">
+                        {dayparts.map((dp) => {
+                          const [sh] = dp.start.split(":").map(Number);
+                          const [eh] = dp.end.split(":").map(Number);
+                          let hours = eh - sh;
+                          if (hours <= 0) hours += 24;
+                          return (
+                            <div
+                              key={dp.id}
+                              className={`flex items-center justify-center text-[10px] font-medium border-r border-border last:border-0 ${dp.active ? "bg-primary/10 text-primary" : "bg-secondary text-muted-foreground"}`}
+                              style={{ flex: hours }}
+                            >
+                              {formatTime(dp.start).replace(":00", "").toLowerCase()}
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className="flex justify-between text-[10px] text-muted-foreground">
+                        <span>{dayparts.length > 0 ? formatTime(dayparts[0].start) : ""}</span>
+                        <span>{dayparts.length > 0 ? formatTime(dayparts[dayparts.length - 1].end) : ""}</span>
+                      </div>
+
+                      <div className="space-y-2">
+                        {dayparts.map((dp) => (
+                          <div key={dp.id} className="flex items-center justify-between py-3 px-4 rounded-md bg-secondary/50">
+                            <div className="flex items-center gap-3 flex-1 min-w-0">
+                              <Switch
+                                checked={dp.active}
+                                onCheckedChange={(v) => updateDaypart(dp.id, "active", v)}
+                              />
+                              <input
+                                type="text"
+                                value={dp.name}
+                                onChange={(e) => updateDaypart(dp.id, "name", e.target.value)}
+                                className="text-sm font-medium bg-transparent border-b border-transparent hover:border-border focus:border-primary focus:outline-none w-28"
+                              />
+                              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                <input
+                                  type="time"
+                                  value={dp.start}
+                                  onChange={(e) => updateDaypart(dp.id, "start", e.target.value)}
+                                  className="bg-background border border-border rounded px-1.5 py-1 text-xs w-[90px]"
+                                />
+                                <span>–</span>
+                                <input
+                                  type="time"
+                                  value={dp.end}
+                                  onChange={(e) => updateDaypart(dp.id, "end", e.target.value)}
+                                  className="bg-background border border-border rounded px-1.5 py-1 text-xs w-[90px]"
+                                />
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <StatusChip status={dp.active ? "active" : "paused"} label={dp.active ? "Active" : "Inactive"} />
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
+                                onClick={() => removeDaypart(dp.id)}
+                              >
+                                ×
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="flex items-start gap-2 bg-primary/5 border border-primary/10 rounded-md px-3 py-2">
+                        <Info size={13} className="text-primary mt-0.5 shrink-0" />
+                        <p className="text-[11px] text-muted-foreground">Currently <span className="font-medium text-foreground">{Math.round(activeHours)} active hours/day</span> across {dayparts.filter(d => d.active).length} time windows.</p>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <div className="border-t border-border" />
+
+                {/* ===== SECTION 3: Content Split + Serving Rules ===== */}
+                <section>
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary text-xs font-semibold">3</span>
+                    <div>
+                      <h2 className="text-sm font-semibold text-foreground">Content Split & Rules</h2>
+                      <p className="text-xs text-muted-foreground">Set the ratio between content types and configure serving behaviour</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    {/* Content Split */}
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2">
+                        <label className="text-sm font-medium text-foreground">Content Split</label>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info size={14} className="text-muted-foreground cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent side="right" className="max-w-[240px]">
+                            <p className="text-xs leading-relaxed">
+                              <strong>Owned</strong> — Your own brand content<br />
+                              <strong>Direct</strong> — Booked campaigns<br />
+                              <strong>Programmatic</strong> — Automated ads
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+
+                      <div className="space-y-4">
+                        <div>
+                          <div className="flex justify-between text-sm mb-1">
+                            <span>Owned</span>
+                            <span className="tabular-nums font-medium">{owned}%{hasScreens ? ` · ${ownedCap.toLocaleString()} playback opportunities/day` : ""}</span>
+                          </div>
+                          <Slider value={[owned]} onValueChange={([v]) => { if (v + direct <= 100) setOwned(v); }} max={100} step={5} className="[&_[role=slider]]:bg-skoop-slate" />
+                        </div>
+                        <div>
+                          <div className="flex justify-between text-sm mb-1">
+                            <span>Direct</span>
+                            <span className="tabular-nums font-medium">{direct}%{hasScreens ? ` · ${directCap.toLocaleString()} playback opportunities/day` : ""}</span>
+                          </div>
+                          <Slider value={[direct]} onValueChange={([v]) => { if (owned + v <= 100) setDirect(v); }} max={100} step={5} className="[&_[role=slider]]:bg-skoop-blue" />
+                        </div>
+                        <div>
+                          <div className="flex justify-between text-sm mb-1">
+                            <span>Programmatic</span>
+                            <span className="tabular-nums font-medium">{Math.max(0, prog)}%{hasScreens ? ` · ${progCap.toLocaleString()} playback opportunities/day` : ""}</span>
+                          </div>
+                          <div className="h-2 rounded-full bg-secondary overflow-hidden">
+                            <div className="h-full bg-skoop-purple rounded-full transition-all" style={{ width: `${Math.max(0, prog)}%` }} />
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-1">Auto-calculated from remaining allocation</p>
+                        </div>
+                      </div>
+
+                      <MixBar owned={owned} direct={direct} programmatic={Math.max(0, prog)} height="h-3" showLabels />
+                    </div>
+
+                    {/* Serving Rules — clean toggle rows */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-foreground">Serving Rules</label>
+
+                      <div className="rounded-lg border border-border divide-y divide-border overflow-hidden">
+                        <div className="flex items-center justify-between px-4 py-3.5">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-foreground">Category Separation</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">Prevent competing brands from appearing in the same loop</p>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            {catSeparation && (
+                              <select
+                                value={catSeparationGap}
+                                onChange={(e) => setCatSeparationGap(Number(e.target.value))}
+                                className="text-xs border border-border rounded px-2 py-1 bg-background"
+                              >
+                                {[1, 2, 3, 4, 5].map((n) => (
+                                  <option key={n} value={n}>{n} slot{n > 1 ? "s" : ""} apart</option>
+                                ))}
+                              </select>
+                            )}
+                            <Switch checked={catSeparation} onCheckedChange={setCatSeparation} />
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between px-4 py-3.5">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-foreground">Back-to-back Prevention</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">Same creative cannot play consecutively</p>
+                          </div>
+                          <Switch checked={backToBack} onCheckedChange={setBackToBack} />
+                        </div>
+
+                        <div className="flex items-center justify-between px-4 py-3.5">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-foreground">Frequency Cap</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">Maximum plays per unique creative per hour</p>
+                          </div>
+                          <select
+                            value={freqCap}
+                            onChange={(e) => setFreqCap(Number(e.target.value))}
+                            className="text-xs border border-border rounded px-2 py-1 bg-background"
+                          >
+                            {[1, 2, 3, 4, 5, 6, 8, 10].map((n) => (
+                              <option key={n} value={n}>{n} plays/hour</option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div className="flex items-center justify-between px-4 py-3.5">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-foreground">If No Ad Available, Show:</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">Fall back to owned content when programmatic has no fill</p>
+                          </div>
+                          <Switch checked={noFillFallback} onCheckedChange={setNoFillFallback} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+              {/* ===== RIGHT PANEL ===== */}
+              <div className="space-y-4">
+                {/* Publish Readiness — always visible */}
+                <div className="skoop-card p-5 space-y-3">
+                  <p className="skoop-section-header">Publish Readiness</p>
+                  <p className="text-[11px] text-muted-foreground">Complete these steps to publish this rule</p>
+                  <div className="space-y-2.5 mt-1">
+                    {[
+                      { label: "Rule name", done: placementName.trim().length > 0 },
+                      { label: "Screens assigned", done: screenIds.length > 0 },
+                      { label: "Active hours configured", done: dayparts.some(d => d.active) },
+                      { label: "Content split set", done: true },
+                    ].map((item) => (
+                      <div key={item.label} className="flex items-center gap-2 text-sm">
+                        <CheckCircle2 size={14} className={item.done ? "text-emerald-500" : "text-muted-foreground/40"} />
+                        <span className={item.done ? "text-foreground" : "text-muted-foreground"}>{item.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="pt-2 border-t border-border mt-3">
+                    <p className="text-xs text-muted-foreground">Status: <span className="font-medium text-foreground">{canPublish ? "Ready to publish" : "Not ready"}</span></p>
+                  </div>
+                </div>
+
+                {/* Draft Summary — only when screens assigned */}
+                {hasScreens && (
+                  <div className="skoop-card p-5 space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <p className="skoop-section-header">Draft Summary</p>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Screens</span><span className="font-medium tabular-nums">{screenIds.length}</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Capacity</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} opp/day</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Content Split</span><span className="font-medium tabular-nums">{owned}/{direct}/{Math.max(0, prog)}</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Active Hours</span><span className="font-medium tabular-nums">{dayparts.filter(d => d.active).length} windows</span></div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Capacity Usage — only when screens assigned */}
+                {hasScreens && (
+                  <div className="skoop-card p-5 space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <p className="skoop-section-header">Capacity Usage</p>
+                    <p className="text-[11px] text-muted-foreground">Eligible playback opportunities based on selected screens and playback model</p>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} opp/day</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} opp/day</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} opp/day</span></div>
+                    </div>
+                    <div className="h-2 rounded-full bg-secondary overflow-hidden mt-2">
+                      <div className="h-full bg-primary rounded-full" style={{ width: `${capacity.total > 0 ? Math.round((capacity.booked / capacity.total) * 100) : 0}%` }} />
+                    </div>
+                    <p className="text-xs text-muted-foreground tabular-nums">{capacity.total > 0 ? Math.round((capacity.booked / capacity.total) * 100) : 0}% utilised</p>
+                  </div>
+                )}
+
+                {/* Capacity by Type — only when screens assigned */}
+                {hasScreens && (
+                  <div className="skoop-card p-5 space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <p className="skoop-section-header">Capacity by Type</p>
+                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Owned ({owned}%)</span><span className="tabular-nums font-medium">{ownedCap.toLocaleString()} opp/day</span></div>
+                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Direct ({direct}%)</span><span className="tabular-nums font-medium">{directCap.toLocaleString()} opp/day</span></div>
+                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Programmatic ({Math.max(0, prog)}%)</span><span className="tabular-nums font-medium">{progCap.toLocaleString()} opp/day</span></div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </TooltipProvider>
+    );
+  }
+
+  // ===== EXISTING PLACEMENT: keep tabs =====
   return (
     <div>
       <div className="px-8 pt-4 pb-0">
@@ -213,15 +742,15 @@ export default function PlacementDetail() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>{isNew ? "New Rule" : placement.name}</BreadcrumbPage>
+              <BreadcrumbPage>{placement.name}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </div>
 
       <PageHeader
-        title={isNew ? "New Rule" : placement.name}
-        subtitle={isNew ? "Create a new network rule · Define how ads run on selected screens" : "Network Rule · Defines how ads run on selected screens"}
+        title={placement.name}
+        subtitle="Network Rule · Defines how ads run on selected screens"
         icon={<MapPin size={20} />}
         actions={
           <div className="flex items-center gap-2">
@@ -243,7 +772,7 @@ export default function PlacementDetail() {
 
       <div className="border-b border-border px-8">
         <div className="flex gap-0">
-          {(isNew ? SECTIONS_NEW : SECTIONS_EXISTING).map((s) => (
+          {SECTIONS_EXISTING.map((s) => (
             <button
               key={s}
               onClick={() => setSection(s)}
@@ -258,26 +787,10 @@ export default function PlacementDetail() {
       </div>
 
       <div className="p-8">
-        {/* ======= WHERE IT RUNS ======= */}
+        {/* ======= SCREENS ======= */}
         {section === "Screens" && (
           <div className="grid grid-cols-3 gap-6">
             <div className="col-span-2 space-y-6">
-              {isNew && (
-                <div className="skoop-card p-5 space-y-3">
-                  <p className="skoop-section-header">Rule Name</p>
-                  <input
-                    type="text"
-                    value={placementName}
-                    onChange={(e) => setPlacementName(e.target.value)}
-                    placeholder="e.g. Lobby Screens — Main Loop"
-                    className="w-full text-sm border border-border rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                  />
-                  {placementName.trim() === "" && (
-                    <p className="text-xs text-amber-600 flex items-center gap-1"><AlertTriangle size={12} /> A rule name is required to publish</p>
-                  )}
-                </div>
-              )}
-
               <div className="skoop-card p-5 space-y-4">
                 <p className="skoop-section-header">Applies To</p>
                 <p className="text-xs text-muted-foreground">This network rule is linked to screens at specific venues. All screens below will display content from campaigns assigned to this rule.</p>
@@ -341,7 +854,7 @@ export default function PlacementDetail() {
             </div>
 
             <div className="space-y-4">
-              {isNew ? (
+              {isDraft ? (
                 <>
                   <div className="skoop-card p-5 space-y-3">
                     <p className="skoop-section-header">Publish Readiness</p>
@@ -369,7 +882,7 @@ export default function PlacementDetail() {
                       <div className="flex justify-between text-sm"><span className="text-muted-foreground">Screens</span><span className="font-medium tabular-nums">{screenIds.length}</span></div>
                       <div className="flex justify-between text-sm"><span className="text-muted-foreground">Capacity</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} opp/day</span></div>
                       <div className="flex justify-between text-sm"><span className="text-muted-foreground">Content Split</span><span className="font-medium tabular-nums">{owned}/{direct}/{Math.max(0, prog)}</span></div>
-                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Active Dayparts</span><span className="font-medium tabular-nums">{dayparts.filter(d => d.active).length}</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Active Hours</span><span className="font-medium tabular-nums">{dayparts.filter(d => d.active).length}</span></div>
                     </div>
                   </div>
                 </>
@@ -383,11 +896,11 @@ export default function PlacementDetail() {
               )}
               <div className="skoop-card p-5 space-y-3">
                 <p className="skoop-section-header">Capacity Usage</p>
-                 <p className="text-[11px] text-muted-foreground">Eligible playback opportunities based on selected screens and playback model</p>
-                 <div className="space-y-2">
-                   <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} playback opportunities/day</span></div>
-                   <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} playback opportunities/day</span></div>
-                   <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} playback opportunities/day</span></div>
+                <p className="text-[11px] text-muted-foreground">Eligible playback opportunities based on selected screens and playback model</p>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} playback opportunities/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} playback opportunities/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} playback opportunities/day</span></div>
                 </div>
                 <div className="h-2 rounded-full bg-secondary overflow-hidden mt-2">
                   <div className="h-full bg-primary rounded-full" style={{ width: `${capacity.total > 0 ? Math.round((capacity.booked / capacity.total) * 100) : 0}%` }} />
@@ -398,7 +911,7 @@ export default function PlacementDetail() {
           </div>
         )}
 
-        {/* ======= HOW IT RUNS ======= */}
+        {/* ======= SCHEDULE ======= */}
         {section === "Schedule" && (
           <div className="grid grid-cols-3 gap-6">
             <div className="col-span-2 space-y-6">
@@ -427,7 +940,7 @@ export default function PlacementDetail() {
                   <p className="skoop-section-header">Active Hours</p>
                   {isDraft && (
                     <Button variant="outline" size="sm" onClick={addDaypart}>
-                      <Plus size={13} className="mr-1" /> Add Daypart
+                      <Plus size={13} className="mr-1" /> Add Time Window
                     </Button>
                   )}
                 </div>
@@ -518,7 +1031,7 @@ export default function PlacementDetail() {
                 {isDraft && (
                   <div className="flex items-start gap-2 mt-3 bg-primary/5 border border-primary/10 rounded-md px-3 py-2">
                     <Info size={13} className="text-primary mt-0.5 shrink-0" />
-                    <p className="text-[11px] text-muted-foreground">Active hours affect capacity calculations. Currently <span className="font-medium text-foreground">{Math.round(activeHours)} active hours/day</span> across {dayparts.filter(d => d.active).length} dayparts.</p>
+                    <p className="text-[11px] text-muted-foreground">Active hours affect capacity calculations. Currently <span className="font-medium text-foreground">{Math.round(activeHours)} active hours/day</span> across {dayparts.filter(d => d.active).length} time windows.</p>
                   </div>
                 )}
               </div>
@@ -527,11 +1040,11 @@ export default function PlacementDetail() {
             <div className="space-y-4">
               <div className="skoop-card p-5 space-y-3">
                 <p className="skoop-section-header">Capacity Usage</p>
-                 <p className="text-[11px] text-muted-foreground">Eligible playback opportunities based on selected screens and playback model</p>
-                 <div className="space-y-2">
-                   <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} playback opportunities/day</span></div>
-                   <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} playback opportunities/day</span></div>
-                   <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} playback opportunities/day</span></div>
+                <p className="text-[11px] text-muted-foreground">Eligible playback opportunities based on selected screens and playback model</p>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} playback opportunities/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Booked</span><span className="font-medium tabular-nums">{capacity.booked.toLocaleString()} playback opportunities/day</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacity.available.toLocaleString()} playback opportunities/day</span></div>
                 </div>
                 <div className="h-2 rounded-full bg-secondary overflow-hidden mt-2">
                   <div className="h-full bg-primary rounded-full" style={{ width: `${capacity.total > 0 ? Math.round((capacity.booked / capacity.total) * 100) : 0}%` }} />
@@ -540,15 +1053,15 @@ export default function PlacementDetail() {
               </div>
               <div className="skoop-card p-5 space-y-2">
                 <p className="skoop-section-header">Capacity by Type</p>
-                 <div className="flex justify-between text-sm"><span className="text-muted-foreground">Owned ({owned}%)</span><span className="tabular-nums font-medium">{ownedCap.toLocaleString()} playback opportunities/day</span></div>
-                 <div className="flex justify-between text-sm"><span className="text-muted-foreground">Direct ({direct}%)</span><span className="tabular-nums font-medium">{directCap.toLocaleString()} playback opportunities/day</span></div>
-                 <div className="flex justify-between text-sm"><span className="text-muted-foreground">Programmatic ({Math.max(0, prog)}%)</span><span className="tabular-nums font-medium">{progCap.toLocaleString()} playback opportunities/day</span></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Owned ({owned}%)</span><span className="tabular-nums font-medium">{ownedCap.toLocaleString()} playback opportunities/day</span></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Direct ({direct}%)</span><span className="tabular-nums font-medium">{directCap.toLocaleString()} playback opportunities/day</span></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Programmatic ({Math.max(0, prog)}%)</span><span className="tabular-nums font-medium">{progCap.toLocaleString()} playback opportunities/day</span></div>
               </div>
             </div>
           </div>
         )}
 
-        {/* ======= HOW IT IS MONETISED ======= */}
+        {/* ======= MIX ======= */}
         {section === "Mix" && (
           <div className="grid grid-cols-3 gap-6">
             <div className="col-span-2 space-y-6">
@@ -690,7 +1203,7 @@ export default function PlacementDetail() {
 
             <div className="space-y-4">
               <div className="skoop-card p-5">
-                <p className="skoop-section-header mb-4">Mix Allocation</p>
+                <p className="skoop-section-header mb-4">Content Split</p>
                 <ResponsiveContainer width="100%" height={180}>
                   <PieChart>
                     <Pie data={pieData} cx="50%" cy="50%" innerRadius={50} outerRadius={75} paddingAngle={2} dataKey="value">
