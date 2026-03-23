@@ -454,7 +454,7 @@ export default function CampaignCreate() {
     const hasConflict = capacitySummary ? !capacitySummary.fits : false;
     const hasPendingCreatives = true; // mock
 
-    const ready = !hasConflict && campaignName && selectedRules.length > 0;
+    const ready = !hasConflict && campaignName && (selectedRules.length > 0 || selectedTags.length > 0);
 
     return (
       <div className="space-y-4">
