@@ -1,4 +1,4 @@
-import { MapPin, ArrowLeft, Monitor, ExternalLink, AlertTriangle, Info, ChevronRight, Pencil, Plus } from "lucide-react";
+import { MapPin, ArrowLeft, Monitor, ExternalLink, AlertTriangle, Info, ChevronRight, Pencil, Plus, CheckCircle2 } from "lucide-react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
@@ -12,8 +12,10 @@ import { Switch } from "@/components/ui/switch";
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb";
 import { allScreens } from "@/data/screens";
 import { allPlacements, calcCapacity } from "@/data/placements";
+import { toast } from "@/hooks/use-toast";
 
-const sections = ["Where it runs", "How it runs", "How it is monetised", "Active Campaigns"];
+const SECTIONS_NEW = ["Where it runs", "How it runs", "How it is monetised"];
+const SECTIONS_EXISTING = ["Where it runs", "How it runs", "How it is monetised", "Active Campaigns"];
 const PIE_COLORS = ["hsl(215,16%,47%)", "hsl(210,100%,50%)", "hsl(262,80%,60%)"];
 
 // Mock campaigns for existing placements
@@ -54,6 +56,7 @@ export default function PlacementDetail() {
   const [owned, setOwned] = useState(placement.owned);
   const [direct, setDirect] = useState(placement.direct);
   const [screenIds, setScreenIds] = useState<string[]>(placement.screenIds);
+  const [placementName, setPlacementName] = useState(isNew ? "" : placement.name);
   const [showScreenModal, setShowScreenModal] = useState(false);
 
   // Editable rules state
@@ -102,6 +105,21 @@ export default function PlacementDetail() {
       return sum + hours;
     }, 0);
   }, [dayparts]);
+  const canPublish = screenIds.length > 0 && placementName.trim().length > 0 && dayparts.some(d => d.active);
+
+  const handlePublish = () => {
+    if (!canPublish) {
+      toast({ title: "Cannot publish", description: "Assign screens, set a name, and configure at least one active daypart.", variant: "destructive" });
+      return;
+    }
+    const newId = `pl-${Date.now()}`;
+    toast({ title: "Ad Placement published successfully", description: `${placementName} is now live.` });
+    navigate(`/placements/${newId}`);
+  };
+
+  const handleSaveDraft = () => {
+    toast({ title: "Draft saved", description: `${placementName || "Untitled"} saved as draft.` });
+  };
 
   const prog = 100 - owned - direct;
 
@@ -203,8 +221,8 @@ export default function PlacementDetail() {
             <Button variant="outline" size="sm" onClick={() => navigate("/placements")}><ArrowLeft size={14} className="mr-1" /> Back</Button>
             {isDraft ? (
               <>
-                <Button variant="outline" size="sm">Save Draft</Button>
-                <Button size="sm">Publish Placement</Button>
+                <Button variant="outline" size="sm" onClick={handleSaveDraft}>Save Draft</Button>
+                <Button size="sm" onClick={handlePublish} disabled={!canPublish}>Publish Placement</Button>
               </>
             ) : (
               <Button size="sm">Save Changes</Button>
@@ -216,7 +234,7 @@ export default function PlacementDetail() {
       {/* Sections nav */}
       <div className="border-b border-border px-8">
         <div className="flex gap-0">
-          {sections.map((s) => (
+          {(isNew ? SECTIONS_NEW : SECTIONS_EXISTING).map((s) => (
             <button
               key={s}
               onClick={() => setSection(s)}
@@ -235,6 +253,23 @@ export default function PlacementDetail() {
         {section === "Where it runs" && (
           <div className="grid grid-cols-3 gap-6">
             <div className="col-span-2 space-y-6">
+              {/* Placement Name — editable for new */}
+              {isNew && (
+                <div className="skoop-card p-5 space-y-3">
+                  <p className="skoop-section-header">Placement Name</p>
+                  <input
+                    type="text"
+                    value={placementName}
+                    onChange={(e) => setPlacementName(e.target.value)}
+                    placeholder="e.g. Lobby Screens — Main Loop"
+                    className="w-full text-sm border border-border rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                  />
+                  {placementName.trim() === "" && (
+                    <p className="text-xs text-amber-600 flex items-center gap-1"><AlertTriangle size={12} /> A placement name is required to publish</p>
+                  )}
+                </div>
+              )}
+
               <div className="skoop-card p-5 space-y-4">
                 <p className="skoop-section-header">Placement Scope</p>
                 <p className="text-xs text-muted-foreground">This ad placement is linked to screens at specific venues. All screens below will display content from campaigns assigned to this placement.</p>
@@ -298,23 +333,46 @@ export default function PlacementDetail() {
             </div>
 
             <div className="space-y-4">
-              <div className="skoop-card p-5 space-y-3">
-                <p className="skoop-section-header">Summary</p>
-                {isDraft ? (
-                  <>
-                    <div><p className="text-xs text-muted-foreground">Active Campaigns</p><p className="text-lg font-semibold tabular-nums text-muted-foreground">0</p></div>
-                    <div><p className="text-xs text-muted-foreground">Forecasted Fill</p><p className="text-lg font-semibold tabular-nums text-muted-foreground">—</p></div>
-                    <div><p className="text-xs text-muted-foreground">Projected Revenue</p><p className="text-lg font-semibold tabular-nums text-muted-foreground">—</p></div>
-                    <p className="text-[11px] text-muted-foreground">This placement is in draft state. Forecasts will appear once campaigns are assigned.</p>
-                  </>
-                ) : (
-                  <>
-                    <div><p className="text-xs text-muted-foreground">Active Campaigns</p><p className="text-lg font-semibold tabular-nums">{mockCampaigns.length}</p></div>
-                    <div><p className="text-xs text-muted-foreground">Forecasted Fill</p><p className="text-lg font-semibold tabular-nums">88%</p></div>
-                    <div><p className="text-xs text-muted-foreground">Projected Revenue</p><p className="text-lg font-semibold tabular-nums">$4,820</p></div>
-                  </>
-                )}
-              </div>
+              {isNew ? (
+                <>
+                  <div className="skoop-card p-5 space-y-3">
+                    <p className="skoop-section-header">Publish Readiness</p>
+                    <p className="text-[11px] text-muted-foreground">Complete these steps to publish this placement</p>
+                    <div className="space-y-2.5 mt-1">
+                      {[
+                        { label: "Placement name", done: placementName.trim().length > 0 },
+                        { label: "Screens assigned", done: screenIds.length > 0 },
+                        { label: "Dayparts configured", done: dayparts.some(d => d.active) },
+                        { label: "Playback mix set", done: true },
+                      ].map((item) => (
+                        <div key={item.label} className="flex items-center gap-2 text-sm">
+                          <CheckCircle2 size={14} className={item.done ? "text-emerald-500" : "text-muted-foreground/40"} />
+                          <span className={item.done ? "text-foreground" : "text-muted-foreground"}>{item.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="pt-2 border-t border-border mt-3">
+                      <p className="text-xs text-muted-foreground">Status: <span className="font-medium text-foreground">{canPublish ? "Ready to publish" : "Not ready"}</span></p>
+                    </div>
+                  </div>
+                  <div className="skoop-card p-5 space-y-3">
+                    <p className="skoop-section-header">Draft Summary</p>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Screens</span><span className="font-medium tabular-nums">{screenIds.length}</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Capacity</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} opp/day</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Playback Mix</span><span className="font-medium tabular-nums">{owned}/{direct}/{Math.max(0, prog)}</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Active Dayparts</span><span className="font-medium tabular-nums">{dayparts.filter(d => d.active).length}</span></div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="skoop-card p-5 space-y-3">
+                  <p className="skoop-section-header">Summary</p>
+                  <div><p className="text-xs text-muted-foreground">Active Campaigns</p><p className="text-lg font-semibold tabular-nums">{mockCampaigns.length}</p></div>
+                  <div><p className="text-xs text-muted-foreground">Forecasted Fill</p><p className="text-lg font-semibold tabular-nums">88%</p></div>
+                  <div><p className="text-xs text-muted-foreground">Projected Revenue</p><p className="text-lg font-semibold tabular-nums">$4,820</p></div>
+                </div>
+              )}
               <div className="skoop-card p-5 space-y-3">
                 <p className="skoop-section-header">Capacity Usage</p>
                  <p className="text-[11px] text-muted-foreground">Eligible playback opportunities based on selected screens and playback model</p>
