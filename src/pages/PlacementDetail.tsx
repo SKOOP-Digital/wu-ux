@@ -357,50 +357,105 @@ export default function PlacementDetail() {
               )}
 
               <div className="skoop-card p-5">
-                <p className="skoop-section-header mb-1">Daypart Schedule</p>
-                <p className="text-xs text-muted-foreground mb-2">Controls when this placement is active. Only these dayparts are available for campaigns on this placement.</p>
+                <div className="flex items-center justify-between mb-1">
+                  <p className="skoop-section-header">Placement Daypart Availability</p>
+                  {isDraft && (
+                    <Button variant="outline" size="sm" onClick={addDaypart}>
+                      <Plus size={13} className="mr-1" /> Add Daypart
+                    </Button>
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground mb-1">These are the time windows in which campaigns may run on this placement</p>
+                <p className="text-[11px] text-muted-foreground/70 mb-3">Campaigns created later can select all or a subset of these placement dayparts</p>
 
+                {/* Visual timeline */}
                 <div className="mb-4">
                   <div className="flex h-8 rounded-md overflow-hidden border border-border">
-                    {[
-                      { label: "6am", hours: 5, active: true },
-                      { label: "11am", hours: 3, active: true },
-                      { label: "2pm", hours: 3, active: true },
-                      { label: "5pm", hours: 4, active: true },
-                      { label: "9pm", hours: 3, active: false },
-                    ].map((dp, i) => (
-                      <div
-                        key={i}
-                        className={`flex items-center justify-center text-[10px] font-medium border-r border-border last:border-0 ${dp.active ? "bg-primary/10 text-primary" : "bg-secondary text-muted-foreground"}`}
-                        style={{ flex: dp.hours }}
-                      >
-                        {dp.label}
-                      </div>
-                    ))}
+                    {dayparts.map((dp) => {
+                      const [sh] = dp.start.split(":").map(Number);
+                      const [eh] = dp.end.split(":").map(Number);
+                      let hours = eh - sh;
+                      if (hours <= 0) hours += 24;
+                      return (
+                        <div
+                          key={dp.id}
+                          className={`flex items-center justify-center text-[10px] font-medium border-r border-border last:border-0 ${dp.active ? "bg-primary/10 text-primary" : "bg-secondary text-muted-foreground"}`}
+                          style={{ flex: hours }}
+                        >
+                          {formatTime(dp.start).replace(":00", "").toLowerCase()}
+                        </div>
+                      );
+                    })}
                   </div>
                   <div className="flex justify-between mt-1 text-[10px] text-muted-foreground">
-                    <span>6:00 AM</span>
-                    <span>12:00 AM</span>
+                    <span>{dayparts.length > 0 ? formatTime(dayparts[0].start) : ""}</span>
+                    <span>{dayparts.length > 0 ? formatTime(dayparts[dayparts.length - 1].end) : ""}</span>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  {[
-                    { name: "Morning", time: "6:00 AM – 11:00 AM", active: true },
-                    { name: "Midday", time: "11:00 AM – 2:00 PM", active: true },
-                    { name: "Afternoon", time: "2:00 PM – 5:00 PM", active: true },
-                    { name: "Evening", time: "5:00 PM – 9:00 PM", active: true },
-                    { name: "Late Night", time: "9:00 PM – 12:00 AM", active: false },
-                  ].map((dp) => (
-                    <div key={dp.name} className="flex items-center justify-between py-3 px-4 rounded-md bg-secondary/50">
-                      <div>
-                        <p className="text-sm font-medium">{dp.name}</p>
-                        <p className="text-xs text-muted-foreground">{dp.time}</p>
-                      </div>
-                      <StatusChip status={dp.active ? "active" : "paused"} label={dp.active ? "Active" : "Inactive"} />
+                  {dayparts.map((dp) => (
+                    <div key={dp.id} className="flex items-center justify-between py-3 px-4 rounded-md bg-secondary/50">
+                      {isDraft ? (
+                        <>
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <Switch
+                              checked={dp.active}
+                              onCheckedChange={(v) => updateDaypart(dp.id, "active", v)}
+                            />
+                            <input
+                              type="text"
+                              value={dp.name}
+                              onChange={(e) => updateDaypart(dp.id, "name", e.target.value)}
+                              className="text-sm font-medium bg-transparent border-b border-transparent hover:border-border focus:border-primary focus:outline-none w-28"
+                            />
+                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                              <input
+                                type="time"
+                                value={dp.start}
+                                onChange={(e) => updateDaypart(dp.id, "start", e.target.value)}
+                                className="bg-background border border-border rounded px-1.5 py-1 text-xs w-[90px]"
+                              />
+                              <span>–</span>
+                              <input
+                                type="time"
+                                value={dp.end}
+                                onChange={(e) => updateDaypart(dp.id, "end", e.target.value)}
+                                className="bg-background border border-border rounded px-1.5 py-1 text-xs w-[90px]"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <StatusChip status={dp.active ? "active" : "paused"} label={dp.active ? "Active" : "Inactive"} />
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
+                              onClick={() => removeDaypart(dp.id)}
+                            >
+                              ×
+                            </Button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div>
+                            <p className="text-sm font-medium">{dp.name}</p>
+                            <p className="text-xs text-muted-foreground">{formatTime(dp.start)} – {formatTime(dp.end)}</p>
+                          </div>
+                          <StatusChip status={dp.active ? "active" : "paused"} label={dp.active ? "Active" : "Inactive"} />
+                        </>
+                      )}
                     </div>
                   ))}
                 </div>
+
+                {isDraft && (
+                  <div className="flex items-start gap-2 mt-3 bg-primary/5 border border-primary/10 rounded-md px-3 py-2">
+                    <Info size={13} className="text-primary mt-0.5 shrink-0" />
+                    <p className="text-[11px] text-muted-foreground">Active hours affect capacity calculations. Currently <span className="font-medium text-foreground">{Math.round(activeHours)} active hours/day</span> across {dayparts.filter(d => d.active).length} dayparts.</p>
+                  </div>
+                )}
               </div>
             </div>
 
