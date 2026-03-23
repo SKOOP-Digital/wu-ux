@@ -39,13 +39,19 @@ export default function PlacementDetail() {
     name: "Untitled Rule",
     scope: "Screen",
     venue: "",
+    venueType: "",
+    region: "",
     model: "Loop",
     owned: 50,
     direct: 30,
     prog: 20,
     dayparts: "All Day",
+    activeHours: 16,
     status: "Draft",
+    screenCount: 0,
     screenIds: [],
+    defaultPlayDuration: 15,
+    capacityUsagePct: 0,
   };
 
   const placement = isNew ? defaultDraft : (allPlacements.find((p) => p.id === id) ?? allPlacements[0]);
@@ -139,13 +145,19 @@ export default function PlacementDetail() {
       name: placementName,
       scope: screenIds.length === 1 ? "Screen" : "Group",
       venue: venues[0] || "",
+      venueType: "",
+      region: venues.join(", "),
       model: playbackModel,
       owned,
       direct,
       prog: Math.max(0, 100 - owned - direct),
       dayparts: dayparts.filter(d => d.active).map(d => d.name).join(", ") || "All Day",
+      activeHours: activeHours,
       status: "Healthy",
+      screenCount: screenIds.length,
       screenIds: [...screenIds],
+      defaultPlayDuration: defaultPlayDuration === "custom" ? customDuration : parseInt(defaultPlayDuration),
+      capacityUsagePct: 0,
     };
     allPlacements.push(newPlacement);
     toast({ title: "Network rule published successfully", description: `${placementName} is now live.` });
