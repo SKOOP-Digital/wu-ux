@@ -105,6 +105,21 @@ export default function PlacementDetail() {
       return sum + hours;
     }, 0);
   }, [dayparts]);
+  const canPublish = screenIds.length > 0 && placementName.trim().length > 0 && dayparts.some(d => d.active);
+
+  const handlePublish = () => {
+    if (!canPublish) {
+      toast({ title: "Cannot publish", description: "Assign screens, set a name, and configure at least one active daypart.", variant: "destructive" });
+      return;
+    }
+    const newId = `pl-${Date.now()}`;
+    toast({ title: "Ad Placement published successfully", description: `${placementName} is now live.` });
+    navigate(`/placements/${newId}`);
+  };
+
+  const handleSaveDraft = () => {
+    toast({ title: "Draft saved", description: `${placementName || "Untitled"} saved as draft.` });
+  };
 
   const prog = 100 - owned - direct;
 
