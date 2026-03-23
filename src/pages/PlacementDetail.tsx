@@ -13,7 +13,8 @@ import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbS
 import { allScreens } from "@/data/screens";
 import { allPlacements, calcCapacity } from "@/data/placements";
 
-const sections = ["Where it runs", "How it runs", "How it is monetised", "Active Campaigns"];
+const SECTIONS_NEW = ["Where it runs", "How it runs", "How it is monetised"];
+const SECTIONS_EXISTING = ["Where it runs", "How it runs", "How it is monetised", "Active Campaigns"];
 const PIE_COLORS = ["hsl(215,16%,47%)", "hsl(210,100%,50%)", "hsl(262,80%,60%)"];
 
 // Mock campaigns for existing placements
