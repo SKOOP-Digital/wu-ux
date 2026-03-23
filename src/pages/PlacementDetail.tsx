@@ -332,7 +332,7 @@ export default function PlacementDetail() {
                         </div>
                         {screenIds.length > 0 && (
                           <span className="text-xs text-muted-foreground tabular-nums">
-                            {screenIds.length} selected · {capacity.total.toLocaleString()} playback opportunities/day
+                            {screenIds.length} selected · {totalPlaysPerDay.toLocaleString()} plays/day
                           </span>
                         )}
                       </div>
