@@ -113,7 +113,7 @@ export default function Overview() {
 
         <div className="grid grid-cols-2 gap-4">
           <KPICard label="Marketing Content Delivered" value="47.8%" change="Target: 50%" changeType="neutral" />
-          <KPICard label="Backfill Rate" value="6.2%" change="No-fill fallback to owned" changeType="neutral" />
+          <KPICard label="Backfill Rate" value="6.2%" change="No-fill fallback to marketing" changeType="neutral" />
         </div>
 
         {/* Charts */}
