@@ -86,11 +86,11 @@ export default function Placements() {
             <table className="w-full table-fixed">
               <thead>
                 <tr className="skoop-table-header">
-                  <th className="skoop-table-cell text-left" style={{ width: "24%" }}>Network Rule</th>
-                  <th className="skoop-table-cell text-left" style={{ width: "15%" }}>Screens</th>
-                  <th className="skoop-table-cell text-left" style={{ width: "11%" }}>How Ads Play</th>
+                  <th className="skoop-table-cell text-left" style={{ width: "22%" }}>Network Rule</th>
+                  <th className="skoop-table-cell text-left" style={{ width: "14%" }}>Screens</th>
+                  <th className="skoop-table-cell text-left whitespace-nowrap" style={{ width: "13%" }}>How Ads Play</th>
                   <th className="skoop-table-cell text-left" style={{ width: "18%" }}>Content Split</th>
-                  <th className="skoop-table-cell text-left" style={{ width: "10%" }}>Active Hours</th>
+                  <th className="skoop-table-cell text-left" style={{ width: "11%" }}>Active Hours</th>
                   <th className="skoop-table-cell text-left" style={{ width: "10%" }}>Capacity</th>
                   <th className="skoop-table-cell text-left" style={{ width: "12%" }}>Status</th>
                 </tr>
