@@ -235,7 +235,7 @@ export default function CampaignCreate() {
                 </button>
                 {isSelected && sr && (
                   <div className="ml-4 mt-2 mb-3 pl-4 border-l-2 border-primary/20 space-y-2">
-                    <label className="text-[11px] text-muted-foreground">Narrow to specific screens using tags</label>
+                    <label className="text-[11px] text-muted-foreground">Filter to tags</label>
                     <div className="flex flex-wrap gap-1.5">
                       {sr.tags.map((tag) => (
                         <span key={tag} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
@@ -270,7 +270,7 @@ export default function CampaignCreate() {
           <Tag size={16} className="text-muted-foreground" />
           <p className="skoop-section-header">Target by Tags</p>
         </div>
-        <p className="text-xs text-muted-foreground">Select screen tags to target specific screens across your network. Use alongside or instead of Network Rules.</p>
+        <p className="text-xs text-muted-foreground">Add screens by tag across your entire network, outside of the rules selected above.</p>
 
         <div className="flex flex-wrap gap-1.5">
           {selectedTags.map((tag) => (
