@@ -354,12 +354,6 @@ export default function PlacementDetail() {
                         )}
                       </div>
 
-                      {filteredScreens.some(s => screenIds.includes(s.id) && s.status === "Offline") && (
-                        <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-amber-50 border border-amber-200 text-xs text-amber-700">
-                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
-                          Offline screens reduce effective live capacity
-                        </div>
-                      )}
 
                       <div className="border border-border rounded-lg overflow-hidden max-h-[320px] overflow-y-auto">
                         {filteredScreens.map(s => {
@@ -379,12 +373,6 @@ export default function PlacementDetail() {
                                 <p className="text-xs text-muted-foreground">{s.venue} · {s.resolution} · {s.orientation}</p>
                               </div>
                               <span className="text-xs text-muted-foreground tabular-nums">{dailyCap.toLocaleString()} opp/day</span>
-                              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${
-                                s.status === "Online" ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"
-                              }`}>
-                                <span className={`w-1 h-1 rounded-full ${s.status === "Online" ? "bg-emerald-500" : "bg-red-400"}`} />
-                                {s.status}
-                              </span>
                             </label>
                           );
                         })}
@@ -838,10 +826,6 @@ export default function PlacementDetail() {
                         </div>
                         <div className="flex items-center gap-3">
                           <span className="text-xs text-muted-foreground tabular-nums">{(s.loopsPerHour * 16).toLocaleString()} playback opportunities/day</span>
-                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${s.status === "Online" ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"}`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${s.status === "Online" ? "bg-emerald-500" : "bg-red-400"}`} />
-                            {s.status}
-                          </span>
                           <span className="text-xs text-primary flex items-center gap-1">
                             View <ExternalLink size={10} />
                           </span>
