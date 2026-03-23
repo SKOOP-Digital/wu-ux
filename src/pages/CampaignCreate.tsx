@@ -403,12 +403,10 @@ export default function CampaignCreate() {
       <p className="skoop-section-header">How Much It Plays</p>
       <p className="text-xs text-muted-foreground">Define how this campaign's content is delivered across the selected rules.</p>
 
-      {campaignType === "direct" && (
-        <div className="flex gap-2">
-          <button onClick={() => setDeliveryMode("sov")} className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "sov" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>% of Screen Time</button>
-          <button onClick={() => setDeliveryMode("total")} className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "total" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>Total Plays</button>
-        </div>
-      )}
+      <div className="flex gap-2">
+        <button onClick={() => setDeliveryMode("sov")} className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "sov" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>% of Screen Time</button>
+        <button onClick={() => setDeliveryMode("total")} className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "total" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>Total Plays</button>
+      </div>
 
       {(deliveryMode === "sov" || campaignType === "marketing") ? (
         <div className="space-y-3">
