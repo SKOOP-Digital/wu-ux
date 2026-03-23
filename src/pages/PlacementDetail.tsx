@@ -218,7 +218,7 @@ export default function PlacementDetail() {
       {/* Sections nav */}
       <div className="border-b border-border px-8">
         <div className="flex gap-0">
-          {sections.map((s) => (
+          {(isNew ? SECTIONS_NEW : SECTIONS_EXISTING).map((s) => (
             <button
               key={s}
               onClick={() => setSection(s)}
