@@ -20,7 +20,7 @@ import { allPlacements, calcCapacity } from "@/data/placements";
 import { toast } from "@/hooks/use-toast";
 
 
-const PIE_COLORS = ["hsl(215,16%,47%)", "hsl(210,100%,50%)", "hsl(262,80%,60%)"];
+
 
 const mockCampaigns = [
   { id: "1", name: "Nike Summer Push", type: "Direct", target: "5,000 plays", delivered: "3,100", pct: 62, status: "Live" },
