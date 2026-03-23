@@ -549,7 +549,7 @@ export default function PlacementDetail() {
         )}
 
         {/* ======= HOW IT IS MONETISED ======= */}
-        {section === "How it is monetised" && (
+        {section === "Mix" && (
           <div className="grid grid-cols-3 gap-6">
             <div className="col-span-2 space-y-6">
               <div className="skoop-card p-5 space-y-5">
