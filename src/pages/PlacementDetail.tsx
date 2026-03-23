@@ -63,6 +63,9 @@ export default function PlacementDetail() {
   const [screenSearch, setScreenSearch] = useState("");
   const [screenVenueFilter, setScreenVenueFilter] = useState("All");
   const [playbackModel, setPlaybackModel] = useState<"Loop" | "Ad-break">(placement.model as "Loop" | "Ad-break");
+  const [defaultPlayDuration, setDefaultPlayDuration] = useState<string>("15");
+  const [customDuration, setCustomDuration] = useState<number>(20);
+  const [servingRulesOpen, setServingRulesOpen] = useState(false);
 
   const [catSeparation, setCatSeparation] = useState(true);
   const [catSeparationGap, setCatSeparationGap] = useState(2);
