@@ -55,7 +55,7 @@ export default function Placements() {
         subtitle="Define monetisable playback capacity on your screens"
         icon={<MapPin size={20} />}
         actions={
-          <Button size="sm" onClick={() => navigate("/placements/pl-1")}>
+          <Button size="sm" onClick={() => navigate("/placements/new")}>
             <Plus size={14} className="mr-1" /> New Ad Placement
           </Button>
         }
