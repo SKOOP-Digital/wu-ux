@@ -49,8 +49,7 @@ const App = () => (
                 <Route path="/programmatic" element={<ProgrammaticSlots />} />
                 <Route path="/playback-mix" element={<PlaybackMix />} />
                 <Route path="/proof-of-play" element={<ProofOfPlay />} />
-                <Route path="/revenue" element={<RevenueReports />} />
-                <Route path="/orders" element={<OrdersBilling />} />
+                <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
