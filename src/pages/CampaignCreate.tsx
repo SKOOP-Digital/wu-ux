@@ -270,7 +270,7 @@ export default function CampaignCreate() {
           <Tag size={16} className="text-muted-foreground" />
           <p className="skoop-section-header">Target by Tags</p>
         </div>
-        <p className="text-xs text-muted-foreground">Select screen tags to target specific screens across your network. Use alongside or instead of Network Rules.</p>
+        <p className="text-xs text-muted-foreground">Add screens by tag across your entire network, outside of the rules selected above.</p>
 
         <div className="flex flex-wrap gap-1.5">
           {selectedTags.map((tag) => (
