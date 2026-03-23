@@ -93,8 +93,11 @@ export default function Campaigns() {
                     </td>
                     <td className="skoop-table-cell text-muted-foreground text-xs whitespace-nowrap">{c.dates}</td>
                     <td className="skoop-table-cell text-xs text-muted-foreground">{c.goal}</td>
-                    <td className="skoop-table-cell">
-                      <Progress value={pct} className="h-1.5" />
+                    <td className="skoop-table-cell group/progress relative">
+                      <div className="relative">
+                        <Progress value={pct} className="h-1.5" />
+                        <span className="absolute -top-7 left-1/2 -translate-x-1/2 bg-foreground text-background text-[10px] font-medium px-1.5 py-0.5 rounded opacity-0 group-hover/progress:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">{pct}%</span>
+                      </div>
                     </td>
                     <td className="skoop-table-cell"><StatusChip status={c.status.toLowerCase().replace(" ", "-")} label={fullStatus} /></td>
                   </tr>
