@@ -354,12 +354,6 @@ export default function PlacementDetail() {
                         )}
                       </div>
 
-                      {filteredScreens.some(s => screenIds.includes(s.id) && s.status === "Offline") && (
-                        <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-amber-50 border border-amber-200 text-xs text-amber-700">
-                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
-                          Offline screens reduce effective live capacity
-                        </div>
-                      )}
 
                       <div className="border border-border rounded-lg overflow-hidden max-h-[320px] overflow-y-auto">
                         {filteredScreens.map(s => {
