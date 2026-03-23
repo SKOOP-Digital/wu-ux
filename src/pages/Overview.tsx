@@ -40,7 +40,7 @@ const topVenues = [
 
 const flowSteps = [
   { icon: Monitor, label: "Screens", desc: "Physical devices", to: "/screens", color: "bg-muted text-foreground" },
-  { icon: MapPin, label: "Ad Placements", desc: "Monetisable inventory", to: "/placements", color: "bg-primary/10 text-primary" },
+  { icon: MapPin, label: "Network Rules", desc: "Rules & inventory", to: "/placements", color: "bg-primary/10 text-primary" },
   { icon: Megaphone, label: "Campaigns", desc: "Content & delivery", to: "/campaigns", color: "bg-skoop-blue/10 text-skoop-blue" },
   { icon: Play, label: "Playback", desc: "Automated delivery", to: "/playback-mix", color: "bg-skoop-purple/10 text-skoop-purple" },
 ];
@@ -55,7 +55,7 @@ export default function Overview() {
         actions={
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={() => navigate("/placements")}>
-              <Plus size={14} className="mr-1" /> New Ad Placement
+              <Plus size={14} className="mr-1" /> New Rule
             </Button>
             <Button size="sm" onClick={() => navigate("/campaigns/create")}>
               <Plus size={14} className="mr-1" /> Create Campaign
@@ -68,7 +68,7 @@ export default function Overview() {
         {/* How it works — Flow Diagram */}
         <div className="skoop-card p-5">
           <p className="skoop-section-header mb-1">How Monetisation Works</p>
-          <p className="text-xs text-muted-foreground mb-4">Screens are devices → Ad Placements define inventory on those screens → Campaigns use that inventory → System manages playback automatically</p>
+          <p className="text-xs text-muted-foreground mb-4">Screens are devices → Network Rules define inventory on those screens → Campaigns use that inventory → System manages playback automatically</p>
           <div className="flex items-center gap-0">
             {flowSteps.map((step, i) => (
               <div key={step.label} className="flex items-center flex-1 min-w-0">
@@ -94,7 +94,7 @@ export default function Overview() {
 
         {/* Network Mix Bar */}
         <div className="skoop-card p-5">
-          <p className="skoop-section-header mb-1">Network Playback Mix</p>
+          <p className="skoop-section-header mb-1">Network Content Split</p>
           <p className="text-xs text-muted-foreground mb-3">
             <span className="font-medium text-foreground">Owned:</span> Your content &nbsp;·&nbsp;
             <span className="font-medium text-foreground">Direct:</span> Booked campaigns &nbsp;·&nbsp;
@@ -105,7 +105,7 @@ export default function Overview() {
 
         {/* KPIs */}
         <div className="grid grid-cols-4 gap-4">
-          <KPICard label="Active Ad Placements" value="24" change="+3 this month" changeType="positive" icon={<MapPin size={16} />} />
+          <KPICard label="Active Network Rules" value="24" change="+3 this month" changeType="positive" icon={<MapPin size={16} />} />
           <KPICard label="Direct Revenue (MTD)" value="$14,200" change="+12% vs last month" changeType="positive" icon={<DollarSign size={16} />} />
           <KPICard label="Programmatic Fill Rate" value="88.4%" change="-2.1% vs target" changeType="negative" icon={<Radio size={16} />} />
           <KPICard label="Under-delivery Alerts" value="2" change="2 campaigns at risk" changeType="negative" icon={<AlertTriangle size={16} />} />
@@ -193,7 +193,7 @@ export default function Overview() {
           <p className="skoop-section-header mb-3">Quick Actions</p>
           <div className="flex gap-3">
             <Button variant="outline" size="sm" onClick={() => navigate("/placements")}>
-              <MapPin size={14} className="mr-1.5" /> New Ad Placement
+              <MapPin size={14} className="mr-1.5" /> New Rule
             </Button>
             <Button variant="outline" size="sm" onClick={() => navigate("/campaigns/create")}>
               <Megaphone size={14} className="mr-1.5" /> Create Campaign

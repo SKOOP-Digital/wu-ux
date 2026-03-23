@@ -56,7 +56,7 @@ export default function RevenueReports() {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="skoop-card p-5">
-            <p className="skoop-section-header mb-4">Top Placements by Revenue</p>
+            <p className="skoop-section-header mb-4">Top Rules by Revenue</p>
             {topPlacements.map((p) => (
               <div key={p.name} className="flex items-center justify-between py-2.5 border-b border-border last:border-0">
                 <div><p className="text-sm font-medium">{p.name}</p><p className="text-xs text-muted-foreground">Fill: {p.fill}</p></div>

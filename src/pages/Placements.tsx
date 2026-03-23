@@ -51,12 +51,12 @@ export default function Placements() {
   return (
     <div>
       <PageHeader
-        title="Ad Placements"
+        title="Network Rules"
         subtitle="Define monetisable playback capacity on your screens"
         icon={<MapPin size={20} />}
         actions={
           <Button size="sm" onClick={() => navigate("/placements/new")}>
-            <Plus size={14} className="mr-1" /> New Ad Placement
+            <Plus size={14} className="mr-1" /> New Rule
           </Button>
         }
       />
@@ -64,7 +64,7 @@ export default function Placements() {
         <div className="flex items-start gap-3 bg-primary/5 border border-primary/10 rounded-lg px-4 py-3">
           <MapPin size={16} className="text-primary mt-0.5 shrink-0" />
           <p className="text-xs text-muted-foreground leading-relaxed">
-            <span className="font-medium text-foreground">Ad Placements</span> define how ads run on selected screens. Each placement maps to one or more screens and controls the playback mix between <span className="font-medium">Owned</span> (your content), <span className="font-medium">Direct</span> (booked campaigns), and <span className="font-medium">Programmatic</span> (automated ads).
+            <span className="font-medium text-foreground">Network Rules</span> define how ads run on selected screens. Each rule maps to one or more screens and controls the content split between <span className="font-medium">Owned</span> (your content), <span className="font-medium">Direct</span> (booked campaigns), and <span className="font-medium">Programmatic</span> (automated ads).
           </p>
         </div>
 
@@ -72,7 +72,7 @@ export default function Placements() {
           <div className="flex items-center gap-3">
             <div className="relative">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <Input placeholder="Search ad placements…" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 w-64 h-9 text-sm" />
+              <Input placeholder="Search network rules…" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 w-64 h-9 text-sm" />
             </div>
             <div className="flex gap-1">
               {filters.map((f) => (
@@ -93,11 +93,11 @@ export default function Placements() {
             <table className="w-full">
               <thead>
                 <tr className="skoop-table-header">
-                  <th className="skoop-table-cell text-left">Ad Placement</th>
+                  <th className="skoop-table-cell text-left">Network Rule</th>
                   <th className="skoop-table-cell text-left">Screens</th>
                   <th className="skoop-table-cell text-left">Model</th>
-                  <th className="skoop-table-cell text-left w-40">Playback Mix</th>
-                  <th className="skoop-table-cell text-left">Dayparts</th>
+                  <th className="skoop-table-cell text-left w-40">Content Split</th>
+                  <th className="skoop-table-cell text-left">Active Hours</th>
                   <th className="skoop-table-cell text-right">Capacity Usage</th>
                   <th className="skoop-table-cell text-left">Status</th>
                   <th className="skoop-table-cell text-center w-10"></th>
@@ -161,7 +161,7 @@ export default function Placements() {
         )}
       </div>
 
-      <DetailDrawer open={!!drawer} onClose={() => setDrawer(null)} title="Ad Placement Details">
+      <DetailDrawer open={!!drawer} onClose={() => setDrawer(null)} title="Network Rule Details">
         {drawer && (
           <div className="space-y-6">
             <div>
@@ -170,8 +170,8 @@ export default function Placements() {
             </div>
 
             <div className="space-y-2">
-              <p className="skoop-section-header">Screens in this Placement</p>
-              <p className="text-[11px] text-muted-foreground">These screens will display campaigns assigned to this placement</p>
+              <p className="skoop-section-header">Screens in this Rule</p>
+              <p className="text-[11px] text-muted-foreground">These screens will display campaigns assigned to this rule</p>
               <div className="flex items-center gap-2 bg-secondary/60 rounded-md px-3 py-2">
                 <Monitor size={14} className="text-primary" />
                 <div className="flex-1">
@@ -193,7 +193,7 @@ export default function Placements() {
             </div>
 
             <div className="space-y-2">
-              <p className="skoop-section-header">Playback Mix</p>
+              <p className="skoop-section-header">Content Split</p>
               <p className="text-[11px] text-muted-foreground">
                 <span className="font-medium text-foreground">Owned:</span> Your content &nbsp;·&nbsp;
                 <span className="font-medium text-foreground">Direct:</span> Booked campaigns &nbsp;·&nbsp;
@@ -226,7 +226,7 @@ export default function Placements() {
 
             <div className="grid grid-cols-2 gap-4">
               <div><p className="text-xs text-muted-foreground">Model</p><p className="text-sm font-medium">{drawer.model}</p></div>
-              <div><p className="text-xs text-muted-foreground">Dayparts</p><p className="text-sm font-medium">{drawer.dayparts}</p></div>
+              <div><p className="text-xs text-muted-foreground">Active Hours</p><p className="text-sm font-medium">{drawer.dayparts}</p></div>
             </div>
 
             <div className="border-t border-border pt-4">

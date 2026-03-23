@@ -17,7 +17,7 @@ export default function ScreenDetail() {
   const placementId = searchParams.get("placementId");
 
   const backPath = fromPlacement && placementId ? `/placements/${placementId}` : "/screens";
-  const backLabel = fromPlacement ? "Back to Ad Placement" : "Back to Screens";
+  const backLabel = fromPlacement ? "Back to Network Rule" : "Back to Screens";
   const screen = allScreens.find((s) => s.id === id);
 
   if (!screen) {
@@ -36,19 +36,17 @@ export default function ScreenDetail() {
   const linkedPlacements = allPlacements.filter((p) => p.screenIds.includes(screen.id));
   const dailyCapacity = screen.loopsPerHour * 16;
 
-  // Breadcrumb context
   const placementObj = placementId ? allPlacements.find(p => p.id === placementId) : null;
 
   return (
     <div>
-      {/* Breadcrumb */}
       <div className="px-8 pt-4 pb-0">
         <Breadcrumb>
           <BreadcrumbList>
             {fromPlacement && placementObj ? (
               <>
                 <BreadcrumbItem>
-                  <BreadcrumbLink asChild><Link to="/placements">Ad Placements</Link></BreadcrumbLink>
+                  <BreadcrumbLink asChild><Link to="/placements">Network Rules</Link></BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
@@ -138,13 +136,12 @@ export default function ScreenDetail() {
               </div>
             </div>
 
-            {/* Ad Placements linked to this screen */}
             <div className="skoop-card p-5 space-y-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="skoop-section-header">Ad Placements</p>
+                  <p className="skoop-section-header">Network Rules</p>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Placements that include this screen in their inventory
+                    Rules that include this screen in their inventory
                   </p>
                 </div>
               </div>
@@ -152,10 +149,10 @@ export default function ScreenDetail() {
               {linkedPlacements.length === 0 ? (
                 <div className="border border-dashed border-border rounded-lg py-8 text-center">
                   <MapPin size={20} className="mx-auto text-muted-foreground mb-2" />
-                  <p className="text-sm text-muted-foreground">No ad placements assigned to this screen</p>
-                  <p className="text-xs text-muted-foreground mt-1">Create an ad placement to monetise this screen</p>
+                  <p className="text-sm text-muted-foreground">No network rules assigned to this screen</p>
+                  <p className="text-xs text-muted-foreground mt-1">Create a network rule to monetise this screen</p>
                   <Button size="sm" className="mt-3" onClick={() => navigate("/placements")}>
-                    View Ad Placements
+                    View Network Rules
                   </Button>
                 </div>
               ) : (
@@ -178,7 +175,7 @@ export default function ScreenDetail() {
                           <MixBar owned={p.owned} direct={p.direct} programmatic={p.prog} />
                         </div>
                         <StatusChip status={p.status.toLowerCase().replace(" ", "-")} label={p.status} />
-                        <span className="text-xs text-primary">View Placement</span>
+                        <span className="text-xs text-primary">View Rule</span>
                       </div>
                     </div>
                   ))}
@@ -187,12 +184,11 @@ export default function ScreenDetail() {
             </div>
           </div>
 
-          {/* Right sidebar */}
           <div className="space-y-4">
             <div className="skoop-card p-5 space-y-3">
               <p className="skoop-section-header">Summary</p>
               <div>
-                <p className="text-xs text-muted-foreground">Ad Placements</p>
+                <p className="text-xs text-muted-foreground">Network Rules</p>
                 <p className="text-lg font-semibold tabular-nums">{linkedPlacements.length}</p>
               </div>
               <div>

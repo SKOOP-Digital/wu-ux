@@ -55,7 +55,6 @@ export default function ScreenSelectorModal({ open, onClose, selectedIds, onSave
     }
   };
 
-  // Capacity preview
   const selectedScreens = allScreens.filter((s) => selected.includes(s.id));
   const totalCapacity = selectedScreens.reduce((sum, s) => sum + s.loopsPerHour * 16, 0);
 
@@ -67,7 +66,7 @@ export default function ScreenSelectorModal({ open, onClose, selectedIds, onSave
         <DialogHeader>
           <DialogTitle>Manage Screens</DialogTitle>
           <DialogDescription>
-            Select which screens belong to this ad placement. Capacity will be recalculated based on selection.
+            Select which screens belong to this network rule. Capacity will be recalculated based on selection.
           </DialogDescription>
           <div className="flex items-center justify-between pt-1">
             <span className="text-xs text-muted-foreground tabular-nums">
