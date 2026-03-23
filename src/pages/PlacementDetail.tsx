@@ -152,8 +152,8 @@ export default function PlacementDetail() {
       </div>
 
       <PageHeader
-        title={placement.name}
-        subtitle="Ad Placement · Defines how ads run on selected screens"
+        title={isNew ? "New Ad Placement" : placement.name}
+        subtitle={isNew ? "Create a new ad placement · Define how ads run on selected screens" : "Ad Placement · Defines how ads run on selected screens"}
         icon={<MapPin size={20} />}
         actions={
           <div className="flex items-center gap-2">
