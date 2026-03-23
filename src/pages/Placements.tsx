@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { MapPin, Search, Plus, LayoutGrid, List, Trash2, Monitor } from "lucide-react";
+import { MapPin, Search, Plus, LayoutGrid, List, Monitor } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import PageHeader from "@/components/layout/PageHeader";
@@ -9,9 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { allPlacements, calcCapacityFromRule } from "@/data/placements";
-import { toast } from "@/hooks/use-toast";
 
-const filters = ["All", "Healthy", "Overbooked", "At Risk", "Loop", "Ad-break"];
+const filters = ["All", "Healthy", "Overbooked", "At Risk", "Continuous", "Ad Breaks"];
 
 const statusTooltips: Record<string, string> = {
   Healthy: "Capacity within safe range",
@@ -19,35 +18,31 @@ const statusTooltips: Record<string, string> = {
   Overbooked: "Booked demand exceeds eligible capacity",
 };
 
+function modelLabel(model: string) {
+  if (model === "Loop") return "Continuous";
+  if (model === "Ad-break") return "Ad Breaks";
+  return model;
+}
+
 export default function Placements() {
   const navigate = useNavigate();
   const [view, setView] = useState<"table" | "card">("table");
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
 
-  const [placements, setPlacements] = useState(allPlacements);
+  const [placements] = useState(allPlacements);
 
   const enriched = useMemo(() => placements.map((p) => {
     const cap = calcCapacityFromRule(p);
-    return {
-      ...p,
-      capacitySlots: cap,
-      capacityPct: p.capacityUsagePct,
-    };
+    return { ...p, capacitySlots: cap, capacityPct: p.capacityUsagePct };
   }), [placements]);
-
-  const deleteRule = (id: string, name: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    const idx = allPlacements.findIndex(p => p.id === id);
-    if (idx !== -1) allPlacements.splice(idx, 1);
-    setPlacements([...allPlacements]);
-    toast({ title: "Rule deleted", description: `"${name}" has been removed.` });
-  };
 
   const filtered = enriched.filter((p) => {
     if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
     if (activeFilter === "All") return true;
-    return p.status === activeFilter || p.model === activeFilter.replace("-", "-");
+    if (activeFilter === "Continuous") return p.model === "Loop";
+    if (activeFilter === "Ad Breaks") return p.model === "Ad-break";
+    return p.status === activeFilter;
   });
 
   return (
@@ -88,48 +83,35 @@ export default function Placements() {
 
         {view === "table" ? (
           <div className="skoop-card overflow-hidden">
-            <table className="w-full">
+            <table className="w-full table-fixed">
               <thead>
                 <tr className="skoop-table-header">
-                  <th className="skoop-table-cell text-left">Network Rule</th>
-                  <th className="skoop-table-cell text-left">Screens</th>
-                  <th className="skoop-table-cell text-left">Model</th>
-                  <th className="skoop-table-cell text-left w-40">Content Split</th>
-                  <th className="skoop-table-cell text-left">Active Hours</th>
-                  <th className="skoop-table-cell text-right">Capacity Usage</th>
-                  <th className="skoop-table-cell text-left">Status</th>
-                  <th className="skoop-table-cell text-center w-10"></th>
+                  <th className="skoop-table-cell text-left" style={{ width: "22%" }}>Network Rule</th>
+                  <th className="skoop-table-cell text-left" style={{ width: "16%" }}>Screens</th>
+                  <th className="skoop-table-cell text-left" style={{ width: "12%" }}>How Ads Play</th>
+                  <th className="skoop-table-cell text-left" style={{ width: "18%" }}>Content Split</th>
+                  <th className="skoop-table-cell text-left" style={{ width: "10%" }}>Active Hours</th>
+                  <th className="skoop-table-cell text-left" style={{ width: "10%" }}>Capacity</th>
+                  <th className="skoop-table-cell text-left" style={{ width: "12%" }}>Status</th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((p) => (
                   <tr key={p.id} className="skoop-table-row cursor-pointer" onClick={() => navigate(`/placements/${p.id}`)}>
-                    <td className="skoop-table-cell">
-                      <div className="leading-tight">
-                        <span className="font-medium text-foreground">{p.name}</span>
-                        <span className="text-[11px] block text-muted-foreground">{p.venueType}</span>
-                      </div>
+                    <td className="skoop-table-cell font-medium text-foreground">
+                      <span className="truncate block">{p.name}</span>
+                    </td>
+                    <td className="skoop-table-cell text-muted-foreground text-xs whitespace-nowrap">
+                      {p.screenCount.toLocaleString()} screens · {p.region}
                     </td>
                     <td className="skoop-table-cell">
-                      <div className="flex items-center gap-1.5 text-muted-foreground">
-                        <Monitor size={13} className="shrink-0" />
-                        <div className="leading-tight">
-                          <span className="text-sm">{p.screenCount.toLocaleString()} screens</span>
-                          <span className="text-xs block text-muted-foreground">{p.region}</span>
-                        </div>
-                      </div>
+                      <StatusChip status={p.model.toLowerCase()} label={modelLabel(p.model)} />
                     </td>
-                    <td className="skoop-table-cell"><StatusChip status={p.model.toLowerCase()} label={p.model} /></td>
                     <td className="skoop-table-cell">
                       <MixBar owned={p.owned} direct={p.direct} programmatic={p.prog} showHoverTooltip />
                     </td>
                     <td className="skoop-table-cell text-muted-foreground text-xs">{p.dayparts}</td>
-                    <td className="skoop-table-cell text-right">
-                      <div className="text-sm tabular-nums font-medium">{p.capacityPct}%</div>
-                      <div className="text-[11px] text-muted-foreground tabular-nums">
-                        {p.capacitySlots.booked.toLocaleString()} / {p.capacitySlots.total.toLocaleString()} plays/day
-                      </div>
-                    </td>
+                    <td className="skoop-table-cell text-sm tabular-nums font-medium">{p.capacityPct}%</td>
                     <td className="skoop-table-cell">
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -137,15 +119,6 @@ export default function Placements() {
                         </TooltipTrigger>
                         <TooltipContent><p className="text-xs">{statusTooltips[p.status] || p.status}</p></TooltipContent>
                       </Tooltip>
-                    </td>
-                    <td className="skoop-table-cell text-center">
-                      <button
-                        onClick={(e) => deleteRule(p.id, p.name, e)}
-                        className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
-                        title="Delete rule"
-                      >
-                        <Trash2 size={14} />
-                      </button>
                     </td>
                   </tr>
                 ))}
@@ -158,18 +131,16 @@ export default function Placements() {
               <div key={p.id} className="skoop-card p-5 cursor-pointer hover:shadow-sm transition-shadow" onClick={() => navigate(`/placements/${p.id}`)}>
                 <div className="flex items-center justify-between mb-2">
                   <StatusChip status={p.status.toLowerCase().replace(" ", "-")} label={p.status} />
-                  <StatusChip status={p.model.toLowerCase()} label={p.model} />
+                  <StatusChip status={p.model.toLowerCase()} label={modelLabel(p.model)} />
                 </div>
                 <h3 className="font-medium text-sm text-foreground mb-1">{p.name}</h3>
-                <span className="text-[11px] text-muted-foreground block mb-1">{p.venueType}</span>
                 <div className="flex items-center gap-1.5 text-muted-foreground mb-3">
                   <Monitor size={12} />
                   <span className="text-xs">{p.screenCount.toLocaleString()} screens · {p.region}</span>
                 </div>
                 <MixBar owned={p.owned} direct={p.direct} programmatic={p.prog} showLabels />
                 <div className="flex justify-between mt-3 text-xs text-muted-foreground">
-                  <span className="tabular-nums">{p.capacitySlots.booked.toLocaleString()} / {p.capacitySlots.total.toLocaleString()} plays/day</span>
-                  <span className="tabular-nums font-medium">{p.capacityPct}%</span>
+                  <span className="tabular-nums">{p.capacityPct}% capacity</span>
                 </div>
               </div>
             ))}
