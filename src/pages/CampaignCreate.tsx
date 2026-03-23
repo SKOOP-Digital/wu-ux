@@ -533,7 +533,7 @@ export default function CampaignCreate() {
             <div><p className="text-xs text-muted-foreground">Schedule</p><p className="text-sm font-medium">{startDate || "—"} → {endDate || "—"}</p></div>
             <div><p className="text-xs text-muted-foreground">Active Days</p><p className="text-sm font-medium">{activeDays.join(", ")}</p></div>
             <div><p className="text-xs text-muted-foreground">Delivery Target</p><p className="text-sm font-medium tabular-nums">{deliveryMode === "sov" || campaignType === "marketing" ? `${sov}% screen time` : `${totalPlays.toLocaleString()} total plays`}</p></div>
-            <div><p className="text-xs text-muted-foreground">Creatives</p><p className="text-sm font-medium">3 assets (2 approved, 1 pending)</p></div>
+            <div><p className="text-xs text-muted-foreground">Creatives</p><p className="text-sm font-medium">{creatives.length} asset{creatives.length !== 1 ? "s" : ""} uploaded</p></div>
           </div>
         </div>
 
