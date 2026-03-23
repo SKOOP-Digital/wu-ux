@@ -117,17 +117,10 @@ export default function PlacementDetail() {
     return Number(defaultPlayDuration);
   }, [defaultPlayDuration, customDuration]);
 
-  // Calculate plays/day: for each screen, (loopsPerHour * activeHours) gives loop opps,
-  // but we want plays based on duration: totalSecondsAvailable / playDuration
   const calcPlaysPerDay = (screen: { loopsPerHour: number }) => {
-    const totalSeconds = screen.loopsPerHour * 60 * activeHours; // seconds available in active hours (loopsPerHour * 60s * hours)
+    const totalSeconds = screen.loopsPerHour * 60 * activeHours;
     return Math.floor(totalSeconds / playDurationSeconds);
   };
-
-  const totalPlaysPerDay = useMemo(() => {
-    if (screenIds.length === 0) return 0;
-    return assignedScreens.reduce((sum, s) => sum + calcPlaysPerDay(s), 0);
-  }, [screenIds, assignedScreens, playDurationSeconds, activeHours]);
 
   const canPublish = screenIds.length > 0 && placementName.trim().length > 0 && dayparts.some(d => d.active);
 
