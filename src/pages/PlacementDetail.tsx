@@ -18,7 +18,6 @@ const SECTIONS_NEW = ["Where it runs", "How it runs", "How it is monetised"];
 const SECTIONS_EXISTING = ["Where it runs", "How it runs", "How it is monetised", "Active Campaigns"];
 const PIE_COLORS = ["hsl(215,16%,47%)", "hsl(210,100%,50%)", "hsl(262,80%,60%)"];
 
-// Mock campaigns for existing placements
 const mockCampaigns = [
   { id: "1", name: "Nike Summer Push", type: "Direct", target: "5,000 plays", delivered: "3,100", pct: 62, status: "Live" },
   { id: "2", name: "Coca-Cola Lobby Spots", type: "Direct", target: "SoV 15%", delivered: "1,800", pct: 72, status: "Under-delivering" },
@@ -29,11 +28,11 @@ export default function PlacementDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const isNew = !id; // /placements/new has no :id param
+  const isNew = !id;
 
   const defaultDraft: typeof allPlacements[0] = {
     id: "new",
-    name: "Untitled Ad Placement",
+    name: "Untitled Rule",
     scope: "Screen",
     venue: "",
     model: "Loop",
@@ -47,9 +46,8 @@ export default function PlacementDetail() {
 
   const placement = isNew ? defaultDraft : (allPlacements.find((p) => p.id === id) ?? allPlacements[0]);
 
-  // Determine if this is a draft/new placement vs live/existing
   const isDraft = isNew || placement.status === "Draft" || placement.status === "New";
-  const stateLabel = isDraft ? (isNew ? "New Placement" : "Draft Placement") : "Live Placement";
+  const stateLabel = isDraft ? (isNew ? "New Rule" : "Draft Rule") : "Live Rule";
   const stateColor = isDraft ? "bg-skoop-amber-light text-skoop-amber" : "bg-skoop-aqua-light text-skoop-aqua";
 
   const [section, setSection] = useState("Where it runs");
@@ -59,7 +57,6 @@ export default function PlacementDetail() {
   const [placementName, setPlacementName] = useState(isNew ? "" : placement.name);
   const [showScreenModal, setShowScreenModal] = useState(false);
 
-  // Editable rules state
   const [catSeparation, setCatSeparation] = useState(true);
   const [catSeparationGap, setCatSeparationGap] = useState(2);
   const [backToBack, setBackToBack] = useState(true);
@@ -67,7 +64,6 @@ export default function PlacementDetail() {
   const [noFillFallback, setNoFillFallback] = useState(true);
   const [editingRules, setEditingRules] = useState(false);
 
-  // Editable dayparts state
   const [dayparts, setDayparts] = useState([
     { id: "dp-1", name: "Morning", start: "06:00", end: "11:00", active: true },
     { id: "dp-2", name: "Midday", start: "11:00", end: "14:00", active: true },
@@ -77,16 +73,16 @@ export default function PlacementDetail() {
   ]);
 
   const addDaypart = () => {
-    const id = `dp-${Date.now()}`;
-    setDayparts(prev => [...prev, { id, name: "New Daypart", start: "09:00", end: "17:00", active: true }]);
+    const dpId = `dp-${Date.now()}`;
+    setDayparts(prev => [...prev, { id: dpId, name: "New Daypart", start: "09:00", end: "17:00", active: true }]);
   };
 
-  const removeDaypart = (id: string) => {
-    setDayparts(prev => prev.filter(dp => dp.id !== id));
+  const removeDaypart = (dpId: string) => {
+    setDayparts(prev => prev.filter(dp => dp.id !== dpId));
   };
 
-  const updateDaypart = (id: string, field: string, value: string | boolean) => {
-    setDayparts(prev => prev.map(dp => dp.id === id ? { ...dp, [field]: value } : dp));
+  const updateDaypart = (dpId: string, field: string, value: string | boolean) => {
+    setDayparts(prev => prev.map(dp => dp.id === dpId ? { ...dp, [field]: value } : dp));
   };
 
   const formatTime = (t: string) => {
@@ -105,6 +101,7 @@ export default function PlacementDetail() {
       return sum + hours;
     }, 0);
   }, [dayparts]);
+
   const canPublish = screenIds.length > 0 && placementName.trim().length > 0 && dayparts.some(d => d.active);
 
   const handlePublish = () => {
@@ -128,7 +125,7 @@ export default function PlacementDetail() {
       screenIds: [...screenIds],
     };
     allPlacements.push(newPlacement);
-    toast({ title: "Ad Placement published successfully", description: `${placementName} is now live.` });
+    toast({ title: "Network rule published successfully", description: `${placementName} is now live.` });
     navigate("/placements");
   };
 
@@ -204,29 +201,27 @@ export default function PlacementDetail() {
     return items;
   }, [capacity, prog, direct, isDraft]);
 
-  // Campaigns: only show for existing/live placements
   const activeCampaigns = isDraft ? [] : mockCampaigns;
 
   return (
     <div>
-      {/* Breadcrumb */}
       <div className="px-8 pt-4 pb-0">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink asChild><Link to="/placements">Ad Placements</Link></BreadcrumbLink>
+              <BreadcrumbLink asChild><Link to="/placements">Network Rules</Link></BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>{isNew ? "New Ad Placement" : placement.name}</BreadcrumbPage>
+              <BreadcrumbPage>{isNew ? "New Rule" : placement.name}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </div>
 
       <PageHeader
-        title={isNew ? "New Ad Placement" : placement.name}
-        subtitle={isNew ? "Create a new ad placement · Define how ads run on selected screens" : "Ad Placement · Defines how ads run on selected screens"}
+        title={isNew ? "New Rule" : placement.name}
+        subtitle={isNew ? "Create a new network rule · Define how ads run on selected screens" : "Network Rule · Defines how ads run on selected screens"}
         icon={<MapPin size={20} />}
         actions={
           <div className="flex items-center gap-2">
@@ -237,7 +232,7 @@ export default function PlacementDetail() {
             {isDraft ? (
               <>
                 <Button variant="outline" size="sm" onClick={handleSaveDraft}>Save Draft</Button>
-                <Button size="sm" onClick={handlePublish} disabled={!canPublish}>Publish Placement</Button>
+                <Button size="sm" onClick={handlePublish} disabled={!canPublish}>Publish Rule</Button>
               </>
             ) : (
               <Button size="sm">Save Changes</Button>
@@ -246,7 +241,6 @@ export default function PlacementDetail() {
         }
       />
 
-      {/* Sections nav */}
       <div className="border-b border-border px-8">
         <div className="flex gap-0">
           {(isNew ? SECTIONS_NEW : SECTIONS_EXISTING).map((s) => (
@@ -268,10 +262,9 @@ export default function PlacementDetail() {
         {section === "Where it runs" && (
           <div className="grid grid-cols-3 gap-6">
             <div className="col-span-2 space-y-6">
-              {/* Placement Name — editable for new */}
               {isNew && (
                 <div className="skoop-card p-5 space-y-3">
-                  <p className="skoop-section-header">Placement Name</p>
+                  <p className="skoop-section-header">Rule Name</p>
                   <input
                     type="text"
                     value={placementName}
@@ -280,14 +273,14 @@ export default function PlacementDetail() {
                     className="w-full text-sm border border-border rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                   />
                   {placementName.trim() === "" && (
-                    <p className="text-xs text-amber-600 flex items-center gap-1"><AlertTriangle size={12} /> A placement name is required to publish</p>
+                    <p className="text-xs text-amber-600 flex items-center gap-1"><AlertTriangle size={12} /> A rule name is required to publish</p>
                   )}
                 </div>
               )}
 
               <div className="skoop-card p-5 space-y-4">
-                <p className="skoop-section-header">Placement Scope</p>
-                <p className="text-xs text-muted-foreground">This ad placement is linked to screens at specific venues. All screens below will display content from campaigns assigned to this placement.</p>
+                <p className="skoop-section-header">Applies To</p>
+                <p className="text-xs text-muted-foreground">This network rule is linked to screens at specific venues. All screens below will display content from campaigns assigned to this rule.</p>
                 <div className="grid grid-cols-3 gap-4">
                   <div><p className="text-xs text-muted-foreground">Scope</p><p className="text-sm font-medium">{scopeLabel}</p></div>
                   <div><p className="text-xs text-muted-foreground">Venue{venues.length > 1 ? "s" : ""}</p><p className="text-sm font-medium">{venues.length > 0 ? venues.join(", ") : "—"}</p></div>
@@ -298,8 +291,8 @@ export default function PlacementDetail() {
               <div className="skoop-card p-5 space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="skoop-section-header">Screens in this Placement</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">These screens will display campaigns assigned to this placement</p>
+                    <p className="skoop-section-header">Screens in this Rule</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">These screens will display campaigns assigned to this rule</p>
                   </div>
                   <Button variant="outline" size="sm" onClick={() => setShowScreenModal(true)}>
                     <Monitor size={13} className="mr-1.5" /> Manage Screens
@@ -310,7 +303,7 @@ export default function PlacementDetail() {
                   <div className="border border-dashed border-border rounded-lg py-8 text-center">
                     <AlertTriangle size={20} className="mx-auto text-amber-500 mb-2" />
                     <p className="text-sm font-medium text-foreground">No screens assigned yet</p>
-                    <p className="text-xs text-muted-foreground mt-1">This placement is not assigned to any screens</p>
+                    <p className="text-xs text-muted-foreground mt-1">This rule is not assigned to any screens</p>
                     <Button size="sm" className="mt-3" onClick={() => setShowScreenModal(true)}>
                       Assign Screens
                     </Button>
@@ -352,13 +345,13 @@ export default function PlacementDetail() {
                 <>
                   <div className="skoop-card p-5 space-y-3">
                     <p className="skoop-section-header">Publish Readiness</p>
-                    <p className="text-[11px] text-muted-foreground">Complete these steps to publish this placement</p>
+                    <p className="text-[11px] text-muted-foreground">Complete these steps to publish this rule</p>
                     <div className="space-y-2.5 mt-1">
                       {[
-                        { label: "Placement name", done: placementName.trim().length > 0 },
+                        { label: "Rule name", done: placementName.trim().length > 0 },
                         { label: "Screens assigned", done: screenIds.length > 0 },
-                        { label: "Dayparts configured", done: dayparts.some(d => d.active) },
-                        { label: "Playback mix set", done: true },
+                        { label: "Active hours configured", done: dayparts.some(d => d.active) },
+                        { label: "Content split set", done: true },
                       ].map((item) => (
                         <div key={item.label} className="flex items-center gap-2 text-sm">
                           <CheckCircle2 size={14} className={item.done ? "text-emerald-500" : "text-muted-foreground/40"} />
@@ -375,7 +368,7 @@ export default function PlacementDetail() {
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm"><span className="text-muted-foreground">Screens</span><span className="font-medium tabular-nums">{screenIds.length}</span></div>
                       <div className="flex justify-between text-sm"><span className="text-muted-foreground">Capacity</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} opp/day</span></div>
-                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Playback Mix</span><span className="font-medium tabular-nums">{owned}/{direct}/{Math.max(0, prog)}</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Content Split</span><span className="font-medium tabular-nums">{owned}/{direct}/{Math.max(0, prog)}</span></div>
                       <div className="flex justify-between text-sm"><span className="text-muted-foreground">Active Dayparts</span><span className="font-medium tabular-nums">{dayparts.filter(d => d.active).length}</span></div>
                     </div>
                   </div>
@@ -411,7 +404,7 @@ export default function PlacementDetail() {
             <div className="col-span-2 space-y-6">
               <div className="skoop-card p-5 space-y-4">
                 <p className="skoop-section-header">Playback Model</p>
-                <p className="text-xs text-muted-foreground">Determines how content is scheduled within this placement.</p>
+                <p className="text-xs text-muted-foreground">Determines how content is scheduled within this rule.</p>
                 <div className="grid grid-cols-3 gap-4">
                   <div><p className="text-xs text-muted-foreground">Model</p><p className="text-sm font-medium">{placement.model}-based</p></div>
                   <div><p className="text-xs text-muted-foreground">Avg Loop Duration</p><p className="text-sm font-medium tabular-nums">{assignedScreens.length > 0 ? Math.round(assignedScreens.reduce((s, sc) => s + sc.loopDuration, 0) / assignedScreens.length) : 0}s</p></div>
@@ -431,17 +424,16 @@ export default function PlacementDetail() {
 
               <div className="skoop-card p-5">
                 <div className="flex items-center justify-between mb-1">
-                  <p className="skoop-section-header">Placement Daypart Availability</p>
+                  <p className="skoop-section-header">Active Hours</p>
                   {isDraft && (
                     <Button variant="outline" size="sm" onClick={addDaypart}>
                       <Plus size={13} className="mr-1" /> Add Daypart
                     </Button>
                   )}
                 </div>
-                <p className="text-xs text-muted-foreground mb-1">These are the time windows in which campaigns may run on this placement</p>
-                <p className="text-[11px] text-muted-foreground/70 mb-3">Campaigns created later can select all or a subset of these placement dayparts</p>
+                <p className="text-xs text-muted-foreground mb-1">These are the time windows in which campaigns may run on this rule</p>
+                <p className="text-[11px] text-muted-foreground/70 mb-3">Campaigns created later can select all or a subset of these active hours</p>
 
-                {/* Visual timeline */}
                 <div className="mb-4">
                   <div className="flex h-8 rounded-md overflow-hidden border border-border">
                     {dayparts.map((dp) => {
@@ -562,8 +554,8 @@ export default function PlacementDetail() {
             <div className="col-span-2 space-y-6">
               <div className="skoop-card p-5 space-y-5">
                 <div>
-                  <p className="skoop-section-header">Playback Mix Policy</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Controls the ratio between content types in this placement</p>
+                  <p className="skoop-section-header">Content Split</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Controls the ratio between content types in this rule</p>
                 </div>
                 <div className="bg-secondary/50 rounded-md px-4 py-3 space-y-1">
                   <p className="text-xs font-medium text-foreground">What do these mean?</p>
@@ -602,10 +594,10 @@ export default function PlacementDetail() {
                 <MixBar owned={owned} direct={direct} programmatic={Math.max(0, prog)} height="h-3" showLabels />
               </div>
 
-              {/* Placement Rules — Editable */}
+              {/* Serving Rules */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <p className="skoop-section-header">Placement Rules</p>
+                  <p className="skoop-section-header">Serving Rules</p>
                   <Button variant="ghost" size="sm" onClick={() => setEditingRules(!editingRules)} className="text-xs gap-1.5">
                     <Pencil size={12} />
                     {editingRules ? "Done Editing" : "Edit Rules"}
@@ -671,7 +663,7 @@ export default function PlacementDetail() {
                     <div className="skoop-card p-4">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm font-medium">No-fill Fallback</p>
+                          <p className="text-sm font-medium">If No Ad Available, Show:</p>
                           <p className="text-xs text-muted-foreground mt-0.5">When programmatic has no fill, fall back to owned content</p>
                         </div>
                         <Switch checked={noFillFallback} onCheckedChange={setNoFillFallback} />
@@ -684,7 +676,7 @@ export default function PlacementDetail() {
                       { rule: "Category Separation", desc: "Prevent competing brands from appearing in the same loop", value: catSeparation ? `Enabled — ${catSeparationGap} slot gap` : "Disabled" },
                       { rule: "Back-to-back Prevention", desc: "Same creative cannot play consecutively", value: backToBack ? "Enabled" : "Disabled" },
                       { rule: "Frequency Cap", desc: "Maximum plays per unique creative per hour", value: `${freqCap} plays/hour` },
-                      { rule: "No-fill Fallback", desc: "When programmatic has no fill, fall back to owned content", value: noFillFallback ? "Enabled — Owned Content Pool" : "Disabled" },
+                      { rule: "If No Ad Available, Show:", desc: "When programmatic has no fill, fall back to owned content", value: noFillFallback ? "Enabled — Owned Content Pool" : "Disabled" },
                     ].map((r) => (
                       <div key={r.rule} className="skoop-card p-4 flex items-center justify-between">
                         <div><p className="text-sm font-medium">{r.rule}</p><p className="text-xs text-muted-foreground mt-0.5">{r.desc}</p></div>
@@ -745,8 +737,8 @@ export default function PlacementDetail() {
               <Info size={14} className="text-primary mt-0.5 shrink-0" />
               <p className="text-xs text-muted-foreground">
                 {isDraft
-                  ? "Campaigns will appear here once this placement is used in live campaign bookings."
-                  : "These campaigns consume inventory from this ad placement. Delivery targets draw from the placement's available capacity."}
+                  ? "Campaigns will appear here once this rule is used in live campaign bookings."
+                  : "These campaigns consume inventory from this network rule. Delivery targets draw from the rule's available capacity."}
               </p>
             </div>
 
@@ -757,10 +749,10 @@ export default function PlacementDetail() {
                 </div>
                 <p className="text-sm font-medium text-foreground">No campaigns assigned yet</p>
                 <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
-                  Campaigns will appear here once this placement is used in live campaign bookings.
+                  Campaigns will appear here once this rule is used in live campaign bookings.
                 </p>
                 <Button size="sm" className="mt-4" onClick={() => navigate("/campaigns/create")}>
-                  <Plus size={14} className="mr-1.5" /> Create Campaign for this Placement
+                  <Plus size={14} className="mr-1.5" /> Create Campaign for this Rule
                 </Button>
               </div>
             ) : (
