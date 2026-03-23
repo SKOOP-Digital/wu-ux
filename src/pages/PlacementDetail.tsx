@@ -1365,7 +1365,7 @@ export default function PlacementDetail() {
                         </Button>
                       </div>
                     ) : (
-                      <div className="skoop-card overflow-hidden">
+                      <div className="skoop-card overflow-x-auto">
                         <table className="w-full">
                           <thead>
                             <tr className="skoop-table-header">
