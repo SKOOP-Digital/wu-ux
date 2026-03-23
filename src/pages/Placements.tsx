@@ -147,7 +147,15 @@ export default function Placements() {
                         <TooltipContent><p className="text-xs">{statusTooltips[p.status] || p.status}</p></TooltipContent>
                       </Tooltip>
                     </td>
-                    <td className="skoop-table-cell text-center"><MoreHorizontal size={14} className="text-muted-foreground" /></td>
+                    <td className="skoop-table-cell text-center">
+                      <button
+                        onClick={(e) => deleteRule(p.id, p.name, e)}
+                        className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                        title="Delete rule"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
