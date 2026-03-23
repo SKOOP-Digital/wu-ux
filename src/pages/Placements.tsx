@@ -8,11 +8,10 @@ import StatusChip from "@/components/shared/StatusChip";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { allPlacements, calcCapacity } from "@/data/placements";
+import { allPlacements, calcCapacityFromRule } from "@/data/placements";
 import { toast } from "@/hooks/use-toast";
-import { allScreens } from "@/data/screens";
 
-const filters = ["All", "Healthy", "Overbooked", "At Risk", "Draft", "Loop", "Ad-break"];
+const filters = ["All", "Healthy", "Overbooked", "At Risk", "Loop", "Ad-break"];
 
 const statusTooltips: Record<string, string> = {
   Healthy: "Capacity within safe range",
@@ -29,17 +28,11 @@ export default function Placements() {
   const [placements, setPlacements] = useState(allPlacements);
 
   const enriched = useMemo(() => placements.map((p) => {
-    const cap = calcCapacity(p.screenIds, allScreens);
-    const screens = allScreens.filter((s) => p.screenIds.includes(s.id));
-    const venues = [...new Set(screens.map((s) => s.venue))];
-    const utilPct = cap.total > 0 ? Math.round((cap.booked / cap.total) * 100) : 0;
+    const cap = calcCapacityFromRule(p);
     return {
       ...p,
-      screens: screens.length,
-      venueLabel: venues.join(", "),
       capacitySlots: cap,
-      capacityPct: utilPct,
-      capacityDisplay: `${utilPct}% · ${cap.booked.toLocaleString()} / ${cap.total.toLocaleString()}`,
+      capacityPct: p.capacityUsagePct,
     };
   }), [placements]);
 
@@ -111,13 +104,18 @@ export default function Placements() {
               <tbody>
                 {filtered.map((p) => (
                   <tr key={p.id} className="skoop-table-row cursor-pointer" onClick={() => navigate(`/placements/${p.id}`)}>
-                    <td className="skoop-table-cell font-medium text-foreground">{p.name}</td>
+                    <td className="skoop-table-cell">
+                      <div className="leading-tight">
+                        <span className="font-medium text-foreground">{p.name}</span>
+                        <span className="text-[11px] block text-muted-foreground">{p.venueType}</span>
+                      </div>
+                    </td>
                     <td className="skoop-table-cell">
                       <div className="flex items-center gap-1.5 text-muted-foreground">
                         <Monitor size={13} className="shrink-0" />
                         <div className="leading-tight">
-                          <span className="text-sm">{p.screens} screen{p.screens !== 1 ? "s" : ""}</span>
-                          <span className="text-xs block text-muted-foreground">{p.venueLabel}</span>
+                          <span className="text-sm">{p.screenCount.toLocaleString()} screens</span>
+                          <span className="text-xs block text-muted-foreground">{p.region}</span>
                         </div>
                       </div>
                     </td>
@@ -128,7 +126,9 @@ export default function Placements() {
                     <td className="skoop-table-cell text-muted-foreground text-xs">{p.dayparts}</td>
                     <td className="skoop-table-cell text-right">
                       <div className="text-sm tabular-nums font-medium">{p.capacityPct}%</div>
-                      <div className="text-[11px] text-muted-foreground tabular-nums">{p.capacitySlots.booked.toLocaleString()} / {p.capacitySlots.total.toLocaleString()}</div>
+                      <div className="text-[11px] text-muted-foreground tabular-nums">
+                        {p.capacitySlots.booked.toLocaleString()} / {p.capacitySlots.total.toLocaleString()} plays/day
+                      </div>
                     </td>
                     <td className="skoop-table-cell">
                       <Tooltip>
@@ -161,13 +161,14 @@ export default function Placements() {
                   <StatusChip status={p.model.toLowerCase()} label={p.model} />
                 </div>
                 <h3 className="font-medium text-sm text-foreground mb-1">{p.name}</h3>
+                <span className="text-[11px] text-muted-foreground block mb-1">{p.venueType}</span>
                 <div className="flex items-center gap-1.5 text-muted-foreground mb-3">
                   <Monitor size={12} />
-                  <span className="text-xs">{p.screens} screen{p.screens !== 1 ? "s" : ""} · {p.venueLabel}</span>
+                  <span className="text-xs">{p.screenCount.toLocaleString()} screens · {p.region}</span>
                 </div>
                 <MixBar owned={p.owned} direct={p.direct} programmatic={p.prog} showLabels />
                 <div className="flex justify-between mt-3 text-xs text-muted-foreground">
-                  <span className="tabular-nums">{p.capacitySlots.booked.toLocaleString()} / {p.capacitySlots.total.toLocaleString()} opp</span>
+                  <span className="tabular-nums">{p.capacitySlots.booked.toLocaleString()} / {p.capacitySlots.total.toLocaleString()} plays/day</span>
                   <span className="tabular-nums font-medium">{p.capacityPct}%</span>
                 </div>
               </div>
