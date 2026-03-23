@@ -1369,12 +1369,12 @@ export default function PlacementDetail() {
                         <table className="w-full table-fixed">
                           <thead>
                             <tr className="skoop-table-header">
-                              <th className="skoop-table-cell text-left" style={{ width: "24%" }}>Campaign</th>
-                              <th className="skoop-table-cell text-left" style={{ width: "10%" }}>Type</th>
-                              <th className="skoop-table-cell text-left" style={{ width: "16%" }}>Delivery Target</th>
-                              <th className="skoop-table-cell text-left" style={{ width: "16%" }}>Current Delivery</th>
-                              <th className="skoop-table-cell text-left" style={{ width: "18%" }}>Progress</th>
-                              <th className="skoop-table-cell text-left" style={{ width: "16%" }}>Status</th>
+                              <th className="skoop-table-cell text-left" style={{ width: "22%" }}>Campaign</th>
+                              <th className="skoop-table-cell text-left" style={{ width: "9%" }}>Type</th>
+                              <th className="skoop-table-cell text-left" style={{ width: "14%" }}>Delivery Target</th>
+                              <th className="skoop-table-cell text-left" style={{ width: "14%" }}>Current Delivery</th>
+                              <th className="skoop-table-cell text-left" style={{ width: "16%" }}>Progress</th>
+                              <th className="skoop-table-cell text-left" style={{ width: "18%" }}>Status</th>
                             </tr>
                           </thead>
                           <tbody>
