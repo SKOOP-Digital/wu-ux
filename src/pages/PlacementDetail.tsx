@@ -834,7 +834,6 @@ export default function PlacementDetail() {
   }
 
   // ===== EXISTING PLACEMENT: collapsible sections + Active Campaigns =====
-  const [showCampaigns, setShowCampaigns] = useState(false);
 
   // Use rule-level data for capacity on existing rules
   const existingTotalPlays = placement.screenCount > 0
