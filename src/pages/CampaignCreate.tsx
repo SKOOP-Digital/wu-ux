@@ -42,6 +42,7 @@ export default function CampaignCreate() {
   const [selectedRules, setSelectedRules] = useState<SelectedRule[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [tagSearch, setTagSearch] = useState("");
+  const [conflictAcknowledged, setConflictAcknowledged] = useState(false);
 
   // Step 3 — Schedule
   const [startDate, setStartDate] = useState("");
