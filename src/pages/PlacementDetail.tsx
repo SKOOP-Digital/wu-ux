@@ -1369,12 +1369,11 @@ export default function PlacementDetail() {
                         <table className="w-full table-fixed">
                           <thead>
                             <tr className="skoop-table-header">
-                              <th className="skoop-table-cell text-left" style={{ width: "22%" }}>Campaign</th>
-                              <th className="skoop-table-cell text-left" style={{ width: "9%" }}>Type</th>
-                              <th className="skoop-table-cell text-left" style={{ width: "14%" }}>Delivery Target</th>
-                              <th className="skoop-table-cell text-left" style={{ width: "14%" }}>Current Delivery</th>
-                              <th className="skoop-table-cell text-left" style={{ width: "16%" }}>Progress</th>
-                              <th className="skoop-table-cell text-left" style={{ width: "18%" }}>Status</th>
+                              <th className="skoop-table-cell text-left" style={{ width: "28%" }}>Campaign</th>
+                              <th className="skoop-table-cell text-left" style={{ width: "12%" }}>Type</th>
+                              <th className="skoop-table-cell text-left" style={{ width: "18%" }}>Delivery Target</th>
+                              <th className="skoop-table-cell text-left" style={{ width: "22%" }}>Progress</th>
+                              <th className="skoop-table-cell text-left" style={{ width: "20%" }}>Status</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -1385,7 +1384,6 @@ export default function PlacementDetail() {
                                 </td>
                                 <td className="skoop-table-cell"><StatusChip status={c.type.toLowerCase()} /></td>
                                 <td className="skoop-table-cell text-muted-foreground text-xs">{c.target}</td>
-                                <td className="skoop-table-cell tabular-nums text-sm">{c.delivered}</td>
                                 <td className="skoop-table-cell">
                                   <div className="flex items-center gap-2">
                                     <div className="h-1.5 flex-1 bg-secondary rounded-full overflow-hidden">
