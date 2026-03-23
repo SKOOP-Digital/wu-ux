@@ -1,7 +1,7 @@
 import { MapPin, ArrowLeft, Monitor, AlertTriangle, Info, Plus, CheckCircle2, Search, ChevronDown } from "lucide-react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { useState, useMemo } from "react";
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+
 import PageHeader from "@/components/layout/PageHeader";
 import MixBar from "@/components/shared/MixBar";
 import StatusChip from "@/components/shared/StatusChip";
