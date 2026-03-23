@@ -27,11 +27,27 @@ export default function PlacementDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const placement = allPlacements.find((p) => p.id === id) ?? allPlacements[0];
+  const isNew = !id; // /placements/new has no :id param
+
+  const defaultDraft: typeof allPlacements[0] = {
+    id: "new",
+    name: "Untitled Ad Placement",
+    scope: "Screen",
+    venue: "",
+    model: "Loop",
+    owned: 50,
+    direct: 30,
+    prog: 20,
+    dayparts: "All Day",
+    status: "Draft",
+    screenIds: [],
+  };
+
+  const placement = isNew ? defaultDraft : (allPlacements.find((p) => p.id === id) ?? allPlacements[0]);
 
   // Determine if this is a draft/new placement vs live/existing
-  const isDraft = placement.status === "Draft" || placement.status === "New";
-  const stateLabel = isDraft ? "Draft Placement" : "Live Placement";
+  const isDraft = isNew || placement.status === "Draft" || placement.status === "New";
+  const stateLabel = isDraft ? (isNew ? "New Placement" : "Draft Placement") : "Live Placement";
   const stateColor = isDraft ? "bg-skoop-amber-light text-skoop-amber" : "bg-skoop-aqua-light text-skoop-aqua";
 
   const [section, setSection] = useState("Where it runs");
@@ -129,15 +145,15 @@ export default function PlacementDetail() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>{placement.name}</BreadcrumbPage>
+              <BreadcrumbPage>{isNew ? "New Ad Placement" : placement.name}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </div>
 
       <PageHeader
-        title={placement.name}
-        subtitle="Ad Placement · Defines how ads run on selected screens"
+        title={isNew ? "New Ad Placement" : placement.name}
+        subtitle={isNew ? "Create a new ad placement · Define how ads run on selected screens" : "Ad Placement · Defines how ads run on selected screens"}
         icon={<MapPin size={20} />}
         actions={
           <div className="flex items-center gap-2">
@@ -145,7 +161,14 @@ export default function PlacementDetail() {
               {stateLabel}
             </span>
             <Button variant="outline" size="sm" onClick={() => navigate("/placements")}><ArrowLeft size={14} className="mr-1" /> Back</Button>
-            <Button size="sm">Save Changes</Button>
+            {isDraft ? (
+              <>
+                <Button variant="outline" size="sm">Save Draft</Button>
+                <Button size="sm">Publish Placement</Button>
+              </>
+            ) : (
+              <Button size="sm">Save Changes</Button>
+            )}
           </div>
         }
       />

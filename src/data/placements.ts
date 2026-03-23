@@ -68,6 +68,17 @@ export const allPlacements: Placement[] = [
     status: "At Risk",
     screenIds: ["scr-18"],
   },
+  {
+    id: "pl-draft-1",
+    name: "New Draft Placement",
+    scope: "Screen",
+    venue: "",
+    model: "Loop",
+    owned: 50, direct: 30, prog: 20,
+    dayparts: "All Day",
+    status: "Draft",
+    screenIds: [],
+  },
 ];
 
 /** Calculate capacity for a placement based on its assigned screens */
