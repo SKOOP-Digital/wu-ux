@@ -769,9 +769,9 @@ export default function PlacementDetail() {
                 {hasScreens && (
                   <div className="skoop-card p-5 space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                     <p className="skoop-section-header">Capacity by Type</p>
-                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Owned ({owned}%)</span><span className="tabular-nums font-medium">{ownedCap.toLocaleString()} opp/day</span></div>
-                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Direct ({direct}%)</span><span className="tabular-nums font-medium">{directCap.toLocaleString()} opp/day</span></div>
-                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Programmatic ({Math.max(0, prog)}%)</span><span className="tabular-nums font-medium">{progCap.toLocaleString()} opp/day</span></div>
+                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Owned ({owned}%)</span><span className="tabular-nums font-medium">{ownedCap.toLocaleString()} plays/day</span></div>
+                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Direct ({direct}%)</span><span className="tabular-nums font-medium">{directCap.toLocaleString()} plays/day</span></div>
+                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Programmatic ({Math.max(0, prog)}%)</span><span className="tabular-nums font-medium">{progCap.toLocaleString()} plays/day</span></div>
                   </div>
                 )}
               </div>
