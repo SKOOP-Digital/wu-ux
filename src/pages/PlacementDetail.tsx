@@ -1,4 +1,4 @@
-import { MapPin, ArrowLeft, Monitor, AlertTriangle, Info, Plus, CheckCircle2, Search, ChevronDown } from "lucide-react";
+import { MapPin, ArrowLeft, Monitor, AlertTriangle, Info, Plus, CheckCircle2, Search, ChevronDown, Trash2 } from "lucide-react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { useState, useMemo } from "react";
 
@@ -13,6 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Select as SelectRoot, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb";
 import { allScreens } from "@/data/screens";
@@ -873,7 +874,38 @@ export default function PlacementDetail() {
                 <Button size="sm" onClick={handlePublish} disabled={!canPublish}>Publish Rule</Button>
               </>
             ) : (
-              <Button size="sm">Save Changes</Button>
+              <>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline" size="sm" className="text-destructive border-destructive/30 hover:bg-destructive/10">
+                      <Trash2 size={14} className="mr-1" /> Delete
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete this network rule?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will permanently remove "{placement.name}" and disconnect it from all active campaigns. This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        onClick={() => {
+                          const idx = allPlacements.findIndex(p => p.id === id);
+                          if (idx !== -1) allPlacements.splice(idx, 1);
+                          toast({ title: "Rule deleted", description: `"${placement.name}" has been removed.` });
+                          navigate("/placements");
+                        }}
+                      >
+                        Delete Rule
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+                <Button size="sm">Save Changes</Button>
+              </>
             )}
           </div>
         }
