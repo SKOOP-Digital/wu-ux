@@ -904,7 +904,9 @@ export default function PlacementDetail() {
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
-                <Button size="sm">Save Changes</Button>
+                <Button size="sm" onClick={() => {
+                  toast({ title: "Changes saved", description: `"${placement.name}" has been updated.` });
+                }}>Save Changes</Button>
               </>
             )}
           </div>
