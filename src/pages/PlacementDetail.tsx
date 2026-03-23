@@ -581,7 +581,7 @@ export default function PlacementDetail() {
 
                 {/* ===== SECTION 3: Content Split & Rules ===== */}
                 {(() => {
-                  const s3Summary = `Owned ${owned}% · Direct ${direct}% · Programmatic ${Math.max(0, prog)}%`;
+                  const s3Summary = `Marketing ${owned}% · Direct ${direct}% · Programmatic ${Math.max(0, prog)}%`;
                   return (
                     <Collapsible open={section3Open} onOpenChange={setSection3Open}>
                       <CollapsibleTrigger className="w-full rounded-lg border border-l-[3px] border-l-primary border-y-border border-r-border bg-background transition-colors">
@@ -615,7 +615,7 @@ export default function PlacementDetail() {
                                 </TooltipTrigger>
                                 <TooltipContent side="right" className="max-w-[240px]">
                                   <p className="text-xs leading-relaxed">
-                                    <strong>Owned</strong> — Your own brand content<br />
+                                    <strong>Marketing</strong> — Your own brand content<br />
                                     <strong>Direct</strong> — Booked campaigns<br />
                                     <strong>Programmatic</strong> — Automated ads
                                   </p>
@@ -626,7 +626,7 @@ export default function PlacementDetail() {
                             <div className="space-y-4">
                               <div>
                                 <div className="flex justify-between text-sm mb-1">
-                                  <span>Owned</span>
+                                  <span>Marketing</span>
                                   <span className="tabular-nums font-medium">{owned}%{hasScreens ? ` · ${ownedCap.toLocaleString()} plays/day` : ""}</span>
                                 </div>
                                 <Slider value={[owned]} onValueChange={([v]) => { if (v + direct <= 100) setOwned(v); }} max={100} step={5} className="[&_[role=slider]]:bg-skoop-slate" />
@@ -816,7 +816,7 @@ export default function PlacementDetail() {
                 {hasScreens && (
                   <div className="skoop-card p-5 space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                     <p className="skoop-section-header">Capacity by Type</p>
-                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Owned ({owned}%)</span><span className="tabular-nums font-medium">{ownedCap.toLocaleString()} plays/day</span></div>
+                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Marketing ({owned}%)</span><span className="tabular-nums font-medium">{ownedCap.toLocaleString()} plays/day</span></div>
                     <div className="flex justify-between text-sm"><span className="text-muted-foreground">Direct ({direct}%)</span><span className="tabular-nums font-medium">{directCap.toLocaleString()} plays/day</span></div>
                     <div className="flex justify-between text-sm"><span className="text-muted-foreground">Programmatic ({Math.max(0, prog)}%)</span><span className="tabular-nums font-medium">{progCap.toLocaleString()} plays/day</span></div>
                   </div>
@@ -1193,7 +1193,7 @@ export default function PlacementDetail() {
 
             {/* ===== SECTION 3: Content Split & Rules ===== */}
             {(() => {
-              const s3Summary = `Owned ${owned}% · Direct ${direct}% · Programmatic ${Math.max(0, prog)}%`;
+              const s3Summary = `Marketing ${owned}% · Direct ${direct}% · Programmatic ${Math.max(0, prog)}%`;
               return (
                 <Collapsible open={section3Open} onOpenChange={setSection3Open}>
                   <CollapsibleTrigger className="w-full rounded-lg border border-l-[3px] border-l-primary border-y-border border-r-border bg-background transition-colors">
@@ -1226,7 +1226,7 @@ export default function PlacementDetail() {
                             </TooltipTrigger>
                             <TooltipContent side="right" className="max-w-[240px]">
                               <p className="text-xs leading-relaxed">
-                                <strong>Owned</strong> — Your own brand content<br />
+                                <strong>Marketing</strong> — Your own brand content<br />
                                 <strong>Direct</strong> — Booked campaigns<br />
                                 <strong>Programmatic</strong> — Automated ads
                               </p>
@@ -1237,7 +1237,7 @@ export default function PlacementDetail() {
                         <div className="space-y-4">
                           <div>
                             <div className="flex justify-between text-sm mb-1">
-                              <span>Owned</span>
+                              <span>Marketing</span>
                               <span className="tabular-nums font-medium">{owned}% · {existingOwnedCap.toLocaleString()} plays/day</span>
                             </div>
                             <Slider value={[owned]} onValueChange={([v]) => { if (v + direct <= 100) setOwned(v); }} max={100} step={5} className="[&_[role=slider]]:bg-skoop-slate" />
