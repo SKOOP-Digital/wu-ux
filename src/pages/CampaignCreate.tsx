@@ -235,7 +235,7 @@ export default function CampaignCreate() {
                 </button>
                 {isSelected && sr && (
                   <div className="ml-4 mt-2 mb-3 pl-4 border-l-2 border-primary/20 space-y-2">
-                    <label className="text-[11px] text-muted-foreground">Narrow to specific screens using tags</label>
+                    <label className="text-[11px] text-muted-foreground">Filter to tags</label>
                     <div className="flex flex-wrap gap-1.5">
                       {sr.tags.map((tag) => (
                         <span key={tag} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
