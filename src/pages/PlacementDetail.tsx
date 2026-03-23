@@ -14,8 +14,8 @@ import { allScreens } from "@/data/screens";
 import { allPlacements, calcCapacity } from "@/data/placements";
 import { toast } from "@/hooks/use-toast";
 
-const SECTIONS_NEW = ["Where it runs", "How it runs", "How it is monetised"];
-const SECTIONS_EXISTING = ["Where it runs", "How it runs", "How it is monetised", "Active Campaigns"];
+const SECTIONS_NEW = ["Screens", "Schedule", "Mix"];
+const SECTIONS_EXISTING = ["Screens", "Schedule", "Mix", "Active Campaigns"];
 const PIE_COLORS = ["hsl(215,16%,47%)", "hsl(210,100%,50%)", "hsl(262,80%,60%)"];
 
 const mockCampaigns = [
@@ -50,7 +50,7 @@ export default function PlacementDetail() {
   const stateLabel = isDraft ? (isNew ? "New Rule" : "Draft Rule") : "Live Rule";
   const stateColor = isDraft ? "bg-skoop-amber-light text-skoop-amber" : "bg-skoop-aqua-light text-skoop-aqua";
 
-  const [section, setSection] = useState("Where it runs");
+  const [section, setSection] = useState("Screens");
   const [owned, setOwned] = useState(placement.owned);
   const [direct, setDirect] = useState(placement.direct);
   const [screenIds, setScreenIds] = useState<string[]>(placement.screenIds);
@@ -259,7 +259,7 @@ export default function PlacementDetail() {
 
       <div className="p-8">
         {/* ======= WHERE IT RUNS ======= */}
-        {section === "Where it runs" && (
+        {section === "Screens" && (
           <div className="grid grid-cols-3 gap-6">
             <div className="col-span-2 space-y-6">
               {isNew && (
@@ -399,7 +399,7 @@ export default function PlacementDetail() {
         )}
 
         {/* ======= HOW IT RUNS ======= */}
-        {section === "How it runs" && (
+        {section === "Schedule" && (
           <div className="grid grid-cols-3 gap-6">
             <div className="col-span-2 space-y-6">
               <div className="skoop-card p-5 space-y-4">
@@ -549,7 +549,7 @@ export default function PlacementDetail() {
         )}
 
         {/* ======= HOW IT IS MONETISED ======= */}
-        {section === "How it is monetised" && (
+        {section === "Mix" && (
           <div className="grid grid-cols-3 gap-6">
             <div className="col-span-2 space-y-6">
               <div className="skoop-card p-5 space-y-5">
