@@ -27,11 +27,27 @@ export default function PlacementDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const placement = allPlacements.find((p) => p.id === id) ?? allPlacements[0];
+  const isNew = !id; // /placements/new has no :id param
+
+  const defaultDraft: typeof allPlacements[0] = {
+    id: "new",
+    name: "Untitled Ad Placement",
+    scope: "Screen",
+    venue: "",
+    model: "Loop",
+    owned: 50,
+    direct: 30,
+    prog: 20,
+    dayparts: "All Day",
+    status: "Draft",
+    screenIds: [],
+  };
+
+  const placement = isNew ? defaultDraft : (allPlacements.find((p) => p.id === id) ?? allPlacements[0]);
 
   // Determine if this is a draft/new placement vs live/existing
-  const isDraft = placement.status === "Draft" || placement.status === "New";
-  const stateLabel = isDraft ? "Draft Placement" : "Live Placement";
+  const isDraft = isNew || placement.status === "Draft" || placement.status === "New";
+  const stateLabel = isDraft ? (isNew ? "New Placement" : "Draft Placement") : "Live Placement";
   const stateColor = isDraft ? "bg-skoop-amber-light text-skoop-amber" : "bg-skoop-aqua-light text-skoop-aqua";
 
   const [section, setSection] = useState("Where it runs");
