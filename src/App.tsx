@@ -12,8 +12,6 @@ import CampaignCreate from "./pages/CampaignCreate";
 import ProgrammaticSlots from "./pages/ProgrammaticSlots";
 import PlaybackMix from "./pages/PlaybackMix";
 import ProofOfPlay from "./pages/ProofOfPlay";
-import RevenueReports from "./pages/RevenueReports";
-import OrdersBilling from "./pages/OrdersBilling";
 import SettingsPage from "./pages/SettingsPage";
 import PlaylistEditor from "./pages/PlaylistEditor";
 import Screens from "./pages/Screens";
@@ -50,8 +48,7 @@ const App = () => (
                 <Route path="/programmatic" element={<ProgrammaticSlots />} />
                 <Route path="/playback-mix" element={<PlaybackMix />} />
                 <Route path="/proof-of-play" element={<ProofOfPlay />} />
-                <Route path="/revenue" element={<RevenueReports />} />
-                <Route path="/orders" element={<OrdersBilling />} />
+                <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

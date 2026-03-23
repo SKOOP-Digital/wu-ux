@@ -9,11 +9,11 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 
 const campaigns = [
-  { id: "1", name: "Pepsi Q2 Push", type: "Direct", advertiser: "PepsiCo", dates: "Apr 1 – Jun 30", goal: "SoV 40%", delivered: 3200, target: 5000, revenue: "$12,400", pricingModel: "CPP", status: "Live" },
-  { id: "2", name: "Nike Spring", type: "Direct", advertiser: "Nike", dates: "Mar 1 – May 31", goal: "5,000 plays", delivered: 3100, target: 5000, revenue: "$8,200", pricingModel: "CPP", status: "Live" },
-  { id: "3", name: "WU Brand Awareness", type: "Owned", advertiser: "Western Union", dates: "Jan 1 – Dec 31", goal: "SoV 50%", delivered: 48000, target: 50000, revenue: "—", pricingModel: "—", status: "Live" },
-  { id: "4", name: "Coca-Cola Summer", type: "Direct", advertiser: "Coca-Cola", dates: "May 1 – Aug 31", goal: "SoV 20%", delivered: 0, target: 4000, revenue: "$6,800", pricingModel: "CPP", status: "Scheduled" },
-  { id: "5", name: "WU Remittance Promo", type: "Direct", advertiser: "Western Union", dates: "Mar 1 – Mar 31", goal: "3,000 plays", delivered: 1200, target: 3000, revenue: "$3,200", pricingModel: "Flat Fee", status: "Under-delivering" },
+  { id: "1", name: "Pepsi Q2 Push", type: "Direct", advertiser: "PepsiCo", dates: "Apr 1 – Jun 30", goal: "SoV 40%", delivered: 3200, target: 5000, status: "Live" },
+  { id: "2", name: "Nike Spring", type: "Direct", advertiser: "Nike", dates: "Mar 1 – May 31", goal: "5,000 plays", delivered: 3100, target: 5000, status: "Live" },
+  { id: "3", name: "WU Brand Awareness", type: "Owned", advertiser: "Western Union", dates: "Jan 1 – Dec 31", goal: "SoV 50%", delivered: 48000, target: 50000, status: "Live" },
+  { id: "4", name: "Coca-Cola Summer", type: "Direct", advertiser: "Coca-Cola", dates: "May 1 – Aug 31", goal: "SoV 20%", delivered: 0, target: 4000, status: "Scheduled" },
+  { id: "5", name: "WU Remittance Promo", type: "Direct", advertiser: "Western Union", dates: "Mar 1 – Mar 31", goal: "3,000 plays", delivered: 1200, target: 3000, status: "Under-delivering" },
 ];
 
 const statusFilters = ["All", "Live", "Scheduled", "Draft", "Under-delivering", "Completed", "At Risk"];
@@ -69,14 +69,13 @@ export default function Campaigns() {
           <table className="w-full table-fixed">
             <thead>
               <tr className="skoop-table-header">
-                <th className="skoop-table-cell text-left" style={{ width: "20%" }}>Campaign</th>
-                <th className="skoop-table-cell text-left" style={{ width: "9%" }}>Type</th>
-                <th className="skoop-table-cell text-left" style={{ width: "13%" }}>Advertiser</th>
-                <th className="skoop-table-cell text-left" style={{ width: "11%" }}>Dates</th>
-                <th className="skoop-table-cell text-left" style={{ width: "9%" }}>Target</th>
-                <th className="skoop-table-cell text-left" style={{ width: "17%" }}>Progress</th>
-                <th className="skoop-table-cell text-right" style={{ width: "8%" }}>Revenue</th>
-                <th className="skoop-table-cell text-left" style={{ width: "13%" }}>Status</th>
+                <th className="skoop-table-cell text-left" style={{ width: "22%" }}>Campaign</th>
+                <th className="skoop-table-cell text-left" style={{ width: "10%" }}>Type</th>
+                <th className="skoop-table-cell text-left" style={{ width: "15%" }}>Advertiser</th>
+                <th className="skoop-table-cell text-left" style={{ width: "13%" }}>Dates</th>
+                <th className="skoop-table-cell text-left" style={{ width: "10%" }}>Target</th>
+                <th className="skoop-table-cell text-left" style={{ width: "16%" }}>Progress</th>
+                <th className="skoop-table-cell text-left" style={{ width: "14%" }}>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -92,17 +91,13 @@ export default function Campaigns() {
                     <td className="skoop-table-cell text-muted-foreground">
                       <span className="line-clamp-2">{c.advertiser}</span>
                     </td>
-                    <td className="skoop-table-cell text-muted-foreground text-xs">{c.dates}</td>
+                    <td className="skoop-table-cell text-muted-foreground text-xs whitespace-nowrap">{c.dates}</td>
                     <td className="skoop-table-cell text-xs text-muted-foreground">{c.goal}</td>
                     <td className="skoop-table-cell">
                       <div className="flex items-center gap-2">
                         <Progress value={pct} className="h-1.5 flex-1" />
-                        <span className="text-xs tabular-nums text-muted-foreground whitespace-nowrap">{pct}% · {pacing}</span>
+                        <span className="text-xs text-muted-foreground whitespace-nowrap">{pacing}</span>
                       </div>
-                    </td>
-                    <td className="skoop-table-cell text-right">
-                      <div className="tabular-nums text-sm">{c.revenue}</div>
-                      <div className="text-[10px] text-muted-foreground">{c.pricingModel}</div>
                     </td>
                     <td className="skoop-table-cell"><StatusChip status={c.status.toLowerCase().replace(" ", "-")} label={c.status} /></td>
                   </tr>
