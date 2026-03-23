@@ -11,7 +11,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { allPlacements, calcCapacity } from "@/data/placements";
 import { allScreens } from "@/data/screens";
 
-const filters = ["All", "Healthy", "Overbooked", "At Risk", "Loop", "Ad-break"];
+const filters = ["All", "Healthy", "Overbooked", "At Risk", "Draft", "Loop", "Ad-break"];
 
 const statusTooltips: Record<string, string> = {
   Healthy: "Capacity within safe range",
