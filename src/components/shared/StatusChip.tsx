@@ -20,7 +20,7 @@ const variants: Record<string, string> = {
   pending: "bg-skoop-amber-light text-skoop-amber",
   approved: "bg-skoop-aqua-light text-skoop-aqua",
   rejected: "bg-skoop-risk-light text-skoop-risk",
-  owned: "bg-emerald-50 text-emerald-700",
+  owned: "bg-skoop-green-light text-skoop-green",
   direct: "bg-skoop-blue-light text-skoop-blue",
   programmatic: "bg-skoop-purple-light text-skoop-purple",
   loop: "bg-secondary text-muted-foreground",
