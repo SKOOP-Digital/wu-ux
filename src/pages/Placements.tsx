@@ -27,7 +27,9 @@ export default function Placements() {
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
 
-  const enriched = useMemo(() => allPlacements.map((p) => {
+  const [placements, setPlacements] = useState(allPlacements);
+
+  const enriched = useMemo(() => placements.map((p) => {
     const cap = calcCapacity(p.screenIds, allScreens);
     const screens = allScreens.filter((s) => p.screenIds.includes(s.id));
     const venues = [...new Set(screens.map((s) => s.venue))];
@@ -40,7 +42,16 @@ export default function Placements() {
       capacityPct: utilPct,
       capacityDisplay: `${utilPct}% · ${cap.booked.toLocaleString()} / ${cap.total.toLocaleString()}`,
     };
-  }), []);
+  }), [placements]);
+
+  const deleteRule = (id: string, name: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const idx = allPlacements.findIndex(p => p.id === id);
+    if (idx !== -1) allPlacements.splice(idx, 1);
+    setPlacements([...allPlacements]);
+    setDrawer(null);
+    toast({ title: "Rule deleted", description: `"${name}" has been removed.` });
+  };
 
   const [drawer, setDrawer] = useState<(typeof enriched)[0] | null>(null);
 
