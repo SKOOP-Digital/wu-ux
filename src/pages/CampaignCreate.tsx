@@ -408,7 +408,7 @@ export default function CampaignCreate() {
         <button onClick={() => setDeliveryMode("total")} className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "total" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>Total Plays</button>
       </div>
 
-      {(deliveryMode === "sov" || campaignType === "marketing") ? (
+      {deliveryMode === "sov" ? (
         <div className="space-y-3">
           <div className="flex justify-between text-sm"><span>% of Screen Time</span><span className="font-medium tabular-nums">{sov}%</span></div>
           <Slider value={[sov]} onValueChange={([v]) => { setSov(v); setConflictAcknowledged(false); }} max={50} step={1} />
