@@ -34,7 +34,7 @@ const campaignData: Record<string, {
     creatives: [{ name: "Nike_Spring_16x9.mp4", type: "Video", status: "Approved", duration: "15s" }],
   },
   "3": {
-    name: "WU Brand Awareness", type: "Owned", advertiser: "Western Union",
+    name: "WU Brand Awareness", type: "Marketing", advertiser: "Western Union",
     dates: "Jan 1 – Dec 31", dayparts: "All Day", goal: "SoV 50%",
     delivered: 48000, target: 50000, status: "Live", sov: 50,
     placements: [

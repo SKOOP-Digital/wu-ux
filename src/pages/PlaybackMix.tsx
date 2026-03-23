@@ -50,7 +50,7 @@ export default function PlaybackMix() {
                 <MixBar owned={simOwned} direct={v.actualDirect} programmatic={Math.max(0, simProg)} height="h-3" />
                 <div className="grid grid-cols-3 gap-4 mt-4">
                   <div className="text-center">
-                    <p className="text-xs text-muted-foreground mb-1">Owned</p>
+                    <p className="text-xs text-muted-foreground mb-1">Marketing</p>
                     <p className="text-lg font-semibold tabular-nums">{simOwned}%</p>
                     <p className="text-[10px] text-muted-foreground">Target: {v.targetOwned}%</p>
                     <p className={`text-[10px] font-medium tabular-nums ${driftOwned > 0 ? "text-skoop-blue" : driftOwned < 0 ? "text-skoop-risk" : "text-muted-foreground"}`}>
@@ -85,7 +85,7 @@ export default function PlaybackMix() {
             <AlertTriangle size={14} className="text-skoop-amber" />
             <p className="skoop-section-header">What-if Simulator</p>
           </div>
-          <p className="text-sm text-muted-foreground">Adjust programmatic fill to see how the playback mix shifts. When programmatic has no fill, owned content backfills the gap.</p>
+          <p className="text-sm text-muted-foreground">Adjust programmatic fill to see how the playback mix shifts. When programmatic has no fill, marketing content backfills the gap.</p>
           <div>
             <div className="flex justify-between text-sm mb-2">
               <span>Programmatic Fill Level</span>
@@ -95,7 +95,7 @@ export default function PlaybackMix() {
           </div>
           {simProgFill < 50 && (
             <div className="bg-skoop-amber-light border border-skoop-amber/20 rounded-md p-3 text-xs text-skoop-amber">
-              ⚠ With programmatic fill at {simProgFill}%, owned content will backfill {Math.round((100 - simProgFill) / 100 * 20)}% of the programmatic allocation.
+              ⚠ With programmatic fill at {simProgFill}%, marketing content will backfill {Math.round((100 - simProgFill) / 100 * 20)}% of the programmatic allocation.
             </div>
           )}
         </div>

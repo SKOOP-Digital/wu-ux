@@ -6,9 +6,9 @@ import { useState } from "react";
 import DetailDrawer from "@/components/shared/DetailDrawer";
 
 const slots = [
-  { id: "1", name: "Lobby Programmatic 15s", placement: "Lobby Screens — Main Loop", duration: "15s", format: "Video, Image", demand: "Google Ad Manager", floor: "$2.50 CPM", fallback: "Owned Content Pool", status: "Live", noFill: "8%", avgResponse: "120ms", plays: "1,240" },
+  { id: "1", name: "Lobby Programmatic 15s", placement: "Lobby Screens — Main Loop", duration: "15s", format: "Video, Image", demand: "Google Ad Manager", floor: "$2.50 CPM", fallback: "Marketing Content Pool", status: "Live", noFill: "8%", avgResponse: "120ms", plays: "1,240" },
   { id: "2", name: "Food Court Pre-roll", placement: "Food Court Digital Menu Boards", duration: "10s", format: "Video", demand: "Vistar Media", floor: "$3.00 CPM", fallback: "Brand Reel", status: "Live", noFill: "12%", avgResponse: "95ms", plays: "860" },
-  { id: "3", name: "Elevator Quick Spot", placement: "Elevator Portrait Panels", duration: "6s", format: "Image", demand: "Hivestack", floor: "$1.80 CPM", fallback: "Owned Content Pool", status: "Paused", noFill: "—", avgResponse: "—", plays: "—" },
+  { id: "3", name: "Elevator Quick Spot", placement: "Elevator Portrait Panels", duration: "6s", format: "Image", demand: "Hivestack", floor: "$1.80 CPM", fallback: "Marketing Content Pool", status: "Paused", noFill: "—", avgResponse: "—", plays: "—" },
 ];
 
 export default function ProgrammaticSlots() {

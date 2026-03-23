@@ -29,7 +29,7 @@ export default function MixBar({ owned, direct, programmatic, height = "h-2", sh
         <TooltipContent side="top" className="px-3 py-2">
           <div className="flex flex-col gap-1 text-xs">
             <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-skoop-slate shrink-0" /> Owned {owned}%
+              <span className="w-2 h-2 rounded-full bg-skoop-slate shrink-0" /> Marketing {owned}%
             </span>
             <span className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-skoop-blue shrink-0" /> Direct {direct}%
@@ -43,7 +43,7 @@ export default function MixBar({ owned, direct, programmatic, height = "h-2", sh
       {showLabels && (
         <div className="flex gap-4 mt-2">
           <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <span className="w-2 h-2 rounded-full bg-skoop-slate" /> Owned {owned}%
+            <span className="w-2 h-2 rounded-full bg-skoop-slate" /> Marketing {owned}%
           </span>
           <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <span className="w-2 h-2 rounded-full bg-skoop-blue" /> Direct {direct}%

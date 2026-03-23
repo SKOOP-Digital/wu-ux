@@ -96,7 +96,7 @@ export default function Overview() {
         <div className="skoop-card p-5">
           <p className="skoop-section-header mb-1">Network Content Split</p>
           <p className="text-xs text-muted-foreground mb-3">
-            <span className="font-medium text-foreground">Owned:</span> Your content &nbsp;·&nbsp;
+            <span className="font-medium text-foreground">Marketing:</span> Your content &nbsp;·&nbsp;
             <span className="font-medium text-foreground">Direct:</span> Booked campaigns &nbsp;·&nbsp;
             <span className="font-medium text-foreground">Programmatic:</span> Automated ads
           </p>
@@ -112,8 +112,8 @@ export default function Overview() {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <KPICard label="Owned Content Delivered" value="47.8%" change="Target: 50%" changeType="neutral" />
-          <KPICard label="Backfill Rate" value="6.2%" change="No-fill fallback to owned" changeType="neutral" />
+          <KPICard label="Marketing Content Delivered" value="47.8%" change="Target: 50%" changeType="neutral" />
+          <KPICard label="Backfill Rate" value="6.2%" change="No-fill fallback to marketing" changeType="neutral" />
         </div>
 
         {/* Charts */}

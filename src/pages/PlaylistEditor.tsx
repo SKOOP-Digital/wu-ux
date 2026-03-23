@@ -7,15 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const playlistItems = [
-  { id: "1", section: "Owned Content Pool", name: "Skoop Brand Reel", type: "Owned", duration: "15s", daypart: "All Day", campaign: "Brand Awareness — Q1", priority: "Normal", delivery: "SoV 50%" },
-  { id: "2", section: "Owned Content Pool", name: "Network Promo Spot", type: "Owned", duration: "10s", daypart: "All Day", campaign: "Brand Awareness — Q1", priority: "Low", delivery: "Fill" },
+  { id: "1", section: "Marketing Content Pool", name: "Skoop Brand Reel", type: "Marketing", duration: "15s", daypart: "All Day", campaign: "Brand Awareness — Q1", priority: "Normal", delivery: "SoV 50%" },
+  { id: "2", section: "Marketing Content Pool", name: "Network Promo Spot", type: "Marketing", duration: "10s", daypart: "All Day", campaign: "Brand Awareness — Q1", priority: "Low", delivery: "Fill" },
   { id: "3", section: "Direct Campaigns", name: "Nike Summer Push — 16x9", type: "Direct", duration: "15s", daypart: "All Day", campaign: "Nike Summer Push", priority: "High", delivery: "SoV 15%" },
   { id: "4", section: "Direct Campaigns", name: "Coca-Cola Lobby — V2", type: "Direct", duration: "15s", daypart: "11am–9pm", campaign: "Coca-Cola Lobby Spots", priority: "Normal", delivery: "4 plays/hr" },
   { id: "5", section: "Programmatic Slots", name: "Programmatic Slot — 15s", type: "Programmatic", duration: "15s", daypart: "All Day", campaign: "Programmatic", priority: "Normal", delivery: "Fill" },
   { id: "6", section: "Programmatic Slots", name: "Programmatic Slot — 10s", type: "Programmatic", duration: "10s", daypart: "Peak", campaign: "Programmatic", priority: "Low", delivery: "Fill" },
 ];
 
-const sections = ["Owned Content Pool", "Direct Campaigns", "Programmatic Slots"];
+const sections = ["Marketing Content Pool", "Direct Campaigns", "Programmatic Slots"];
 
 const contentLibrary = ["Media", "AI Image Generator", "Menu Builder", "Zones", "Timer", "Clock", "Weather", "Youtube", "Website", "Templates", "RSS Feed", "KIOSK"];
 
