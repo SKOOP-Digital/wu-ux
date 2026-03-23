@@ -8,6 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb";
 import { allPlacements, calcPlaysPerDay, calcCapacityFromRule } from "@/data/placements";
+import { allScreens } from "@/data/screens";
+
+const AVAILABLE_TAGS = ["Lobby", "Drive-Thru", "Food Court", "Elevator", "Parking", "Northeast Region", "West Coast", "Urban Panel", "Bodega", "Concourse", "Premium", "High Traffic"];
 
 type CampaignType = "direct" | "marketing" | "";
 
