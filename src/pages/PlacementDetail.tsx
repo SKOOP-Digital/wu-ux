@@ -113,8 +113,23 @@ export default function PlacementDetail() {
       return;
     }
     const newId = `pl-${Date.now()}`;
+    const venues = [...new Set(allScreens.filter(s => screenIds.includes(s.id)).map(s => s.venue))];
+    const newPlacement: typeof allPlacements[0] = {
+      id: newId,
+      name: placementName,
+      scope: screenIds.length === 1 ? "Screen" : "Group",
+      venue: venues[0] || "",
+      model: "Loop",
+      owned,
+      direct,
+      prog: Math.max(0, 100 - owned - direct),
+      dayparts: dayparts.filter(d => d.active).map(d => d.name).join(", ") || "All Day",
+      status: "Healthy",
+      screenIds: [...screenIds],
+    };
+    allPlacements.push(newPlacement);
     toast({ title: "Ad Placement published successfully", description: `${placementName} is now live.` });
-    navigate(`/placements/${newId}`);
+    navigate("/placements");
   };
 
   const handleSaveDraft = () => {
