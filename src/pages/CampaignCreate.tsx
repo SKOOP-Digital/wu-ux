@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Megaphone, ArrowLeft, ArrowRight, Check, Info, AlertTriangle, Briefcase, Home, Plus, X, Upload, Tag, Search } from "lucide-react";
+import { Megaphone, ArrowLeft, ArrowRight, Check, Info, AlertTriangle, Briefcase, Home, Plus, X, Upload, Tag, Search, Trash2 } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StatusChip from "@/components/shared/StatusChip";
 import { Button } from "@/components/ui/button";
