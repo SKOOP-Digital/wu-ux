@@ -741,7 +741,7 @@ export default function PlacementDetail() {
                     <p className="skoop-section-header">Draft Summary</p>
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm"><span className="text-muted-foreground">Screens</span><span className="font-medium tabular-nums">{screenIds.length}</span></div>
-                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Capacity</span><span className="font-medium tabular-nums">{capacity.total.toLocaleString()} opp/day</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Capacity</span><span className="font-medium tabular-nums">{totalPlaysPerDay.toLocaleString()} plays/day</span></div>
                       <div className="flex justify-between text-sm"><span className="text-muted-foreground">Content Split</span><span className="font-medium tabular-nums">{owned}/{direct}/{Math.max(0, prog)}</span></div>
                       <div className="flex justify-between text-sm"><span className="text-muted-foreground">Active Hours</span><span className="font-medium tabular-nums">{dayparts.filter(d => d.active).length} windows</span></div>
                     </div>
