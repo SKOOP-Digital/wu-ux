@@ -55,6 +55,39 @@ export default function CampaignCreate() {
   const [sov, setSov] = useState(15);
   const [totalPlays, setTotalPlays] = useState(5000);
 
+  // Step 5 — Creatives
+  interface Creative {
+    id: string;
+    name: string;
+    type: string;
+    size: string;
+    file: File;
+  }
+  const [creatives, setCreatives] = useState<Creative[]>([]);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    const newCreatives: Creative[] = Array.from(files).map((file) => {
+      const ext = file.name.split(".").pop()?.toLowerCase() || "";
+      let type = "File";
+      if (["mp4", "mov", "webm", "avi"].includes(ext)) type = "Video";
+      else if (["jpg", "jpeg", "png", "gif", "webp", "svg"].includes(ext)) type = "Image";
+      else if (ext === "zip" || ext === "html") type = "HTML5";
+      return {
+        id: crypto.randomUUID(),
+        name: file.name,
+        type,
+        size: file.size < 1024 * 1024 ? `${(file.size / 1024).toFixed(0)} KB` : `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
+        file,
+      };
+    });
+    setCreatives((prev) => [...prev, ...newCreatives]);
+    e.target.value = "";
+  };
+
+  const removeCreative = (id: string) => setCreatives((prev) => prev.filter((c) => c.id !== id));
+
   const toggleDay = (d: string) => setActiveDays((prev) => prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]);
   const toggleDaypart = (d: string) => setActiveDayparts((prev) => prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]);
 
