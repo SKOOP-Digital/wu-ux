@@ -156,7 +156,7 @@ export default function PlacementDetail() {
       status: "Healthy",
       screenCount: screenIds.length,
       screenIds: [...screenIds],
-      defaultPlayDuration: defaultPlayDuration === "custom" ? customPlayDuration : parseInt(defaultPlayDuration),
+      defaultPlayDuration: defaultPlayDuration === "custom" ? customDuration : parseInt(defaultPlayDuration),
       capacityUsagePct: 0,
     };
     allPlacements.push(newPlacement);
