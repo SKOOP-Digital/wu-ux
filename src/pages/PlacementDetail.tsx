@@ -145,7 +145,7 @@ export default function PlacementDetail() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>{placement.name}</BreadcrumbPage>
+              <BreadcrumbPage>{isNew ? "New Ad Placement" : placement.name}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
