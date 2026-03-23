@@ -39,13 +39,19 @@ export default function PlacementDetail() {
     name: "Untitled Rule",
     scope: "Screen",
     venue: "",
+    venueType: "",
+    region: "",
     model: "Loop",
     owned: 50,
     direct: 30,
     prog: 20,
     dayparts: "All Day",
+    activeHours: 16,
     status: "Draft",
+    screenCount: 0,
     screenIds: [],
+    defaultPlayDuration: 15,
+    capacityUsagePct: 0,
   };
 
   const placement = isNew ? defaultDraft : (allPlacements.find((p) => p.id === id) ?? allPlacements[0]);
