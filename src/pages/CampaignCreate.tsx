@@ -141,7 +141,7 @@ export default function CampaignCreate() {
     );
   };
 
-  const availableRules = allPlacements.filter((p) => !selectedRules.find((sr) => sr.id === p.id));
+  
 
   // ── STEP RENDERERS ──
 
