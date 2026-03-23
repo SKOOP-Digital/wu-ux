@@ -70,14 +70,14 @@ export default function Campaigns() {
           <table className="w-full table-fixed">
             <thead>
               <tr className="skoop-table-header">
-                <th className="skoop-table-cell text-left" style={{ width: "22%" }}>Campaign</th>
-                <th className="skoop-table-cell text-left" style={{ width: "10%" }}>Type</th>
-                <th className="skoop-table-cell text-left" style={{ width: "14%" }}>Advertiser</th>
-                <th className="skoop-table-cell text-left" style={{ width: "12%" }}>Dates</th>
-                <th className="skoop-table-cell text-left" style={{ width: "10%" }}>Target</th>
-                <th className="skoop-table-cell text-left" style={{ width: "16%" }}>Progress</th>
+                <th className="skoop-table-cell text-left" style={{ width: "20%" }}>Campaign</th>
+                <th className="skoop-table-cell text-left" style={{ width: "9%" }}>Type</th>
+                <th className="skoop-table-cell text-left" style={{ width: "12%" }}>Advertiser</th>
+                <th className="skoop-table-cell text-left" style={{ width: "11%" }}>Dates</th>
+                <th className="skoop-table-cell text-left" style={{ width: "9%" }}>Target</th>
+                <th className="skoop-table-cell text-left" style={{ width: "17%" }}>Progress</th>
                 <th className="skoop-table-cell text-right" style={{ width: "8%" }}>Revenue</th>
-                <th className="skoop-table-cell text-left" style={{ width: "10%" }}>Status</th>
+                <th className="skoop-table-cell text-left" style={{ width: "14%" }}>Status</th>
               </tr>
             </thead>
             <tbody>
