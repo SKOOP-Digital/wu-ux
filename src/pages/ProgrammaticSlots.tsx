@@ -27,7 +27,7 @@ export default function ProgrammaticSlots() {
         <div className="skoop-card p-5">
           <p className="skoop-section-header mb-3">Request Lifecycle</p>
           <div className="flex items-center gap-3 text-xs font-medium">
-            {["Placement", "Programmatic Slot", "Ad Decision", "Creative Delivery", "Proof of Play"].map((s, i) => (
+            {["Network Rule", "Programmatic Slot", "Ad Decision", "Creative Delivery", "Proof of Play"].map((s, i) => (
               <div key={s} className="flex items-center gap-3">
                 <span className="px-3 py-1.5 rounded-md bg-secondary text-foreground">{s}</span>
                 {i < 4 && <span className="text-muted-foreground">→</span>}
@@ -36,13 +36,12 @@ export default function ProgrammaticSlots() {
           </div>
         </div>
 
-        {/* Slots table */}
         <div className="skoop-card overflow-hidden">
           <table className="w-full">
             <thead>
               <tr className="skoop-table-header">
                 <th className="skoop-table-cell text-left">Slot Name</th>
-                <th className="skoop-table-cell text-left">Placement</th>
+                <th className="skoop-table-cell text-left">Network Rule</th>
                 <th className="skoop-table-cell text-left">Duration</th>
                 <th className="skoop-table-cell text-left">Demand Source</th>
                 <th className="skoop-table-cell text-right">Floor Price</th>
@@ -76,7 +75,7 @@ export default function ProgrammaticSlots() {
           <div className="space-y-5">
             <div><h3 className="font-semibold text-foreground">{drawer.name}</h3><StatusChip status={drawer.status.toLowerCase()} /></div>
             <div className="grid grid-cols-2 gap-4">
-              <div><p className="text-xs text-muted-foreground">Placement</p><p className="text-sm font-medium">{drawer.placement}</p></div>
+              <div><p className="text-xs text-muted-foreground">Network Rule</p><p className="text-sm font-medium">{drawer.placement}</p></div>
               <div><p className="text-xs text-muted-foreground">Duration</p><p className="text-sm font-medium">{drawer.duration}</p></div>
               <div><p className="text-xs text-muted-foreground">Formats</p><p className="text-sm font-medium">{drawer.format}</p></div>
               <div><p className="text-xs text-muted-foreground">Demand Source</p><p className="text-sm font-medium">{drawer.demand}</p></div>

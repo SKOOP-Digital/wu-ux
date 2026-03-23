@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb";
 
-// Mock campaign data keyed by id
 const campaignData: Record<string, {
   name: string; type: string; advertiser: string; dates: string; dayparts: string;
   goal: string; delivered: number; target: number; revenue: string; pricingModel: string;
@@ -80,7 +79,6 @@ export default function CampaignDetail() {
       <div className="p-8">
         <div className="grid grid-cols-3 gap-6">
           <div className="col-span-2 space-y-6">
-            {/* Summary */}
             <div className="skoop-card p-5 space-y-4">
               <p className="skoop-section-header">Campaign Summary</p>
               <div className="grid grid-cols-3 gap-4">
@@ -88,15 +86,14 @@ export default function CampaignDetail() {
                 <div><p className="text-xs text-muted-foreground">Advertiser</p><p className="text-sm font-medium">{campaign.advertiser}</p></div>
                 <div><p className="text-xs text-muted-foreground">Status</p><StatusChip status={campaign.status.toLowerCase().replace(" ", "-")} label={campaign.status} /></div>
                 <div><p className="text-xs text-muted-foreground">Dates</p><p className="text-sm font-medium">{campaign.dates}</p></div>
-                <div><p className="text-xs text-muted-foreground">Dayparts</p><p className="text-sm font-medium">{campaign.dayparts}</p></div>
+                <div><p className="text-xs text-muted-foreground">Active Hours</p><p className="text-sm font-medium">{campaign.dayparts}</p></div>
                 <div><p className="text-xs text-muted-foreground">Delivery Target</p><p className="text-sm font-medium">{campaign.goal}</p></div>
               </div>
             </div>
 
-            {/* Ad Placements */}
             <div className="skoop-card p-5 space-y-3">
               <p className="skoop-section-header">This campaign runs on</p>
-              <p className="text-xs text-muted-foreground">Ad placements that provide inventory for this campaign</p>
+              <p className="text-xs text-muted-foreground">Network rules that provide inventory for this campaign</p>
               <div className="space-y-2">
                 {campaign.placements.map((p) => (
                   <div
@@ -111,13 +108,12 @@ export default function CampaignDetail() {
                         <p className="text-xs text-muted-foreground">{p.screens} screens · {p.venue}</p>
                       </div>
                     </div>
-                    <span className="text-xs text-primary">View Placement</span>
+                    <span className="text-xs text-primary">View Rule</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Delivery */}
             <div className="skoop-card p-5 space-y-4">
               <p className="skoop-section-header">Delivery Progress</p>
               <div className="flex items-center gap-4">
@@ -131,7 +127,6 @@ export default function CampaignDetail() {
               </div>
             </div>
 
-            {/* Creatives */}
             <div className="skoop-card p-5 space-y-3">
               <p className="skoop-section-header">Creatives</p>
               <div className="space-y-2">
@@ -148,10 +143,9 @@ export default function CampaignDetail() {
             </div>
           </div>
 
-          {/* Right sidebar */}
           <div className="space-y-4">
             <div className="skoop-card p-5 space-y-3">
-              <p className="skoop-section-header">Commercials</p>
+              <p className="skoop-section-header">Pricing & Billing</p>
               <div><p className="text-xs text-muted-foreground">Pricing Model</p><p className="text-sm font-medium">{campaign.pricingModel}</p></div>
               <div><p className="text-xs text-muted-foreground">Revenue</p><p className="text-lg font-semibold tabular-nums">{campaign.revenue}</p></div>
               <div><p className="text-xs text-muted-foreground">SoV</p><p className="text-sm font-medium tabular-nums">{campaign.sov}%</p></div>

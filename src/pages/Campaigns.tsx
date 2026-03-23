@@ -12,8 +12,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 const campaigns = [
   { id: "1", name: "Nike Summer Push", type: "Direct", advertiser: "Nike Australia", dates: "Mar 1 – Mar 31", dayparts: "All Day", goal: "5,000 plays", delivered: 3100, target: 5000, revenue: "$8,400", pricingModel: "CPP", status: "Live", placements: ["Lobby Screens — Main Loop", "Concourse Video Wall"], placementCount: 2 },
   { id: "2", name: "Coca-Cola Lobby Spots", type: "Direct", advertiser: "Coca-Cola", dates: "Mar 5 – Apr 5", dayparts: "11am–9pm", goal: "SoV 15%", delivered: 1800, target: 2500, revenue: "$4,200", pricingModel: "CPP", status: "Under-delivering", placements: ["Food Court Digital Menu Boards"], placementCount: 1 },
-  { id: "3", name: "Brand Awareness — Q1", type: "Owned", advertiser: "Skoop Network", dates: "Jan 1 – Mar 31", dayparts: "All Day", goal: "SoV 50%", delivered: 48000, target: 50000, revenue: "—", pricingModel: "—", status: "Live", placements: ["All Placements"], placementCount: 5 },
-  { id: "4", name: "Programmatic Backfill — All", type: "Programmatic", advertiser: "Multiple", dates: "Ongoing", dayparts: "All Day", goal: "Fill rate", delivered: 88, target: 100, revenue: "$5,100", pricingModel: "CPM", status: "Live", placements: ["All Placements"], placementCount: 5 },
+  { id: "3", name: "Brand Awareness — Q1", type: "Owned", advertiser: "Skoop Network", dates: "Jan 1 – Mar 31", dayparts: "All Day", goal: "SoV 50%", delivered: 48000, target: 50000, revenue: "—", pricingModel: "—", status: "Live", placements: ["All Rules"], placementCount: 5 },
+  { id: "4", name: "Programmatic Backfill — All", type: "Programmatic", advertiser: "Multiple", dates: "Ongoing", dayparts: "All Day", goal: "Fill rate", delivered: 88, target: 100, revenue: "$5,100", pricingModel: "CPM", status: "Live", placements: ["All Rules"], placementCount: 5 },
   { id: "5", name: "Samsung Galaxy Launch", type: "Direct", advertiser: "Samsung", dates: "Apr 1 – Apr 15", dayparts: "Morning, Afternoon", goal: "2,000 plays", delivered: 0, target: 2000, revenue: "$3,600", pricingModel: "Flat Fee", status: "Scheduled", placements: ["Elevator Portrait Panels"], placementCount: 1 },
   { id: "6", name: "Holiday Season Promo", type: "Direct", advertiser: "Myer", dates: "Dec 1 – Dec 25", dayparts: "All Day", goal: "10,000 plays", delivered: 10000, target: 10000, revenue: "$12,000", pricingModel: "CPP", status: "Completed", placements: ["Lobby Screens — Main Loop", "Food Court Digital Menu Boards"], placementCount: 2 },
 ];
@@ -24,7 +24,6 @@ function pacingLabel(delivered: number, target: number, status: string) {
   if (status === "Scheduled") return "Not started";
   if (status === "Completed") return "Complete";
   const pct = target > 0 ? delivered / target : 0;
-  // Rough pacing logic — if >60% delivered with pct above 0.7 of expected, on track
   if (pct >= 0.95) return "Complete";
   if (pct >= 0.6) return "On Track";
   if (pct >= 0.4) return "Behind Pace";
@@ -73,7 +72,7 @@ export default function Campaigns() {
                 <th className="skoop-table-cell text-left">Campaign</th>
                 <th className="skoop-table-cell text-left">Type</th>
                 <th className="skoop-table-cell text-left">Advertiser</th>
-                <th className="skoop-table-cell text-left">Ad Placements</th>
+                <th className="skoop-table-cell text-left">Network Rules</th>
                 <th className="skoop-table-cell text-left">Dates</th>
                 <th className="skoop-table-cell text-left">Delivery Target</th>
                 <th className="skoop-table-cell text-left w-36">Delivery Progress</th>
@@ -97,7 +96,7 @@ export default function Campaigns() {
                           <PopoverTrigger asChild>
                             <button className="flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors" onClick={(e) => e.stopPropagation()}>
                               <MapPin size={12} className="shrink-0" />
-                              <span className="text-xs">{c.placementCount} placements</span>
+                              <span className="text-xs">{c.placementCount} rules</span>
                             </button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2" align="start">
@@ -149,7 +148,7 @@ export default function Campaigns() {
 
             <div className="space-y-2">
               <p className="skoop-section-header">This campaign runs on</p>
-              <p className="text-[11px] text-muted-foreground">Ad placements that provide inventory for this campaign</p>
+              <p className="text-[11px] text-muted-foreground">Network rules that provide inventory for this campaign</p>
               <div className="space-y-1.5">
                 {drawer.placements.map((p) => (
                   <div key={p} className="flex items-center gap-2 bg-secondary/60 rounded-md px-3 py-2">
@@ -164,7 +163,7 @@ export default function Campaigns() {
               <div><p className="text-xs text-muted-foreground">Advertiser</p><p className="text-sm font-medium">{drawer.advertiser}</p></div>
               <div><p className="text-xs text-muted-foreground">Revenue</p><p className="text-sm font-medium tabular-nums">{drawer.revenue}</p></div>
               <div><p className="text-xs text-muted-foreground">Dates</p><p className="text-sm font-medium">{drawer.dates}</p></div>
-              <div><p className="text-xs text-muted-foreground">Dayparts</p><p className="text-sm font-medium">{drawer.dayparts}</p></div>
+              <div><p className="text-xs text-muted-foreground">Active Hours</p><p className="text-sm font-medium">{drawer.dayparts}</p></div>
               <div><p className="text-xs text-muted-foreground">Delivery Target</p><p className="text-sm font-medium">{drawer.goal}</p></div>
               <div><p className="text-xs text-muted-foreground">Delivery Progress</p><p className="text-sm font-medium tabular-nums">{drawer.delivered.toLocaleString()} / {drawer.target.toLocaleString()}</p></div>
               <div><p className="text-xs text-muted-foreground">Pricing Model</p><p className="text-sm font-medium">{drawer.pricingModel}</p></div>

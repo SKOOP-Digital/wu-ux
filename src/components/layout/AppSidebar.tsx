@@ -13,7 +13,7 @@ const mainNav = [
 
 const monetNav = [
   { icon: LayoutDashboard, label: "Overview", to: "/" },
-  { icon: MapPin, label: "Ad Placements", to: "/placements" },
+  { icon: MapPin, label: "Network Rules", to: "/placements" },
   { icon: Megaphone, label: "Campaigns", to: "/campaigns" },
   { icon: Radio, label: "Programmatic", to: "/programmatic" },
   { icon: Shuffle, label: "Playback Mix", to: "/playback-mix" },
