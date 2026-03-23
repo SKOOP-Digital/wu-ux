@@ -377,7 +377,7 @@ export default function PlacementDetail() {
                       <div className="border border-border rounded-lg overflow-hidden max-h-[320px] overflow-y-auto">
                         {filteredScreens.map(s => {
                           const isSelected = screenIds.includes(s.id);
-                          const dailyCap = s.loopsPerHour * 16;
+                          const dailyPlays = calcPlaysPerDay(s);
                           return (
                             <label
                               key={s.id}
@@ -391,7 +391,7 @@ export default function PlacementDetail() {
                                 <p className="text-sm font-medium truncate">{s.name}</p>
                                 <p className="text-xs text-muted-foreground">{s.venue} · {s.resolution} · {s.orientation}</p>
                               </div>
-                              <span className="text-xs text-muted-foreground tabular-nums">{dailyCap.toLocaleString()} opp/day</span>
+                              <span className="text-xs text-muted-foreground tabular-nums">{dailyPlays.toLocaleString()} plays/day</span>
                             </label>
                           );
                         })}
