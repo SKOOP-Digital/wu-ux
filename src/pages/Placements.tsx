@@ -86,9 +86,9 @@ export default function Placements() {
             <table className="w-full table-fixed">
               <thead>
                 <tr className="skoop-table-header">
-                  <th className="skoop-table-cell text-left" style={{ width: "22%" }}>Network Rule</th>
-                  <th className="skoop-table-cell text-left" style={{ width: "16%" }}>Screens</th>
-                  <th className="skoop-table-cell text-left" style={{ width: "12%" }}>How Ads Play</th>
+                  <th className="skoop-table-cell text-left" style={{ width: "24%" }}>Network Rule</th>
+                  <th className="skoop-table-cell text-left" style={{ width: "15%" }}>Screens</th>
+                  <th className="skoop-table-cell text-left" style={{ width: "11%" }}>How Ads Play</th>
                   <th className="skoop-table-cell text-left" style={{ width: "18%" }}>Content Split</th>
                   <th className="skoop-table-cell text-left" style={{ width: "10%" }}>Active Hours</th>
                   <th className="skoop-table-cell text-left" style={{ width: "10%" }}>Capacity</th>
@@ -99,10 +99,10 @@ export default function Placements() {
                 {filtered.map((p) => (
                   <tr key={p.id} className="skoop-table-row cursor-pointer" onClick={() => navigate(`/placements/${p.id}`)}>
                     <td className="skoop-table-cell font-medium text-foreground">
-                      <span className="truncate block">{p.name}</span>
+                      <span className="line-clamp-2">{p.name}</span>
                     </td>
-                    <td className="skoop-table-cell text-muted-foreground text-xs whitespace-nowrap">
-                      {p.screenCount.toLocaleString()} screens · {p.region}
+                    <td className="skoop-table-cell text-muted-foreground text-xs">
+                      {p.screenCount.toLocaleString()} screens · {p.venue}
                     </td>
                     <td className="skoop-table-cell">
                       <StatusChip status={p.model.toLowerCase()} label={modelLabel(p.model)} />
