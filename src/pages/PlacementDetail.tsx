@@ -64,6 +64,45 @@ export default function PlacementDetail() {
   const [noFillFallback, setNoFillFallback] = useState(true);
   const [editingRules, setEditingRules] = useState(false);
 
+  // Editable dayparts state
+  const [dayparts, setDayparts] = useState([
+    { id: "dp-1", name: "Morning", start: "06:00", end: "11:00", active: true },
+    { id: "dp-2", name: "Midday", start: "11:00", end: "14:00", active: true },
+    { id: "dp-3", name: "Afternoon", start: "14:00", end: "17:00", active: true },
+    { id: "dp-4", name: "Evening", start: "17:00", end: "21:00", active: true },
+    { id: "dp-5", name: "Late Night", start: "21:00", end: "00:00", active: false },
+  ]);
+
+  const addDaypart = () => {
+    const id = `dp-${Date.now()}`;
+    setDayparts(prev => [...prev, { id, name: "New Daypart", start: "09:00", end: "17:00", active: true }]);
+  };
+
+  const removeDaypart = (id: string) => {
+    setDayparts(prev => prev.filter(dp => dp.id !== id));
+  };
+
+  const updateDaypart = (id: string, field: string, value: string | boolean) => {
+    setDayparts(prev => prev.map(dp => dp.id === id ? { ...dp, [field]: value } : dp));
+  };
+
+  const formatTime = (t: string) => {
+    const [h, m] = t.split(":").map(Number);
+    const suffix = h >= 12 ? "PM" : "AM";
+    const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+    return `${h12}:${m.toString().padStart(2, "0")} ${suffix}`;
+  };
+
+  const activeHours = useMemo(() => {
+    return dayparts.filter(dp => dp.active).reduce((sum, dp) => {
+      const [sh, sm] = dp.start.split(":").map(Number);
+      const [eh, em] = dp.end.split(":").map(Number);
+      let hours = (eh * 60 + em - sh * 60 - sm) / 60;
+      if (hours <= 0) hours += 24;
+      return sum + hours;
+    }, 0);
+  }, [dayparts]);
+
   const prog = 100 - owned - direct;
 
   const pieData = [
