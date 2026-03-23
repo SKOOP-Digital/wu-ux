@@ -64,13 +64,6 @@ export default function CampaignCreate() {
   const [totalPlays, setTotalPlays] = useState(5000);
 
   // Step 5 — Creatives
-  interface Creative {
-    id: string;
-    name: string;
-    type: string;
-    size: string;
-    file: File;
-  }
   const [creatives, setCreatives] = useState<Creative[]>([]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
