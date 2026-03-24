@@ -127,6 +127,7 @@ export default function CampaignCreate() {
       totalAvailable += Math.round(tagScreens * tagCapPerScreen * 0.7);
     }
     const availablePct = totalCapacity > 0 ? Math.round((totalAvailable / totalCapacity) * 100) : 0;
+    const bookedPct = 100 - availablePct;
 
     let requested = 0;
     if (deliveryMode === "sov") {
@@ -139,7 +140,7 @@ export default function CampaignCreate() {
       ? Math.round(totalPlays / Math.max(1, Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / 86400000)))
       : 0;
 
-    return { totalScreens, totalAvailable, totalCapacity, availablePct, requested, fits, dailyPacing };
+    return { totalScreens, totalAvailable, totalCapacity, availablePct, bookedPct, requested, fits, dailyPacing };
   }, [selectedRules, selectedTags, tagMatchedScreens, deliveryMode, sov, totalPlays, startDate, endDate]);
 
   const estimatedDailyPlays = useMemo(() => {
@@ -589,7 +590,11 @@ export default function CampaignCreate() {
             <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacitySummary.totalAvailable.toLocaleString()}/day</span></div>
           </div>
           <div className="h-2 rounded-full bg-secondary overflow-hidden">
-            <div className="h-full bg-primary rounded-full" style={{ width: `${100 - capacitySummary.availablePct}%` }} />
+            <div className="h-full bg-primary rounded-full" style={{ width: `${capacitySummary.bookedPct}%` }} />
+          </div>
+          <div className="flex justify-between text-[10px] text-muted-foreground">
+            <span>{capacitySummary.bookedPct}% booked</span>
+            <span>{capacitySummary.availablePct}% available</span>
           </div>
           {step >= 3 && (
             <div className="border-t border-border pt-3 space-y-2">
