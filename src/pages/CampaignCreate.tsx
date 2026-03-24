@@ -140,7 +140,7 @@ export default function CampaignCreate() {
       ? Math.round(totalPlays / Math.max(1, Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / 86400000)))
       : 0;
 
-    return { totalScreens, totalAvailable, totalCapacity, availablePct, requested, fits, dailyPacing };
+    return { totalScreens, totalAvailable, totalCapacity, availablePct, bookedPct, requested, fits, dailyPacing };
   }, [selectedRules, selectedTags, tagMatchedScreens, deliveryMode, sov, totalPlays, startDate, endDate]);
 
   const estimatedDailyPlays = useMemo(() => {
