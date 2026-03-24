@@ -453,7 +453,7 @@ export default function CampaignCreate() {
   const renderStep5 = () => (
     <div className="skoop-card p-5 space-y-4">
       <p className="skoop-section-header">Creatives</p>
-      <p className="text-xs text-muted-foreground">Upload media assets for this campaign (Video, Image, or HTML5).</p>
+      <p className="text-xs text-muted-foreground">Upload media assets for this campaign (Video or Image). Bulk file upload is supported — drag and drop multiple files at once.</p>
 
       {creatives.length > 0 && (
         <div className="grid grid-cols-3 gap-4">
