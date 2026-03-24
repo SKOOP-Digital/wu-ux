@@ -590,7 +590,11 @@ export default function CampaignCreate() {
             <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacitySummary.totalAvailable.toLocaleString()}/day</span></div>
           </div>
           <div className="h-2 rounded-full bg-secondary overflow-hidden">
-            <div className="h-full bg-primary rounded-full" style={{ width: `${100 - capacitySummary.availablePct}%` }} />
+            <div className="h-full bg-primary rounded-full" style={{ width: `${capacitySummary.bookedPct}%` }} />
+          </div>
+          <div className="flex justify-between text-[10px] text-muted-foreground">
+            <span>{capacitySummary.bookedPct}% booked</span>
+            <span>{capacitySummary.availablePct}% available</span>
           </div>
           {step >= 3 && (
             <div className="border-t border-border pt-3 space-y-2">
