@@ -127,6 +127,7 @@ export default function CampaignCreate() {
       totalAvailable += Math.round(tagScreens * tagCapPerScreen * 0.7);
     }
     const availablePct = totalCapacity > 0 ? Math.round((totalAvailable / totalCapacity) * 100) : 0;
+    const bookedPct = 100 - availablePct;
 
     let requested = 0;
     if (deliveryMode === "sov") {
