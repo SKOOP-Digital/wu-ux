@@ -53,6 +53,13 @@ export default function CampaignCreate() {
   const [tagSearch, setTagSearch] = useState("");
   const [conflictAcknowledged, setConflictAcknowledged] = useState(false);
 
+  // Step 2 — Proximity targeting
+  const [proximityPOIs, setProximityPOIs] = useState<POI[]>([]);
+  const [proximityRadius, setProximityRadius] = useState(1);
+  const [poiSearch, setPoiSearch] = useState("");
+  const [poiResults, setPoiResults] = useState<POI[]>([]);
+  const [poiLoading, setPoiLoading] = useState(false);
+
   // Step 3 — Schedule
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
