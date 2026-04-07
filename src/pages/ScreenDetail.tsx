@@ -83,10 +83,13 @@ export default function ScreenDetail() {
   const backLabel = fromPlacement ? "Back to Network Rule" : "Back to Screens";
   const screen = allScreens.find((s) => s.id === id);
 
-  // Inline lat/lng editing for failed geocodes
+  // All hooks must be before early return
   const [editLat, setEditLat] = useState("");
   const [editLng, setEditLng] = useState("");
   const [coordsSaved, setCoordsSaved] = useState(false);
+  const [manualTags, setManualTags] = useState<string[]>(screen?.manualTags || []);
+  const [customTagInput, setCustomTagInput] = useState("");
+  const [tagPopoverOpen, setTagPopoverOpen] = useState(false);
 
   if (!screen) {
     return (
@@ -104,9 +107,6 @@ export default function ScreenDetail() {
   const linkedPlacements = allPlacements.filter((p) => p.screenIds.includes(screen.id));
   const dailyCapacity = screen.loopsPerHour * 16;
   const autoTags = getAutoTags(screen);
-  const [manualTags, setManualTags] = useState<string[]>(screen.manualTags || []);
-  const [customTagInput, setCustomTagInput] = useState("");
-  const [tagPopoverOpen, setTagPopoverOpen] = useState(false);
 
   const addManualTag = (tag: string) => {
     if (tag.trim() && !manualTags.includes(tag.trim())) {
