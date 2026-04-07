@@ -535,6 +535,14 @@ export default function CampaignCreate() {
                 <p className="text-sm font-medium tabular-nums">~{(estimatedDailyPlays * (startDate && endDate ? Math.max(1, Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / 86400000)) : 30)).toLocaleString()} plays</p>
               </div>
             </div>
+            <div>
+              <p className="text-[11px] text-muted-foreground">Estimated daily impressions</p>
+              {hasImpressions ? (
+                <p className="text-sm font-medium tabular-nums">~{estimatedDailyImpressions.toLocaleString()}</p>
+              ) : (
+                <p className="text-[11px] text-muted-foreground italic">— Waiting for impression data. Upload your audience data in Settings to enable.</p>
+              )}
+            </div>
           </div>
         </div>
       )}
