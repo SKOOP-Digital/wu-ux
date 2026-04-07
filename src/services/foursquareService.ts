@@ -67,7 +67,7 @@ export async function searchPOIs(
   });
 
   const res = await fetch(
-    `https://places-api.foursquare.com/places/search?${params.toString()}`,
+    `/fsq-proxy/places/search?${params.toString()}`,
     {
       headers: {
         Authorization: `Bearer ${apiKey}`,
