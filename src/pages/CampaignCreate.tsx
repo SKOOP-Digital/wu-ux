@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Megaphone, ArrowLeft, ArrowRight, Check, Info, AlertTriangle, Briefcase, Home, Plus, X, Upload, Tag, Search, Trash2 } from "lucide-react";
+import { Megaphone, ArrowLeft, ArrowRight, Check, Info, AlertTriangle, Briefcase, Home, Plus, X, Upload, Tag, Search, Trash2, MapPin, Globe } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StatusChip from "@/components/shared/StatusChip";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { allPlacements, calcPlaysPerDay, calcCapacityFromRule } from "@/data/pla
 import { allScreens } from "@/data/screens";
 import { getAllScreenTags, getScreensMatchingTags } from "@/data/screenTags";
 import { hasAnyImpressionData, getImpressionMultiplier } from "@/data/impressionStore";
-import { Globe } from "lucide-react";
+import { searchPOIs, getScreensNearPOIs, getDefaultCenter, milesToMeters, POI } from "@/services/foursquareService";
 
 type CampaignType = "direct" | "marketing" | "";
 
@@ -52,6 +52,13 @@ export default function CampaignCreate() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [tagSearch, setTagSearch] = useState("");
   const [conflictAcknowledged, setConflictAcknowledged] = useState(false);
+
+  // Step 2 — Proximity targeting
+  const [proximityPOIs, setProximityPOIs] = useState<POI[]>([]);
+  const [proximityRadius, setProximityRadius] = useState(1);
+  const [poiSearch, setPoiSearch] = useState("");
+  const [poiResults, setPoiResults] = useState<POI[]>([]);
+  const [poiLoading, setPoiLoading] = useState(false);
 
   // Step 3 — Schedule
   const [startDate, setStartDate] = useState("");
@@ -105,9 +112,14 @@ export default function CampaignCreate() {
     return getScreensMatchingTags(selectedTags).length;
   }, [selectedTags]);
 
+  const proximityMatchedScreens = useMemo(() => {
+    if (proximityPOIs.length === 0) return [];
+    return getScreensNearPOIs(proximityPOIs, allScreens, milesToMeters(proximityRadius));
+  }, [proximityPOIs, proximityRadius]);
+
   // Capacity calculations across all selected rules + tags
   const capacitySummary = useMemo(() => {
-    if (selectedRules.length === 0 && selectedTags.length === 0) return null;
+    if (selectedRules.length === 0 && selectedTags.length === 0 && proximityPOIs.length === 0) return null;
     let totalScreens = 0;
     let totalAvailable = 0;
     let totalCapacity = 0;
@@ -119,13 +131,20 @@ export default function CampaignCreate() {
       totalAvailable += cap.available;
       totalCapacity += cap.total;
     });
-    // Add tag-matched screens (mock capacity: 30 loops/hr × 16 active hrs = 480 plays/day per screen, 70% available)
+    // Add tag-matched screens
     if (selectedTags.length > 0) {
       const tagScreens = tagMatchedScreens;
       const tagCapPerScreen = 480;
       totalScreens += tagScreens;
       totalCapacity += tagScreens * tagCapPerScreen;
       totalAvailable += Math.round(tagScreens * tagCapPerScreen * 0.7);
+    }
+    // Add proximity-matched screens
+    if (proximityMatchedScreens.length > 0) {
+      const proxCapPerScreen = 480;
+      totalScreens += proximityMatchedScreens.length;
+      totalCapacity += proximityMatchedScreens.length * proxCapPerScreen;
+      totalAvailable += Math.round(proximityMatchedScreens.length * proxCapPerScreen * 0.7);
     }
     const availablePct = totalCapacity > 0 ? Math.round((totalAvailable / totalCapacity) * 100) : 0;
     const bookedPct = 100 - availablePct;
@@ -147,7 +166,7 @@ export default function CampaignCreate() {
       : 0;
 
     return { totalScreens, totalAvailable, totalCapacity, availablePct, bookedPct, requested, fits, dailyPacing };
-  }, [selectedRules, selectedTags, tagMatchedScreens, deliveryMode, sov, totalPlays, startDate, endDate, playFrequencyValue, playFrequencyUnit]);
+  }, [selectedRules, selectedTags, tagMatchedScreens, proximityMatchedScreens, deliveryMode, sov, totalPlays, startDate, endDate, playFrequencyValue, playFrequencyUnit, proximityPOIs]);
 
   const estimatedDailyPlays = useMemo(() => {
     if (!capacitySummary) return 0;
@@ -191,7 +210,6 @@ export default function CampaignCreate() {
 
   const estimatedDailyImpressions = useMemo(() => {
     if (!hasImpressions || !capacitySummary) return 0;
-    // Get all matched screen IDs from rules + tags
     const screenIds = new Set<string>();
     selectedRules.forEach((sr) => {
       const rule = allPlacements.find((p) => p.id === sr.id);
@@ -200,6 +218,7 @@ export default function CampaignCreate() {
     if (selectedTags.length > 0) {
       getScreensMatchingTags(selectedTags).forEach((s) => screenIds.add(s.id));
     }
+    proximityMatchedScreens.forEach((s) => screenIds.add(s.id));
     const playsPerScreen = capacitySummary.totalScreens > 0 ? estimatedDailyPlays / capacitySummary.totalScreens : 0;
     let totalImpressions = 0;
     screenIds.forEach((sid) => {
@@ -207,7 +226,22 @@ export default function CampaignCreate() {
       if (mult !== null) totalImpressions += playsPerScreen * mult;
     });
     return Math.round(totalImpressions);
-  }, [hasImpressions, capacitySummary, estimatedDailyPlays, selectedRules, selectedTags]);
+  }, [hasImpressions, capacitySummary, estimatedDailyPlays, selectedRules, selectedTags, proximityMatchedScreens]);
+
+  // POI search handler for campaign builder
+  const handleCampaignPoiSearch = async () => {
+    if (!poiSearch.trim()) return;
+    setPoiLoading(true);
+    try {
+      const center = getDefaultCenter(allScreens);
+      const results = await searchPOIs(poiSearch.trim(), center, milesToMeters(proximityRadius));
+      setPoiResults(results);
+    } catch (err) {
+      console.error("POI search error:", err);
+    } finally {
+      setPoiLoading(false);
+    }
+  };
 
 
 
@@ -380,6 +414,92 @@ export default function CampaignCreate() {
           <div className="flex items-center gap-2 bg-secondary rounded-md px-3 py-2">
             <Info size={12} className="text-primary shrink-0" />
             <p className="text-xs text-foreground font-medium tabular-nums">{tagMatchedScreens} screen{tagMatchedScreens !== 1 ? "s" : ""} match these tags</p>
+          </div>
+        )}
+      </div>
+
+      {/* Target by Proximity */}
+      <div className="skoop-card p-5 space-y-4">
+        <div className="flex items-center gap-2">
+          <MapPin size={16} className="text-muted-foreground" />
+          <p className="skoop-section-header">Target by Proximity</p>
+        </div>
+        <p className="text-xs text-muted-foreground">Find screens near specific points of interest using Foursquare.</p>
+
+        {/* Selected POIs */}
+        {proximityPOIs.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {proximityPOIs.map((poi) => (
+              <span key={poi.fsq_id} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                <MapPin size={10} />
+                {poi.name}
+                <button onClick={() => setProximityPOIs((prev) => prev.filter((p) => p.fsq_id !== poi.fsq_id))}><X size={10} /></button>
+              </span>
+            ))}
+          </div>
+        )}
+
+        <div className="flex items-end gap-3">
+          <div className="flex-1">
+            <label className="text-[11px] text-muted-foreground mb-1 block">Search POI</label>
+            <Input
+              placeholder="e.g. Walmart, Family Dollar, CVS..."
+              className="text-xs"
+              value={poiSearch}
+              onChange={(e) => setPoiSearch(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") handleCampaignPoiSearch(); }}
+            />
+          </div>
+          <div>
+            <label className="text-[11px] text-muted-foreground mb-1 block">Radius</label>
+            <select
+              className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm"
+              value={proximityRadius}
+              onChange={(e) => setProximityRadius(Number(e.target.value))}
+            >
+              <option value={0.25}>0.25 mi</option>
+              <option value={0.5}>0.5 mi</option>
+              <option value={1}>1 mi</option>
+              <option value={2}>2 mi</option>
+              <option value={5}>5 mi</option>
+            </select>
+          </div>
+          <Button size="sm" onClick={handleCampaignPoiSearch} disabled={poiLoading}>
+            {poiLoading ? "Searching..." : "Search"}
+          </Button>
+        </div>
+
+        {/* POI Results */}
+        {poiResults.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {poiResults.map((poi) => {
+              const isSelected = proximityPOIs.some((p) => p.fsq_id === poi.fsq_id);
+              return (
+                <button
+                  key={poi.fsq_id}
+                  onClick={() => isSelected
+                    ? setProximityPOIs((prev) => prev.filter((p) => p.fsq_id !== poi.fsq_id))
+                    : setProximityPOIs((prev) => [...prev, poi])
+                  }
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
+                    isSelected
+                      ? "bg-primary/10 text-primary border border-primary/30"
+                      : "border border-dashed border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                  }`}
+                >
+                  <MapPin size={10} />
+                  {poi.name}
+                  {poi.location.address && <span className="text-[10px] opacity-60 max-w-[120px] truncate">· {poi.location.address}</span>}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {proximityMatchedScreens.length > 0 && (
+          <div className="flex items-center gap-2 bg-secondary rounded-md px-3 py-2">
+            <Info size={12} className="text-primary shrink-0" />
+            <p className="text-xs text-foreground font-medium tabular-nums">{proximityMatchedScreens.length} screen{proximityMatchedScreens.length !== 1 ? "s" : ""} near selected POIs</p>
           </div>
         )}
       </div>
@@ -678,7 +798,7 @@ export default function CampaignCreate() {
 
   // Right panel — capacity summary (visible on steps 1–5)
   const renderCapacityPanel = () => {
-    if (!capacitySummary || (selectedRules.length === 0 && selectedTags.length === 0)) return null;
+    if (!capacitySummary || (selectedRules.length === 0 && selectedTags.length === 0 && proximityPOIs.length === 0)) return null;
     return (
       <div className="w-72 shrink-0 space-y-4">
         <div className="skoop-card p-5 space-y-3 sticky top-8">
