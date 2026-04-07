@@ -59,9 +59,11 @@ export default function CampaignCreate() {
   const [activeDayparts, setActiveDayparts] = useState<string[]>(["Morning", "Midday", "Afternoon"]);
 
   // Step 4 — How Much It Plays
-  const [deliveryMode, setDeliveryMode] = useState<"sov" | "total">("sov");
+  const [deliveryMode, setDeliveryMode] = useState<"sov" | "total" | "frequency">("sov");
   const [sov, setSov] = useState(15);
   const [totalPlays, setTotalPlays] = useState(5000);
+  const [playFrequencyValue, setPlayFrequencyValue] = useState(4);
+  const [playFrequencyUnit, setPlayFrequencyUnit] = useState<"minutes" | "hours">("minutes");
 
   // Step 5 — Creatives
   const [creatives, setCreatives] = useState<Creative[]>([]);
@@ -128,10 +130,15 @@ export default function CampaignCreate() {
     const bookedPct = 100 - availablePct;
 
     let requested = 0;
+    const activeHoursPerDay = 16;
     if (deliveryMode === "sov") {
       requested = Math.round(totalCapacity * sov / 100);
-    } else {
+    } else if (deliveryMode === "total") {
       requested = totalPlays;
+    } else {
+      const freqMinutes = playFrequencyUnit === "hours" ? playFrequencyValue * 60 : playFrequencyValue;
+      const playsPerDayPerScreen = freqMinutes > 0 ? Math.floor((activeHoursPerDay * 60) / freqMinutes) : 0;
+      requested = playsPerDayPerScreen * totalScreens;
     }
     const fits = requested <= totalAvailable;
     const dailyPacing = deliveryMode === "total" && startDate && endDate
@@ -139,13 +146,18 @@ export default function CampaignCreate() {
       : 0;
 
     return { totalScreens, totalAvailable, totalCapacity, availablePct, bookedPct, requested, fits, dailyPacing };
-  }, [selectedRules, selectedTags, tagMatchedScreens, deliveryMode, sov, totalPlays, startDate, endDate]);
+  }, [selectedRules, selectedTags, tagMatchedScreens, deliveryMode, sov, totalPlays, startDate, endDate, playFrequencyValue, playFrequencyUnit]);
 
   const estimatedDailyPlays = useMemo(() => {
     if (!capacitySummary) return 0;
     if (deliveryMode === "sov") return Math.round(capacitySummary.totalCapacity * sov / 100);
+    if (deliveryMode === "frequency") {
+      const freqMinutes = playFrequencyUnit === "hours" ? playFrequencyValue * 60 : playFrequencyValue;
+      const playsPerDayPerScreen = freqMinutes > 0 ? Math.floor((16 * 60) / freqMinutes) : 0;
+      return playsPerDayPerScreen * capacitySummary.totalScreens;
+    }
     return capacitySummary.dailyPacing || totalPlays;
-  }, [capacitySummary, deliveryMode, sov, totalPlays]);
+  }, [capacitySummary, deliveryMode, sov, totalPlays, playFrequencyValue, playFrequencyUnit]);
 
   const addRule = (ruleId: string) => {
     if (selectedRules.find((r) => r.id === ruleId)) return;
@@ -407,6 +419,7 @@ export default function CampaignCreate() {
       <div className="flex gap-2">
         <button onClick={() => setDeliveryMode("sov")} className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "sov" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>% of Screen Time</button>
         <button onClick={() => setDeliveryMode("total")} className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "total" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>Total Plays</button>
+        <button onClick={() => setDeliveryMode("frequency")} className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "frequency" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>Play Frequency</button>
       </div>
 
       {deliveryMode === "sov" ? (
@@ -427,7 +440,7 @@ export default function CampaignCreate() {
             </div>
           </div>
         </div>
-      ) : (
+      ) : deliveryMode === "total" ? (
         <div className="space-y-3">
           <div>
             <label className="text-xs text-muted-foreground">Target Total Plays</label>
@@ -443,6 +456,45 @@ export default function CampaignCreate() {
               <div>
                 <p className="text-[11px] text-muted-foreground">Available capacity</p>
                 <p className="text-sm font-medium tabular-nums">{capacitySummary ? capacitySummary.totalAvailable.toLocaleString() : "—"} plays/day</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          <div className="flex items-end gap-3">
+            <div>
+              <label className="text-xs text-muted-foreground">Play every</label>
+              <Input
+                type="number"
+                min={1}
+                placeholder="e.g. 4"
+                className="mt-1 w-28"
+                value={playFrequencyValue}
+                onChange={(e) => { setPlayFrequencyValue(Number(e.target.value)); setConflictAcknowledged(false); }}
+              />
+            </div>
+            <div>
+              <select
+                className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={playFrequencyUnit}
+                onChange={(e) => { setPlayFrequencyUnit(e.target.value as "minutes" | "hours"); setConflictAcknowledged(false); }}
+              >
+                <option value="minutes">Minutes</option>
+                <option value="hours">Hours</option>
+              </select>
+            </div>
+          </div>
+          <div className="bg-secondary rounded-md p-4 space-y-2">
+            <p className="text-xs font-medium text-foreground">Estimated Delivery</p>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <p className="text-[11px] text-muted-foreground">Estimated daily plays</p>
+                <p className="text-sm font-medium tabular-nums">~{estimatedDailyPlays.toLocaleString()} plays/day</p>
+              </div>
+              <div>
+                <p className="text-[11px] text-muted-foreground">Total over campaign</p>
+                <p className="text-sm font-medium tabular-nums">~{(estimatedDailyPlays * (startDate && endDate ? Math.max(1, Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / 86400000)) : 30)).toLocaleString()} plays</p>
               </div>
             </div>
           </div>
@@ -532,7 +584,7 @@ export default function CampaignCreate() {
             <div><p className="text-xs text-muted-foreground">Screens</p><p className="text-sm font-medium tabular-nums">{capacitySummary?.totalScreens.toLocaleString() || 0}</p></div>
             <div><p className="text-xs text-muted-foreground">Schedule</p><p className="text-sm font-medium">{startDate || "—"} → {endDate || "—"}</p></div>
             <div><p className="text-xs text-muted-foreground">Active Days</p><p className="text-sm font-medium">{activeDays.join(", ")}</p></div>
-            <div><p className="text-xs text-muted-foreground">Delivery Target</p><p className="text-sm font-medium tabular-nums">{deliveryMode === "sov" || campaignType === "marketing" ? `${sov}% screen time` : `${totalPlays.toLocaleString()} total plays`}</p></div>
+            <div><p className="text-xs text-muted-foreground">Delivery Target</p><p className="text-sm font-medium tabular-nums">{deliveryMode === "sov" || campaignType === "marketing" ? `${sov}% screen time` : deliveryMode === "frequency" ? `Every ${playFrequencyValue} ${playFrequencyUnit}` : `${totalPlays.toLocaleString()} total plays`}</p></div>
             <div><p className="text-xs text-muted-foreground">Creatives</p><p className="text-sm font-medium">{creatives.length} asset{creatives.length !== 1 ? "s" : ""} uploaded</p></div>
           </div>
         </div>
