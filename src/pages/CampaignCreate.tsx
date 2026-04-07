@@ -210,7 +210,6 @@ export default function CampaignCreate() {
 
   const estimatedDailyImpressions = useMemo(() => {
     if (!hasImpressions || !capacitySummary) return 0;
-    // Get all matched screen IDs from rules + tags
     const screenIds = new Set<string>();
     selectedRules.forEach((sr) => {
       const rule = allPlacements.find((p) => p.id === sr.id);
@@ -219,6 +218,7 @@ export default function CampaignCreate() {
     if (selectedTags.length > 0) {
       getScreensMatchingTags(selectedTags).forEach((s) => screenIds.add(s.id));
     }
+    proximityMatchedScreens.forEach((s) => screenIds.add(s.id));
     const playsPerScreen = capacitySummary.totalScreens > 0 ? estimatedDailyPlays / capacitySummary.totalScreens : 0;
     let totalImpressions = 0;
     screenIds.forEach((sid) => {
@@ -226,7 +226,22 @@ export default function CampaignCreate() {
       if (mult !== null) totalImpressions += playsPerScreen * mult;
     });
     return Math.round(totalImpressions);
-  }, [hasImpressions, capacitySummary, estimatedDailyPlays, selectedRules, selectedTags]);
+  }, [hasImpressions, capacitySummary, estimatedDailyPlays, selectedRules, selectedTags, proximityMatchedScreens]);
+
+  // POI search handler for campaign builder
+  const handleCampaignPoiSearch = async () => {
+    if (!poiSearch.trim()) return;
+    setPoiLoading(true);
+    try {
+      const center = getDefaultCenter(allScreens);
+      const results = await searchPOIs(poiSearch.trim(), center, milesToMeters(proximityRadius));
+      setPoiResults(results);
+    } catch (err) {
+      console.error("POI search error:", err);
+    } finally {
+      setPoiLoading(false);
+    }
+  };
 
 
 
