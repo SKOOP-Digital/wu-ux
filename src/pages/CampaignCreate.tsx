@@ -417,6 +417,92 @@ export default function CampaignCreate() {
           </div>
         )}
       </div>
+
+      {/* Target by Proximity */}
+      <div className="skoop-card p-5 space-y-4">
+        <div className="flex items-center gap-2">
+          <MapPin size={16} className="text-muted-foreground" />
+          <p className="skoop-section-header">Target by Proximity</p>
+        </div>
+        <p className="text-xs text-muted-foreground">Find screens near specific points of interest using Foursquare.</p>
+
+        {/* Selected POIs */}
+        {proximityPOIs.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {proximityPOIs.map((poi) => (
+              <span key={poi.fsq_id} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                <MapPin size={10} />
+                {poi.name}
+                <button onClick={() => setProximityPOIs((prev) => prev.filter((p) => p.fsq_id !== poi.fsq_id))}><X size={10} /></button>
+              </span>
+            ))}
+          </div>
+        )}
+
+        <div className="flex items-end gap-3">
+          <div className="flex-1">
+            <label className="text-[11px] text-muted-foreground mb-1 block">Search POI</label>
+            <Input
+              placeholder="e.g. Walmart, Family Dollar, CVS..."
+              className="text-xs"
+              value={poiSearch}
+              onChange={(e) => setPoiSearch(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") handleCampaignPoiSearch(); }}
+            />
+          </div>
+          <div>
+            <label className="text-[11px] text-muted-foreground mb-1 block">Radius</label>
+            <select
+              className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm"
+              value={proximityRadius}
+              onChange={(e) => setProximityRadius(Number(e.target.value))}
+            >
+              <option value={0.25}>0.25 mi</option>
+              <option value={0.5}>0.5 mi</option>
+              <option value={1}>1 mi</option>
+              <option value={2}>2 mi</option>
+              <option value={5}>5 mi</option>
+            </select>
+          </div>
+          <Button size="sm" onClick={handleCampaignPoiSearch} disabled={poiLoading}>
+            {poiLoading ? "Searching..." : "Search"}
+          </Button>
+        </div>
+
+        {/* POI Results */}
+        {poiResults.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {poiResults.map((poi) => {
+              const isSelected = proximityPOIs.some((p) => p.fsq_id === poi.fsq_id);
+              return (
+                <button
+                  key={poi.fsq_id}
+                  onClick={() => isSelected
+                    ? setProximityPOIs((prev) => prev.filter((p) => p.fsq_id !== poi.fsq_id))
+                    : setProximityPOIs((prev) => [...prev, poi])
+                  }
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
+                    isSelected
+                      ? "bg-primary/10 text-primary border border-primary/30"
+                      : "border border-dashed border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                  }`}
+                >
+                  <MapPin size={10} />
+                  {poi.name}
+                  {poi.location.address && <span className="text-[10px] opacity-60 max-w-[120px] truncate">· {poi.location.address}</span>}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {proximityMatchedScreens.length > 0 && (
+          <div className="flex items-center gap-2 bg-secondary rounded-md px-3 py-2">
+            <Info size={12} className="text-primary shrink-0" />
+            <p className="text-xs text-foreground font-medium tabular-nums">{proximityMatchedScreens.length} screen{proximityMatchedScreens.length !== 1 ? "s" : ""} near selected POIs</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 
