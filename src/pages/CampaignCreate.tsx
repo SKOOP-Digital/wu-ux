@@ -798,7 +798,7 @@ export default function CampaignCreate() {
 
   // Right panel — capacity summary (visible on steps 1–5)
   const renderCapacityPanel = () => {
-    if (!capacitySummary || (selectedRules.length === 0 && selectedTags.length === 0)) return null;
+    if (!capacitySummary || (selectedRules.length === 0 && selectedTags.length === 0 && proximityPOIs.length === 0)) return null;
     return (
       <div className="w-72 shrink-0 space-y-4">
         <div className="skoop-card p-5 space-y-3 sticky top-8">
