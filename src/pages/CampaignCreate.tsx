@@ -151,8 +151,13 @@ export default function CampaignCreate() {
   const estimatedDailyPlays = useMemo(() => {
     if (!capacitySummary) return 0;
     if (deliveryMode === "sov") return Math.round(capacitySummary.totalCapacity * sov / 100);
+    if (deliveryMode === "frequency") {
+      const freqMinutes = playFrequencyUnit === "hours" ? playFrequencyValue * 60 : playFrequencyValue;
+      const playsPerDayPerScreen = freqMinutes > 0 ? Math.floor((16 * 60) / freqMinutes) : 0;
+      return playsPerDayPerScreen * capacitySummary.totalScreens;
+    }
     return capacitySummary.dailyPacing || totalPlays;
-  }, [capacitySummary, deliveryMode, sov, totalPlays]);
+  }, [capacitySummary, deliveryMode, sov, totalPlays, playFrequencyValue, playFrequencyUnit]);
 
   const addRule = (ruleId: string) => {
     if (selectedRules.find((r) => r.id === ruleId)) return;
