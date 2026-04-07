@@ -87,6 +87,17 @@ export default function SettingsPage() {
         </div>
       </div>
       <div className="p-8 max-w-3xl space-y-6">
+        {/* Playback Tracking — always visible */}
+        <div className="skoop-card p-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium">Proof of Play Tracking</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Record every play event for all content across your network. Required for delivery reporting and advertiser proof of play.</p>
+            </div>
+            <Switch defaultChecked />
+          </div>
+        </div>
+
         {tab === "Mix Policy" && (
           <div className="skoop-card p-5 space-y-5">
             <p className="skoop-section-header">Default Playback Mix</p>
