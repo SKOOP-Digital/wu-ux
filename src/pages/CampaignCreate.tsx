@@ -686,6 +686,7 @@ export default function CampaignCreate() {
             <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total Screens</span><span className="font-medium tabular-nums">{capacitySummary.totalScreens.toLocaleString()}</span></div>
             <div className="flex justify-between text-sm"><span className="text-muted-foreground">Combined Capacity</span><span className="font-medium tabular-nums">{capacitySummary.totalCapacity.toLocaleString()}/day</span></div>
             <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacitySummary.totalAvailable.toLocaleString()}/day</span></div>
+            <div className="flex justify-between text-sm"><span className="text-muted-foreground">Est. Impressions/day</span><span className="font-medium tabular-nums">{hasImpressions ? `~${estimatedDailyImpressions.toLocaleString()}` : "—"}</span></div>
           </div>
           <div className="h-2 rounded-full bg-secondary overflow-hidden">
             <div className="h-full bg-primary rounded-full" style={{ width: `${capacitySummary.bookedPct}%` }} />
