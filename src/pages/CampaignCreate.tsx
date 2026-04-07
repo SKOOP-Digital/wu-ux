@@ -119,7 +119,7 @@ export default function CampaignCreate() {
 
   // Capacity calculations across all selected rules + tags
   const capacitySummary = useMemo(() => {
-    if (selectedRules.length === 0 && selectedTags.length === 0) return null;
+    if (selectedRules.length === 0 && selectedTags.length === 0 && proximityPOIs.length === 0) return null;
     let totalScreens = 0;
     let totalAvailable = 0;
     let totalCapacity = 0;
@@ -131,13 +131,20 @@ export default function CampaignCreate() {
       totalAvailable += cap.available;
       totalCapacity += cap.total;
     });
-    // Add tag-matched screens (mock capacity: 30 loops/hr × 16 active hrs = 480 plays/day per screen, 70% available)
+    // Add tag-matched screens
     if (selectedTags.length > 0) {
       const tagScreens = tagMatchedScreens;
       const tagCapPerScreen = 480;
       totalScreens += tagScreens;
       totalCapacity += tagScreens * tagCapPerScreen;
       totalAvailable += Math.round(tagScreens * tagCapPerScreen * 0.7);
+    }
+    // Add proximity-matched screens
+    if (proximityMatchedScreens.length > 0) {
+      const proxCapPerScreen = 480;
+      totalScreens += proximityMatchedScreens.length;
+      totalCapacity += proximityMatchedScreens.length * proxCapPerScreen;
+      totalAvailable += Math.round(proximityMatchedScreens.length * proxCapPerScreen * 0.7);
     }
     const availablePct = totalCapacity > 0 ? Math.round((totalAvailable / totalCapacity) * 100) : 0;
     const bookedPct = 100 - availablePct;
@@ -159,7 +166,7 @@ export default function CampaignCreate() {
       : 0;
 
     return { totalScreens, totalAvailable, totalCapacity, availablePct, bookedPct, requested, fits, dailyPacing };
-  }, [selectedRules, selectedTags, tagMatchedScreens, deliveryMode, sov, totalPlays, startDate, endDate, playFrequencyValue, playFrequencyUnit]);
+  }, [selectedRules, selectedTags, tagMatchedScreens, proximityMatchedScreens, deliveryMode, sov, totalPlays, startDate, endDate, playFrequencyValue, playFrequencyUnit, proximityPOIs]);
 
   const estimatedDailyPlays = useMemo(() => {
     if (!capacitySummary) return 0;
