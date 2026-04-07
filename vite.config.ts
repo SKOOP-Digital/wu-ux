@@ -14,6 +14,13 @@ export default defineConfig(({ mode }) => ({
     hmr: {
       overlay: false,
     },
+    proxy: {
+      "/fsq-proxy": {
+        target: "https://places-api.foursquare.com",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/fsq-proxy/, ""),
+      },
+    },
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
