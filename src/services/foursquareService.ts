@@ -62,16 +62,17 @@ export async function searchPOIs(
   const params = new URLSearchParams({
     query,
     ll,
-    radius: String(Math.min(radiusMeters, 100000)),
+    radius: String(Math.min(Math.round(radiusMeters), 100000)),
     limit: "50",
   });
 
   const res = await fetch(
-    `https://api.foursquare.com/v3/places/search?${params.toString()}`,
+    `https://places-api.foursquare.com/places/search?${params.toString()}`,
     {
       headers: {
-        Authorization: apiKey,
+        Authorization: `Bearer ${apiKey}`,
         Accept: "application/json",
+        "X-Places-Api-Version": "2025-06-17",
       },
     }
   );
@@ -83,12 +84,12 @@ export async function searchPOIs(
 
   const data = await res.json();
   const pois: POI[] = (data.results || []).map((r: any) => ({
-    fsq_id: r.fsq_id,
+    fsq_id: r.fsq_place_id || r.fsq_id,
     name: r.name,
     location: {
       address: r.location?.formatted_address || r.location?.address,
-      lat: r.geocodes?.main?.latitude ?? 0,
-      lng: r.geocodes?.main?.longitude ?? 0,
+      lat: r.latitude ?? r.geocodes?.main?.latitude ?? 0,
+      lng: r.longitude ?? r.geocodes?.main?.longitude ?? 0,
     },
     categories: (r.categories || []).map((c: any) => ({ name: c.name })),
   }));
