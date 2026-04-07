@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Monitor, ArrowLeft, MapPin, ExternalLink, Globe, Tag, Plus, X, BarChart3 } from "lucide-react";
+import { Monitor, ArrowLeft, MapPin, ExternalLink, Globe, Tag, Plus, X, BarChart3, Clock, AlertTriangle, CheckCircle } from "lucide-react";
 import { useParams, useNavigate, useSearchParams, Link } from "react-router-dom";
 import PageHeader from "@/components/layout/PageHeader";
 import StatusChip from "@/components/shared/StatusChip";
@@ -12,6 +12,14 @@ import { allScreens } from "@/data/screens";
 import { allPlacements } from "@/data/placements";
 import { getAutoTags, STANDARD_VENUE_TAGS } from "@/data/screenTags";
 import { getImpressionMultiplier, getImpressionEntry, setImpressionMultiplier } from "@/data/impressionStore";
+
+function formatMilitaryTime(time: number): string {
+  const hours = Math.floor(time / 100);
+  const minutes = time % 100;
+  const ampm = hours >= 12 ? "PM" : "AM";
+  const h = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
+  return `${h}:${minutes.toString().padStart(2, "0")} ${ampm}`;
+}
 
 function ImpressionDataCard({ screenId }: { screenId: string }) {
   const entry = getImpressionEntry(screenId);
@@ -75,6 +83,11 @@ export default function ScreenDetail() {
   const backLabel = fromPlacement ? "Back to Network Rule" : "Back to Screens";
   const screen = allScreens.find((s) => s.id === id);
 
+  // Inline lat/lng editing for failed geocodes
+  const [editLat, setEditLat] = useState("");
+  const [editLng, setEditLng] = useState("");
+  const [coordsSaved, setCoordsSaved] = useState(false);
+
   if (!screen) {
     return (
       <div>
@@ -103,6 +116,26 @@ export default function ScreenDetail() {
   const removeManualTag = (tag: string) => setManualTags((prev) => prev.filter((t) => t !== tag));
 
   const placementObj = placementId ? allPlacements.find(p => p.id === placementId) : null;
+
+  // Active hours display
+  const activeHoursDisplay = (() => {
+    if (screen.activeHoursStart == null && screen.activeHoursEnd == null) return null;
+    if (screen.activeHoursStart === 0 && screen.activeHoursEnd === 2359) return "Always On";
+    return `${formatMilitaryTime(screen.activeHoursStart || 0)} – ${formatMilitaryTime(screen.activeHoursEnd || 0)}`;
+  })();
+
+  const handleSaveCoords = () => {
+    const lat = parseFloat(editLat);
+    const lng = parseFloat(editLng);
+    if (!isNaN(lat) && !isNaN(lng)) {
+      // Mutate in place for this session
+      (screen as any).lat = lat;
+      (screen as any).lng = lng;
+      (screen as any).geocodeStatus = "success";
+      setCoordsSaved(true);
+      setTimeout(() => setCoordsSaved(false), 2000);
+    }
+  };
 
   return (
     <div>
@@ -177,13 +210,86 @@ export default function ScreenDetail() {
                   <p className="text-sm font-medium mt-1">{screen.orientation}</p>
                 </div>
               </div>
+
+              {/* Location info */}
+              <div className="grid grid-cols-4 gap-4 pt-2 border-t border-border">
+                {screen.city && (
+                  <div>
+                    <p className="text-xs text-muted-foreground">City</p>
+                    <p className="text-sm font-medium mt-1">{screen.city}</p>
+                  </div>
+                )}
+                {screen.state && (
+                  <div>
+                    <p className="text-xs text-muted-foreground">State</p>
+                    <p className="text-sm font-medium mt-1">{screen.state}</p>
+                  </div>
+                )}
+                {screen.zip && (
+                  <div>
+                    <p className="text-xs text-muted-foreground">ZIP</p>
+                    <p className="text-sm font-medium tabular-nums mt-1">{screen.zip}</p>
+                  </div>
+                )}
+                {screen.country && (
+                  <div>
+                    <p className="text-xs text-muted-foreground">Country</p>
+                    <p className="text-sm font-medium mt-1">{screen.country}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Active hours */}
+              {activeHoursDisplay && (
+                <div className="pt-2 border-t border-border">
+                  <div className="flex items-center gap-2">
+                    <Clock size={12} className="text-muted-foreground" />
+                    <p className="text-xs text-muted-foreground">Active Hours</p>
+                  </div>
+                  <p className="text-sm font-medium mt-1">{activeHoursDisplay}</p>
+                </div>
+              )}
+
+              {/* Geocode status */}
+              <div className="pt-2 border-t border-border">
+                {screen.geocodeStatus === "success" ? (
+                  <div className="flex items-center gap-1.5">
+                    <MapPin size={12} className="text-emerald-600" />
+                    <span className="text-xs font-medium text-emerald-700">Location verified</span>
+                    {screen.lat != null && screen.lng != null && (
+                      <span className="text-[11px] text-muted-foreground ml-2 tabular-nums">
+                        {screen.lat.toFixed(4)}, {screen.lng.toFixed(4)}
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5">
+                      <AlertTriangle size={12} className="text-amber-500" />
+                      <span className="text-xs font-medium text-amber-700">Location missing — proximity search unavailable</span>
+                    </div>
+                    <div className="flex items-end gap-2">
+                      <div>
+                        <label className="text-xs text-muted-foreground">Latitude</label>
+                        <Input type="number" step="any" placeholder="e.g. 40.7128" className="mt-1 text-sm w-36" value={editLat} onChange={(e) => setEditLat(e.target.value)} />
+                      </div>
+                      <div>
+                        <label className="text-xs text-muted-foreground">Longitude</label>
+                        <Input type="number" step="any" placeholder="e.g. -74.0060" className="mt-1 text-sm w-36" value={editLng} onChange={(e) => setEditLng(e.target.value)} />
+                      </div>
+                      <Button size="sm" variant="outline" onClick={handleSaveCoords} disabled={!editLat || !editLng}>
+                        {coordsSaved ? "Saved ✓" : "Save"}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Tags Card */}
             <div className="skoop-card p-5 space-y-4">
               <p className="skoop-section-header">Tags</p>
 
-              {/* Auto tags */}
               {autoTags && (
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-1.5">
@@ -196,7 +302,7 @@ export default function ScreenDetail() {
                       { label: autoTags.state, cat: "State" },
                       { label: autoTags.city, cat: "City" },
                       { label: autoTags.zip, cat: "ZIP" },
-                    ].map((t) => (
+                    ].filter(t => t.label).map((t) => (
                       <span key={t.cat} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary text-muted-foreground text-xs font-medium border border-border">
                         <Globe size={10} className="shrink-0" />
                         {t.label}
@@ -206,7 +312,6 @@ export default function ScreenDetail() {
                 </div>
               )}
 
-              {/* Applied tags */}
               <div className="space-y-1.5">
                 <div className="flex items-center gap-1.5">
                   <Tag size={12} className="text-muted-foreground" />
@@ -281,9 +386,7 @@ export default function ScreenDetail() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="skoop-section-header">Network Rules</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Rules that include this screen in their inventory
-                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Rules that include this screen in their inventory</p>
                 </div>
               </div>
 
@@ -292,18 +395,12 @@ export default function ScreenDetail() {
                   <MapPin size={20} className="mx-auto text-muted-foreground mb-2" />
                   <p className="text-sm text-muted-foreground">No network rules assigned to this screen</p>
                   <p className="text-xs text-muted-foreground mt-1">Create a network rule to monetise this screen</p>
-                  <Button size="sm" className="mt-3" onClick={() => navigate("/placements")}>
-                    View Network Rules
-                  </Button>
+                  <Button size="sm" className="mt-3" onClick={() => navigate("/placements")}>View Network Rules</Button>
                 </div>
               ) : (
                 <div className="space-y-2">
                   {linkedPlacements.map((p) => (
-                    <div
-                      key={p.id}
-                      className="flex items-center justify-between py-3 px-4 border border-border rounded-md hover:bg-secondary/30 transition-colors cursor-pointer"
-                      onClick={() => navigate(`/placements/${p.id}`)}
-                    >
+                    <div key={p.id} className="flex items-center justify-between py-3 px-4 border border-border rounded-md hover:bg-secondary/30 transition-colors cursor-pointer" onClick={() => navigate(`/placements/${p.id}`)}>
                       <div className="flex items-center gap-3">
                         <MapPin size={14} className="text-muted-foreground" />
                         <div>
@@ -312,9 +409,7 @@ export default function ScreenDetail() {
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
-                        <div className="w-28">
-                          <MixBar owned={p.owned} direct={p.direct} programmatic={p.prog} />
-                        </div>
+                        <div className="w-28"><MixBar owned={p.owned} direct={p.direct} programmatic={p.prog} /></div>
                         <StatusChip status={p.status.toLowerCase().replace(" ", "-")} label={p.status} />
                         <span className="text-xs text-primary">View Rule</span>
                       </div>
@@ -323,7 +418,7 @@ export default function ScreenDetail() {
                 </div>
               )}
             </div>
-            {/* Impression Data Card */}
+
             <div className="skoop-card p-5 space-y-4">
               <div className="flex items-center gap-2">
                 <BarChart3 size={14} className="text-muted-foreground" />
@@ -351,6 +446,13 @@ export default function ScreenDetail() {
                   {screen.status}
                 </span>
               </div>
+              {screen.address && (
+                <div>
+                  <p className="text-xs text-muted-foreground">Address</p>
+                  <p className="text-sm mt-1">{screen.address}</p>
+                  {screen.city && <p className="text-xs text-muted-foreground">{screen.city}, {screen.state} {screen.zip}</p>}
+                </div>
+              )}
             </div>
           </div>
         </div>
