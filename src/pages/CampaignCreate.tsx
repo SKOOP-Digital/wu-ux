@@ -228,8 +228,8 @@ export default function CampaignCreate() {
     </div>
   );
 
-  const filteredTags = AVAILABLE_TAGS.filter((t) =>
-    !selectedTags.includes(t) && t.toLowerCase().includes(tagSearch.toLowerCase())
+  const filteredTags = allTags.filter((t) =>
+    !selectedTags.includes(t.value) && t.value.toLowerCase().includes(tagSearch.toLowerCase())
   );
 
   const renderStep2 = () => (
