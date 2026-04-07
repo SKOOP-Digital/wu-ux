@@ -112,6 +112,11 @@ export default function CampaignCreate() {
     return getScreensMatchingTags(selectedTags).length;
   }, [selectedTags]);
 
+  const proximityMatchedScreens = useMemo(() => {
+    if (proximityPOIs.length === 0) return [];
+    return getScreensNearPOIs(proximityPOIs, allScreens, milesToMeters(proximityRadius));
+  }, [proximityPOIs, proximityRadius]);
+
   // Capacity calculations across all selected rules + tags
   const capacitySummary = useMemo(() => {
     if (selectedRules.length === 0 && selectedTags.length === 0) return null;
