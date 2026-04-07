@@ -1,59 +1,73 @@
 
 
-## Impressions Field + Data Import
+## Screens Page Search + Foursquare POI Proximity
 
 ### What changes
 
-Add an optional `impressionsPerPlay` multiplier to screens, allow importing it via CSV in Settings, allow manual entry on Screen Detail, and show estimated impressions in the Campaign Builder Step 4 and Capacity Summary.
+Add a search/filter toolbar to the Screens page with free-text search, AND/OR toggle, and a Foursquare-powered proximity filter. Add a tag breakdown sidebar on the right. Also add a "Target by Proximity" section to Campaign Builder Step 2.
 
-### 1. Data model (`src/data/screens.ts`)
+### 1. New file: `src/services/foursquareService.ts`
 
-- Add `impressionsPerPlay?: number` to the `Screen` interface
-- No default values in mock data — all screens start without impression data
+- `searchPOIs(query, ll, radius)` — calls Foursquare Places Search v3 (`/v3/places/search`) with `Authorization: ${import.meta.env.VITE_FOURSQUARE_API_KEY}` header. Returns array of `{ fsq_id, name, location: { address, lat, lng }, categories }`.
+- In-memory cache: `Map<string, POI[]>` keyed by `query|ll|radius`.
+- `getScreensNearPOIs(pois, screens, radiusMeters)` — pure client-side Haversine distance check. Returns deduplicated screens within radius of any POI.
+- Haversine helper function inlined in the same file.
+- Export `POI` interface for use in other files.
 
-### 2. Settings page (`src/pages/SettingsPage.tsx`)
+### 2. Screens page (`src/pages/Screens.tsx`)
 
-- Add "Audience & Impressions" to the tabs array
-- New tab content:
-  - **CSV upload area**: drag-and-drop or file input accepting `.csv`
-  - Expected format: `screen_id, impressions_per_play`
-  - On upload: parse CSV, match screen IDs against `allScreens`, update matching screens' `impressionsPerPlay` in a local state/store
-  - **Success state**: "X screens updated" + timestamp
-  - **Error state**: list unmatched screen IDs
-  - **"Download template" link**: generates and downloads a CSV with headers + all screen IDs pre-filled (impressions column blank)
-  - Since this is a client-side app with no persistence, store imported data in a shared context/store
+Restructure layout to a two-column grid when filters are active:
 
-### 3. Shared impression store (`src/data/impressionStore.ts` — new file)
+**Search toolbar** (above table):
+- Free-text `Input` with search icon — filters by screen name, ID, and all tags (auto + manual)
+- AND/OR pill toggle to the right
+- "+ Add Proximity" button opens a collapsible proximity filter row:
+  - POI search input + radius dropdown (0.25mi / 0.5mi / 1mi / 2mi / 5mi) + "Search" button
+  - Results as selectable chips showing POI name + location count
+  - Selected POIs as removable tags
+- Active filters shown as removable chips below the bar
+- Result count: "X screens match"
 
-- Simple module-level store: `Map<string, { multiplier: number; updatedAt: Date }>`
-- Export `getImpressionMultiplier(screenId)`, `setImpressionMultiplier(screenId, value)`, `bulkSetImpressions(entries[])`, `hasAnyImpressionData()`, `getLastImportTime()`
-- This avoids needing React context — just a shared JS module that all pages import
+**Screen list** (left): existing table, filtered in place. Each row shows small tag badges for matched filters.
 
-### 4. Screen Detail page (`src/pages/ScreenDetail.tsx`)
+**Tag breakdown sidebar** (right, visible when filters active):
+- "Tags in results" header
+- All tags present in matched screens, sorted by count descending
+- Globe icon for auto, tag icon for manual, pin icon for proximity
+- Clickable — adds tag as filter
 
-- Add an "Impression Data" card after existing content
-- Show current multiplier from `getImpressionMultiplier(screen.id)` or "No impression data" message
-- Editable numeric input for manual entry — calls `setImpressionMultiplier` on change
-- "Last updated" timestamp beneath
+**State**: `searchText`, `matchMode` ("any"|"all"), `proximityPOIs`, `proximityRadius`, `showProximity`, `poiSearchQuery`, `poiResults`, `selectedPOIs`
 
-### 5. Campaign Builder Step 4 (`src/pages/CampaignCreate.tsx`)
+**Filtering logic** (`useMemo`):
+- Text filter: split by spaces, match against screen name/id/tags
+- Proximity filter: `getScreensNearPOIs(selectedPOIs, allScreens, radius)`
+- AND mode: intersect text + proximity results
+- OR mode: union text + proximity results
 
-**Estimated Delivery box** — add row beneath daily plays:
-- "Estimated daily impressions"
-- If `hasAnyImpressionData()` is false → muted text: "— Waiting for impression data. Upload your audience data in Settings to enable."
-- Otherwise → calculate: sum of `estimatedDailyPlaysPerScreen × impressionsPerPlay` for each matched screen (screens without multiplier use 0 or are excluded)
+### 3. Campaign Builder Step 2 (`src/pages/CampaignCreate.tsx`)
 
-**Capacity Summary panel (right side)** — add "Est. Impressions/day" row with same logic
+Add a third targeting card after "Target by Tags":
 
-**Review step (Step 6)** — add estimated impressions to summary grid
+- **"Target by Proximity"** card with MapPin icon
+- Description: "Find screens near specific points of interest using Foursquare."
+- POI search input + radius dropdown + Search button (same UI pattern as Screens page)
+- Selected POIs as removable chips
+- "X screens match" count updates live
+- New state: `proximityPOIs`, `proximityRadius`, `poiSearch`, `poiResults`
+- Update `capacitySummary` to include proximity-matched screens (union with rule + tag screens)
 
-### 6. Files
+### 4. Files
 
 | File | Action |
 |------|--------|
-| `src/data/screens.ts` | Add `impressionsPerPlay?` to interface |
-| `src/data/impressionStore.ts` | New — shared impression data store |
-| `src/pages/SettingsPage.tsx` | Add "Audience & Impressions" tab with CSV upload |
-| `src/pages/ScreenDetail.tsx` | Add impression data card with manual input |
-| `src/pages/CampaignCreate.tsx` | Add impression rows to Step 4, Capacity Summary, and Review |
+| `src/services/foursquareService.ts` | New — Foursquare API client + Haversine matching |
+| `src/pages/Screens.tsx` | Major rewrite — search bar, proximity filter, tag sidebar |
+| `src/pages/CampaignCreate.tsx` | Add "Target by Proximity" section to Step 2, update capacity calc |
+
+### Technical notes
+
+- API key accessed via `import.meta.env.VITE_FOURSQUARE_API_KEY` (Vite convention for client-side env vars)
+- Radius conversion: miles to meters (1mi = 1609.34m) done in the service layer
+- POI search debounced or triggered on button click (button click chosen per spec)
+- The default center point for POI search uses the average lat/lng of matched screens, falling back to first screen's coordinates
 
