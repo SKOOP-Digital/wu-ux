@@ -95,13 +95,11 @@ export default function CampaignCreate() {
   const next = () => setStep((s) => Math.min(s + 1, STEPS.length - 1));
   const prev = () => setStep((s) => Math.max(s - 1, 0));
 
-  // Mock: count screens matching selected tags
+  const allTags = useMemo(() => getAllScreenTags(), []);
+
   const tagMatchedScreens = useMemo(() => {
     if (selectedTags.length === 0) return 0;
-    // Simple mock: match screens whose name or venue contains any selected tag (case-insensitive)
-    return allScreens.filter((s) =>
-      selectedTags.some((tag) => s.name.toLowerCase().includes(tag.toLowerCase()) || s.venue.toLowerCase().includes(tag.toLowerCase()))
-    ).length;
+    return getScreensMatchingTags(selectedTags).length;
   }, [selectedTags]);
 
   // Capacity calculations across all selected rules + tags
