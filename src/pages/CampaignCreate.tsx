@@ -419,6 +419,7 @@ export default function CampaignCreate() {
       <div className="flex gap-2">
         <button onClick={() => setDeliveryMode("sov")} className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "sov" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>% of Screen Time</button>
         <button onClick={() => setDeliveryMode("total")} className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "total" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>Total Plays</button>
+        <button onClick={() => setDeliveryMode("frequency")} className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "frequency" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>Play Frequency</button>
       </div>
 
       {deliveryMode === "sov" ? (
@@ -439,7 +440,7 @@ export default function CampaignCreate() {
             </div>
           </div>
         </div>
-      ) : (
+      ) : deliveryMode === "total" ? (
         <div className="space-y-3">
           <div>
             <label className="text-xs text-muted-foreground">Target Total Plays</label>
@@ -455,6 +456,45 @@ export default function CampaignCreate() {
               <div>
                 <p className="text-[11px] text-muted-foreground">Available capacity</p>
                 <p className="text-sm font-medium tabular-nums">{capacitySummary ? capacitySummary.totalAvailable.toLocaleString() : "—"} plays/day</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          <div className="flex items-end gap-3">
+            <div>
+              <label className="text-xs text-muted-foreground">Play every</label>
+              <Input
+                type="number"
+                min={1}
+                placeholder="e.g. 4"
+                className="mt-1 w-28"
+                value={playFrequencyValue}
+                onChange={(e) => { setPlayFrequencyValue(Number(e.target.value)); setConflictAcknowledged(false); }}
+              />
+            </div>
+            <div>
+              <select
+                className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={playFrequencyUnit}
+                onChange={(e) => { setPlayFrequencyUnit(e.target.value as "minutes" | "hours"); setConflictAcknowledged(false); }}
+              >
+                <option value="minutes">Minutes</option>
+                <option value="hours">Hours</option>
+              </select>
+            </div>
+          </div>
+          <div className="bg-secondary rounded-md p-4 space-y-2">
+            <p className="text-xs font-medium text-foreground">Estimated Delivery</p>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <p className="text-[11px] text-muted-foreground">Estimated daily plays</p>
+                <p className="text-sm font-medium tabular-nums">~{estimatedDailyPlays.toLocaleString()} plays/day</p>
+              </div>
+              <div>
+                <p className="text-[11px] text-muted-foreground">Total over campaign</p>
+                <p className="text-sm font-medium tabular-nums">~{(estimatedDailyPlays * (startDate && endDate ? Math.max(1, Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / 86400000)) : 30)).toLocaleString()} plays</p>
               </div>
             </div>
           </div>
