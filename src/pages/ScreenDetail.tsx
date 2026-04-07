@@ -1,12 +1,16 @@
-import { Monitor, ArrowLeft, MapPin, ExternalLink } from "lucide-react";
+import { useState } from "react";
+import { Monitor, ArrowLeft, MapPin, ExternalLink, Globe, Tag, Plus, X } from "lucide-react";
 import { useParams, useNavigate, useSearchParams, Link } from "react-router-dom";
 import PageHeader from "@/components/layout/PageHeader";
 import StatusChip from "@/components/shared/StatusChip";
 import MixBar from "@/components/shared/MixBar";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb";
 import { allScreens } from "@/data/screens";
 import { allPlacements } from "@/data/placements";
+import { getAutoTags, STANDARD_VENUE_TAGS } from "@/data/screenTags";
 
 export default function ScreenDetail() {
   const { id } = useParams<{ id: string }>();
