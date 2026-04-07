@@ -1,4 +1,5 @@
-// Shared module-level store for screen impression multipliers
+import { allScreens } from "./screens";
+
 interface ImpressionEntry {
   multiplier: number;
   updatedAt: Date;
@@ -41,4 +42,16 @@ export function getLastImportTime(): Date | null {
 
 export function getAllImpressionData(): Map<string, ImpressionEntry> {
   return store;
+}
+
+/** Load impressionsPerPlay from screen data into the store on boot */
+export function initFromScreenData(): void {
+  const now = new Date();
+  allScreens.forEach((screen) => {
+    if (screen.impressionsPerPlay != null && screen.impressionsPerPlay > 0) {
+      if (!store.has(screen.id)) {
+        store.set(screen.id, { multiplier: screen.impressionsPerPlay, updatedAt: now });
+      }
+    }
+  });
 }
