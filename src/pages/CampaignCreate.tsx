@@ -9,8 +9,8 @@ import { Slider } from "@/components/ui/slider";
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb";
 import { allPlacements, calcPlaysPerDay, calcCapacityFromRule } from "@/data/placements";
 import { allScreens } from "@/data/screens";
-
-const AVAILABLE_TAGS = ["Lobby", "Drive-Thru", "Food Court", "Elevator", "Parking", "Northeast Region", "West Coast", "Urban Panel", "Bodega", "Concourse", "Premium", "High Traffic"];
+import { getAllScreenTags, getScreensMatchingTags } from "@/data/screenTags";
+import { Globe } from "lucide-react";
 
 type CampaignType = "direct" | "marketing" | "";
 
@@ -95,13 +95,11 @@ export default function CampaignCreate() {
   const next = () => setStep((s) => Math.min(s + 1, STEPS.length - 1));
   const prev = () => setStep((s) => Math.max(s - 1, 0));
 
-  // Mock: count screens matching selected tags
+  const allTags = useMemo(() => getAllScreenTags(), []);
+
   const tagMatchedScreens = useMemo(() => {
     if (selectedTags.length === 0) return 0;
-    // Simple mock: match screens whose name or venue contains any selected tag (case-insensitive)
-    return allScreens.filter((s) =>
-      selectedTags.some((tag) => s.name.toLowerCase().includes(tag.toLowerCase()) || s.venue.toLowerCase().includes(tag.toLowerCase()))
-    ).length;
+    return getScreensMatchingTags(selectedTags).length;
   }, [selectedTags]);
 
   // Capacity calculations across all selected rules + tags
@@ -230,8 +228,8 @@ export default function CampaignCreate() {
     </div>
   );
 
-  const filteredTags = AVAILABLE_TAGS.filter((t) =>
-    !selectedTags.includes(t) && t.toLowerCase().includes(tagSearch.toLowerCase())
+  const filteredTags = allTags.filter((t) =>
+    !selectedTags.includes(t.value) && t.value.toLowerCase().includes(tagSearch.toLowerCase())
   );
 
   const renderStep2 = () => (
@@ -330,11 +328,13 @@ export default function CampaignCreate() {
         <div className="flex flex-wrap gap-1.5">
           {filteredTags.map((tag) => (
             <button
-              key={tag}
-              onClick={() => { setSelectedTags((prev) => [...prev, tag]); setTagSearch(""); }}
-              className="px-2.5 py-1 rounded-full border border-dashed border-border text-xs text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
+              key={tag.value}
+              onClick={() => { setSelectedTags((prev) => [...prev, tag.value]); setTagSearch(""); }}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-dashed border-border text-xs text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
             >
-              + {tag}
+              {tag.type === "auto" ? <Globe size={10} className="shrink-0" /> : null}
+              + {tag.value}
+              <span className="text-[10px] opacity-60">({tag.screenCount})</span>
             </button>
           ))}
           {filteredTags.length === 0 && tagSearch && (
