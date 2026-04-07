@@ -13,6 +13,56 @@ import { allPlacements } from "@/data/placements";
 import { getAutoTags, STANDARD_VENUE_TAGS } from "@/data/screenTags";
 import { getImpressionMultiplier, getImpressionEntry, setImpressionMultiplier } from "@/data/impressionStore";
 
+function ImpressionDataCard({ screenId }: { screenId: string }) {
+  const entry = getImpressionEntry(screenId);
+  const [manualValue, setManualValue] = useState(entry?.multiplier?.toString() || "");
+  const [saved, setSaved] = useState(false);
+
+  const handleSave = () => {
+    const val = parseFloat(manualValue);
+    if (!isNaN(val) && val >= 0) {
+      setImpressionMultiplier(screenId, val);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    }
+  };
+
+  return (
+    <div className="space-y-3">
+      {entry ? (
+        <>
+          <div>
+            <p className="text-xs text-muted-foreground">Impressions per play</p>
+            <p className="text-sm font-medium tabular-nums mt-1">{entry.multiplier.toLocaleString()}</p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">Last updated</p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">{entry.updatedAt.toLocaleString()}</p>
+          </div>
+        </>
+      ) : (
+        <p className="text-xs text-muted-foreground">No impression data — import via Settings or enter manually below.</p>
+      )}
+      <div className="flex items-end gap-2">
+        <div className="flex-1 max-w-[200px]">
+          <label className="text-xs text-muted-foreground">Manual entry</label>
+          <Input
+            type="number"
+            min={0}
+            placeholder="e.g. 150"
+            className="mt-1 text-sm"
+            value={manualValue}
+            onChange={(e) => setManualValue(e.target.value)}
+          />
+        </div>
+        <Button size="sm" variant="outline" onClick={handleSave} disabled={!manualValue}>
+          {saved ? "Saved ✓" : "Save"}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 export default function ScreenDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
