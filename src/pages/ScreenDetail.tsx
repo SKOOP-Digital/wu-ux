@@ -273,6 +273,14 @@ export default function ScreenDetail() {
                 </div>
               )}
             </div>
+            {/* Impression Data Card */}
+            <div className="skoop-card p-5 space-y-4">
+              <div className="flex items-center gap-2">
+                <BarChart3 size={14} className="text-muted-foreground" />
+                <p className="skoop-section-header">Impression Data</p>
+              </div>
+              <ImpressionDataCard screenId={screen.id} />
+            </div>
           </div>
 
           <div className="space-y-4">
