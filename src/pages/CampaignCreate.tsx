@@ -10,6 +10,7 @@ import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbS
 import { allPlacements, calcPlaysPerDay, calcCapacityFromRule } from "@/data/placements";
 import { allScreens } from "@/data/screens";
 import { getAllScreenTags, getScreensMatchingTags } from "@/data/screenTags";
+import { hasAnyImpressionData, getImpressionMultiplier } from "@/data/impressionStore";
 import { Globe } from "lucide-react";
 
 type CampaignType = "direct" | "marketing" | "";
@@ -186,8 +187,29 @@ export default function CampaignCreate() {
       prev.map((r) => r.id === ruleId ? { ...r, tagInput: value } : r)
     );
   };
+  const hasImpressions = hasAnyImpressionData();
 
-  
+  const estimatedDailyImpressions = useMemo(() => {
+    if (!hasImpressions || !capacitySummary) return 0;
+    // Get all matched screen IDs from rules + tags
+    const screenIds = new Set<string>();
+    selectedRules.forEach((sr) => {
+      const rule = allPlacements.find((p) => p.id === sr.id);
+      if (rule) rule.screenIds.forEach((sid) => screenIds.add(sid));
+    });
+    if (selectedTags.length > 0) {
+      getScreensMatchingTags(selectedTags).forEach((s) => screenIds.add(s.id));
+    }
+    const playsPerScreen = capacitySummary.totalScreens > 0 ? estimatedDailyPlays / capacitySummary.totalScreens : 0;
+    let totalImpressions = 0;
+    screenIds.forEach((sid) => {
+      const mult = getImpressionMultiplier(sid);
+      if (mult !== null) totalImpressions += playsPerScreen * mult;
+    });
+    return Math.round(totalImpressions);
+  }, [hasImpressions, capacitySummary, estimatedDailyPlays, selectedRules, selectedTags]);
+
+
 
   // ── STEP RENDERERS ──
 
@@ -438,6 +460,14 @@ export default function CampaignCreate() {
                 <p className="text-sm font-medium tabular-nums">~{estimatedDailyPlays.toLocaleString()} plays/day</p>
               </div>
             </div>
+            <div>
+              <p className="text-[11px] text-muted-foreground">Estimated daily impressions</p>
+              {hasImpressions ? (
+                <p className="text-sm font-medium tabular-nums">~{estimatedDailyImpressions.toLocaleString()}</p>
+              ) : (
+                <p className="text-[11px] text-muted-foreground italic">— Waiting for impression data. Upload your audience data in Settings to enable.</p>
+              )}
+            </div>
           </div>
         </div>
       ) : deliveryMode === "total" ? (
@@ -457,6 +487,14 @@ export default function CampaignCreate() {
                 <p className="text-[11px] text-muted-foreground">Available capacity</p>
                 <p className="text-sm font-medium tabular-nums">{capacitySummary ? capacitySummary.totalAvailable.toLocaleString() : "—"} plays/day</p>
               </div>
+            </div>
+            <div>
+              <p className="text-[11px] text-muted-foreground">Estimated daily impressions</p>
+              {hasImpressions ? (
+                <p className="text-sm font-medium tabular-nums">~{estimatedDailyImpressions.toLocaleString()}</p>
+              ) : (
+                <p className="text-[11px] text-muted-foreground italic">— Waiting for impression data. Upload your audience data in Settings to enable.</p>
+              )}
             </div>
           </div>
         </div>
@@ -496,6 +534,14 @@ export default function CampaignCreate() {
                 <p className="text-[11px] text-muted-foreground">Total over campaign</p>
                 <p className="text-sm font-medium tabular-nums">~{(estimatedDailyPlays * (startDate && endDate ? Math.max(1, Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / 86400000)) : 30)).toLocaleString()} plays</p>
               </div>
+            </div>
+            <div>
+              <p className="text-[11px] text-muted-foreground">Estimated daily impressions</p>
+              {hasImpressions ? (
+                <p className="text-sm font-medium tabular-nums">~{estimatedDailyImpressions.toLocaleString()}</p>
+              ) : (
+                <p className="text-[11px] text-muted-foreground italic">— Waiting for impression data. Upload your audience data in Settings to enable.</p>
+              )}
             </div>
           </div>
         </div>
@@ -594,6 +640,7 @@ export default function CampaignCreate() {
           <div className="grid grid-cols-2 gap-4">
             <div><p className="text-xs text-muted-foreground">Total estimated plays</p><p className="text-sm font-medium tabular-nums">~{totalEstimated.toLocaleString()}</p></div>
             <div><p className="text-xs text-muted-foreground">Daily pacing estimate</p><p className="text-sm font-medium tabular-nums">~{estimatedDailyPlays.toLocaleString()} plays/day</p></div>
+            <div><p className="text-xs text-muted-foreground">Est. daily impressions</p><p className="text-sm font-medium tabular-nums">{hasImpressions ? `~${estimatedDailyImpressions.toLocaleString()}` : "—"}</p></div>
             <div><p className="text-xs text-muted-foreground">Inventory Fit</p><StatusChip status={hasConflict ? "overbooked" : "healthy"} label={hasConflict ? "Conflict" : "Compatible"} /></div>
             <div><p className="text-xs text-muted-foreground">Conflicts</p><p className="text-sm font-medium text-muted-foreground">{hasConflict ? "Requested capacity exceeds available inventory" : "None detected"}</p></div>
           </div>
@@ -640,6 +687,7 @@ export default function CampaignCreate() {
             <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total Screens</span><span className="font-medium tabular-nums">{capacitySummary.totalScreens.toLocaleString()}</span></div>
             <div className="flex justify-between text-sm"><span className="text-muted-foreground">Combined Capacity</span><span className="font-medium tabular-nums">{capacitySummary.totalCapacity.toLocaleString()}/day</span></div>
             <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacitySummary.totalAvailable.toLocaleString()}/day</span></div>
+            <div className="flex justify-between text-sm"><span className="text-muted-foreground">Est. Impressions/day</span><span className="font-medium tabular-nums">{hasImpressions ? `~${estimatedDailyImpressions.toLocaleString()}` : "—"}</span></div>
           </div>
           <div className="h-2 rounded-full bg-secondary overflow-hidden">
             <div className="h-full bg-primary rounded-full" style={{ width: `${capacitySummary.bookedPct}%` }} />

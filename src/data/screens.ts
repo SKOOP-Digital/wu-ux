@@ -7,6 +7,7 @@ export interface Screen {
   orientation: "Landscape" | "Portrait";
   loopDuration: number; // seconds
   loopsPerHour: number;
+  impressionsPerPlay?: number;
   address?: string;
   lat?: number;
   lng?: number;
