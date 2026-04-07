@@ -59,9 +59,11 @@ export default function CampaignCreate() {
   const [activeDayparts, setActiveDayparts] = useState<string[]>(["Morning", "Midday", "Afternoon"]);
 
   // Step 4 — How Much It Plays
-  const [deliveryMode, setDeliveryMode] = useState<"sov" | "total">("sov");
+  const [deliveryMode, setDeliveryMode] = useState<"sov" | "total" | "frequency">("sov");
   const [sov, setSov] = useState(15);
   const [totalPlays, setTotalPlays] = useState(5000);
+  const [playFrequencyValue, setPlayFrequencyValue] = useState(4);
+  const [playFrequencyUnit, setPlayFrequencyUnit] = useState<"minutes" | "hours">("minutes");
 
   // Step 5 — Creatives
   const [creatives, setCreatives] = useState<Creative[]>([]);
