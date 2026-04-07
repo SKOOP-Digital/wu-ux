@@ -128,6 +128,81 @@ export default function ScreenDetail() {
               </div>
             </div>
 
+            {/* Tags Card */}
+            <div className="skoop-card p-5 space-y-4">
+              <p className="skoop-section-header">Tags</p>
+
+              {/* Auto tags */}
+              {autoTags && (
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-1.5">
+                    <Globe size={12} className="text-muted-foreground" />
+                    <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Auto</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      { label: autoTags.country, cat: "Country" },
+                      { label: autoTags.state, cat: "State" },
+                      { label: autoTags.city, cat: "City" },
+                      { label: autoTags.zip, cat: "ZIP" },
+                    ].map((t) => (
+                      <span key={t.cat} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary text-muted-foreground text-xs font-medium border border-border">
+                        <Globe size={10} className="shrink-0" />
+                        {t.label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Applied tags */}
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-1.5">
+                  <Tag size={12} className="text-muted-foreground" />
+                  <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Applied</span>
+                </div>
+                <div className="flex flex-wrap gap-1.5 items-center">
+                  {manualTags.map((tag) => (
+                    <span key={tag} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                      {tag}
+                      <button onClick={() => removeManualTag(tag)} className="hover:text-destructive"><X size={10} /></button>
+                    </span>
+                  ))}
+                  <Popover open={tagPopoverOpen} onOpenChange={setTagPopoverOpen}>
+                    <PopoverTrigger asChild>
+                      <button className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-dashed border-border text-xs text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors">
+                        <Plus size={10} /> Add Tag
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-56 p-3 space-y-2" align="start">
+                      <p className="text-xs font-medium text-foreground">Standard Tags</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {STANDARD_VENUE_TAGS.filter((t) => !manualTags.includes(t)).map((tag) => (
+                          <button key={tag} onClick={() => { addManualTag(tag); }} className="px-2 py-0.5 rounded-full border border-dashed border-border text-xs text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors">
+                            + {tag}
+                          </button>
+                        ))}
+                      </div>
+                      <p className="text-xs font-medium text-foreground pt-1">Custom Tag</p>
+                      <Input
+                        placeholder="Type and press Enter"
+                        className="text-xs h-8"
+                        value={customTagInput}
+                        onChange={(e) => setCustomTagInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            addManualTag(customTagInput);
+                            setCustomTagInput("");
+                          }
+                        }}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
+            </div>
+
             <div className="skoop-card p-5 space-y-4">
               <p className="skoop-section-header">Playback Capacity</p>
               <p className="text-xs text-muted-foreground">This screen's playback configuration determines eligible ad inventory</p>

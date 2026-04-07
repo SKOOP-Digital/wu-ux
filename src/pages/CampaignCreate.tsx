@@ -328,11 +328,13 @@ export default function CampaignCreate() {
         <div className="flex flex-wrap gap-1.5">
           {filteredTags.map((tag) => (
             <button
-              key={tag}
-              onClick={() => { setSelectedTags((prev) => [...prev, tag]); setTagSearch(""); }}
-              className="px-2.5 py-1 rounded-full border border-dashed border-border text-xs text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
+              key={tag.value}
+              onClick={() => { setSelectedTags((prev) => [...prev, tag.value]); setTagSearch(""); }}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-dashed border-border text-xs text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
             >
-              + {tag}
+              {tag.type === "auto" ? <Globe size={10} className="shrink-0" /> : null}
+              + {tag.value}
+              <span className="text-[10px] opacity-60">({tag.screenCount})</span>
             </button>
           ))}
           {filteredTags.length === 0 && tagSearch && (
