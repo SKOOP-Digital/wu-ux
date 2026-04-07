@@ -10,22 +10,20 @@ export interface GeoTags {
 export interface ScreenTag {
   value: string;
   type: "auto" | "manual";
-  category?: string; // e.g. "Country", "State", "City", "ZIP"
+  category?: string;
   screenCount: number;
 }
-
-// Venue-to-geo lookup (hardcoded since no geocoding API)
-const VENUE_GEO: Record<string, GeoTags> = {
-  "Westfield Sydney": { country: "Australia", state: "NSW", city: "Sydney", zip: "2000" },
-  "Melbourne Central": { country: "Australia", state: "VIC", city: "Melbourne", zip: "3000" },
-  "Brisbane CBD Tower": { country: "Australia", state: "QLD", city: "Brisbane", zip: "4000" },
-  "Perth Arena": { country: "Australia", state: "WA", city: "Perth", zip: "6000" },
-};
 
 export const STANDARD_VENUE_TAGS = ["Indoor", "Outdoor"];
 
 export function getAutoTags(screen: Screen): GeoTags | null {
-  return VENUE_GEO[screen.venue] || null;
+  if (!screen.city && !screen.state && !screen.zip && !screen.country) return null;
+  return {
+    country: screen.country || "",
+    state: screen.state || "",
+    city: screen.city || "",
+    zip: screen.zip || "",
+  };
 }
 
 export function getScreenAllTags(screen: Screen): { auto: GeoTags | null; manual: string[] } {
@@ -49,6 +47,7 @@ export function getAllScreenTags(): ScreenTag[] {
         [geo.zip, "ZIP"],
       ];
       geoEntries.forEach(([value, category]) => {
+        if (!value) return;
         const existing = tagMap.get(value);
         if (existing) {
           existing.screenCount++;
@@ -68,7 +67,6 @@ export function getAllScreenTags(): ScreenTag[] {
     });
   });
 
-  // Sort: auto tags first (by category order), then manual
   const categoryOrder = ["Country", "State", "City", "ZIP"];
   return Array.from(tagMap.values()).sort((a, b) => {
     if (a.type !== b.type) return a.type === "auto" ? -1 : 1;
@@ -87,7 +85,7 @@ export function getScreensMatchingTags(tags: string[]): Screen[] {
   return allScreens.filter((screen) => {
     const geo = getAutoTags(screen);
     if (geo) {
-      const geoValues = [geo.country, geo.state, geo.city, geo.zip];
+      const geoValues = [geo.country, geo.state, geo.city, geo.zip].filter(Boolean);
       if (geoValues.some((v) => tagSet.has(v.toLowerCase()))) return true;
     }
     if (screen.manualTags?.some((t) => tagSet.has(t.toLowerCase()))) return true;
