@@ -130,10 +130,15 @@ export default function CampaignCreate() {
     const bookedPct = 100 - availablePct;
 
     let requested = 0;
+    const activeHoursPerDay = 16;
     if (deliveryMode === "sov") {
       requested = Math.round(totalCapacity * sov / 100);
-    } else {
+    } else if (deliveryMode === "total") {
       requested = totalPlays;
+    } else {
+      const freqMinutes = playFrequencyUnit === "hours" ? playFrequencyValue * 60 : playFrequencyValue;
+      const playsPerDayPerScreen = freqMinutes > 0 ? Math.floor((activeHoursPerDay * 60) / freqMinutes) : 0;
+      requested = playsPerDayPerScreen * totalScreens;
     }
     const fits = requested <= totalAvailable;
     const dailyPacing = deliveryMode === "total" && startDate && endDate
@@ -141,7 +146,7 @@ export default function CampaignCreate() {
       : 0;
 
     return { totalScreens, totalAvailable, totalCapacity, availablePct, bookedPct, requested, fits, dailyPacing };
-  }, [selectedRules, selectedTags, tagMatchedScreens, deliveryMode, sov, totalPlays, startDate, endDate]);
+  }, [selectedRules, selectedTags, tagMatchedScreens, deliveryMode, sov, totalPlays, startDate, endDate, playFrequencyValue, playFrequencyUnit]);
 
   const estimatedDailyPlays = useMemo(() => {
     if (!capacitySummary) return 0;
