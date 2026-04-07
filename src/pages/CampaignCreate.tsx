@@ -460,6 +460,14 @@ export default function CampaignCreate() {
                 <p className="text-sm font-medium tabular-nums">~{estimatedDailyPlays.toLocaleString()} plays/day</p>
               </div>
             </div>
+            <div>
+              <p className="text-[11px] text-muted-foreground">Estimated daily impressions</p>
+              {hasImpressions ? (
+                <p className="text-sm font-medium tabular-nums">~{estimatedDailyImpressions.toLocaleString()}</p>
+              ) : (
+                <p className="text-[11px] text-muted-foreground italic">— Waiting for impression data. Upload your audience data in Settings to enable.</p>
+              )}
+            </div>
           </div>
         </div>
       ) : deliveryMode === "total" ? (
