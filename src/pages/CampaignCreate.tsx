@@ -640,6 +640,7 @@ export default function CampaignCreate() {
           <div className="grid grid-cols-2 gap-4">
             <div><p className="text-xs text-muted-foreground">Total estimated plays</p><p className="text-sm font-medium tabular-nums">~{totalEstimated.toLocaleString()}</p></div>
             <div><p className="text-xs text-muted-foreground">Daily pacing estimate</p><p className="text-sm font-medium tabular-nums">~{estimatedDailyPlays.toLocaleString()} plays/day</p></div>
+            <div><p className="text-xs text-muted-foreground">Est. daily impressions</p><p className="text-sm font-medium tabular-nums">{hasImpressions ? `~${estimatedDailyImpressions.toLocaleString()}` : "—"}</p></div>
             <div><p className="text-xs text-muted-foreground">Inventory Fit</p><StatusChip status={hasConflict ? "overbooked" : "healthy"} label={hasConflict ? "Conflict" : "Compatible"} /></div>
             <div><p className="text-xs text-muted-foreground">Conflicts</p><p className="text-sm font-medium text-muted-foreground">{hasConflict ? "Requested capacity exceeds available inventory" : "None detected"}</p></div>
           </div>
