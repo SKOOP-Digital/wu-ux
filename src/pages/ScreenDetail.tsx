@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Monitor, ArrowLeft, MapPin, ExternalLink, Globe, Tag, Plus, X } from "lucide-react";
+import { Monitor, ArrowLeft, MapPin, ExternalLink, Globe, Tag, Plus, X, BarChart3 } from "lucide-react";
 import { useParams, useNavigate, useSearchParams, Link } from "react-router-dom";
 import PageHeader from "@/components/layout/PageHeader";
 import StatusChip from "@/components/shared/StatusChip";
@@ -11,6 +11,7 @@ import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbS
 import { allScreens } from "@/data/screens";
 import { allPlacements } from "@/data/placements";
 import { getAutoTags, STANDARD_VENUE_TAGS } from "@/data/screenTags";
+import { getImpressionMultiplier, getImpressionEntry, setImpressionMultiplier } from "@/data/impressionStore";
 
 export default function ScreenDetail() {
   const { id } = useParams<{ id: string }>();
