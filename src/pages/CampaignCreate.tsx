@@ -187,8 +187,29 @@ export default function CampaignCreate() {
       prev.map((r) => r.id === ruleId ? { ...r, tagInput: value } : r)
     );
   };
+  const hasImpressions = hasAnyImpressionData();
 
-  
+  const estimatedDailyImpressions = useMemo(() => {
+    if (!hasImpressions || !capacitySummary) return 0;
+    // Get all matched screen IDs from rules + tags
+    const screenIds = new Set<string>();
+    selectedRules.forEach((sr) => {
+      const rule = allPlacements.find((p) => p.id === sr.id);
+      if (rule) rule.screenIds.forEach((sid) => screenIds.add(sid));
+    });
+    if (selectedTags.length > 0) {
+      getScreensMatchingTags(selectedTags).forEach((s) => screenIds.add(s.id));
+    }
+    const playsPerScreen = capacitySummary.totalScreens > 0 ? estimatedDailyPlays / capacitySummary.totalScreens : 0;
+    let totalImpressions = 0;
+    screenIds.forEach((sid) => {
+      const mult = getImpressionMultiplier(sid);
+      if (mult !== null) totalImpressions += playsPerScreen * mult;
+    });
+    return Math.round(totalImpressions);
+  }, [hasImpressions, capacitySummary, estimatedDailyPlays, selectedRules, selectedTags]);
+
+
 
   // ── STEP RENDERERS ──
 
