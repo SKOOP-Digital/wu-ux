@@ -1,73 +1,76 @@
 
 
-## Screens Page Search + Foursquare POI Proximity
+## Western Union Inventory Import with Geocoding — Full Dataset
 
-### What changes
+### What we're building
 
-Add a search/filter toolbar to the Screens page with free-text search, AND/OR toggle, and a Foursquare-powered proximity filter. Add a tag breakdown sidebar on the right. Also add a "Target by Proximity" section to Campaign Builder Step 2.
+A build-time pipeline that parses the Western Union XLSX (~2,830 rows), geocodes all addresses to lat/lng, and generates a new `screens.ts` with every row included. No deduplication, no capping — every row becomes a screen.
 
-### 1. New file: `src/services/foursquareService.ts`
+### Phase 1 — Build-time data pipeline (`/tmp/generate_screens.py`)
 
-- `searchPOIs(query, ll, radius)` — calls Foursquare Places Search v3 (`/v3/places/search`) with `Authorization: ${import.meta.env.VITE_FOURSQUARE_API_KEY}` header. Returns array of `{ fsq_id, name, location: { address, lat, lng }, categories }`.
-- In-memory cache: `Map<string, POI[]>` keyed by `query|ll|radius`.
-- `getScreensNearPOIs(pois, screens, radiusMeters)` — pure client-side Haversine distance check. Returns deduplicated screens within radius of any POI.
-- Haversine helper function inlined in the same file.
-- Export `POI` interface for use in other files.
+1. Parse `Inventory_List_1.xlsx` with pandas — all ~2,830 rows
+2. Every row gets a unique screen ID (`scr-1` through `scr-2830`)
+3. Detect country from zip format: 5-digit → US, letter-number → Canada, dash → Brazil
+4. Auto-generate tags from agent name keywords (e.g. "KITCHEN FOOD FAIR" → "Food & Grocery", "OFFICE" → "Office") via a keyword lookup map
+5. Handle active hours: both 0 → always on (0/2359), otherwise as-is, null → undefined
+6. Average Multiplier → `impressionsPerPlay`, default 1.0 if missing
+7. Geocode: US Census Bureau batch (one request), Nominatim for Canada/Brazil (1 req/sec)
+8. Track failed geocodes in `failed_geocodes.json`
+9. Output `src/data/screens.ts` with all ~2,830 screens
 
-### 2. Screens page (`src/pages/Screens.tsx`)
+### Phase 2 — Extend Screen interface (`src/data/screens.ts`)
 
-Restructure layout to a two-column grid when filters are active:
+Add to `Screen` interface:
+- `city`, `state`, `zip`, `country` — from XLSX
+- `activeHoursStart`, `activeHoursEnd` — military time integers
+- `geocodeStatus?: "success" | "failed" | "pending"`
 
-**Search toolbar** (above table):
-- Free-text `Input` with search icon — filters by screen name, ID, and all tags (auto + manual)
-- AND/OR pill toggle to the right
-- "+ Add Proximity" button opens a collapsible proximity filter row:
-  - POI search input + radius dropdown (0.25mi / 0.5mi / 1mi / 2mi / 5mi) + "Search" button
-  - Results as selectable chips showing POI name + location count
-  - Selected POIs as removable tags
-- Active filters shown as removable chips below the bar
-- Result count: "X screens match"
+Defaults: `status: "Online"`, `resolution: "1080×1920"`, `orientation: "Portrait"`, `loopDuration: 60`, `loopsPerHour: 60`, `venue` = Agent Name.
 
-**Screen list** (left): existing table, filtered in place. Each row shows small tag badges for matched filters.
+### Phase 3 — Update tag system (`src/data/screenTags.ts`)
 
-**Tag breakdown sidebar** (right, visible when filters active):
-- "Tags in results" header
-- All tags present in matched screens, sorted by count descending
-- Globe icon for auto, tag icon for manual, pin icon for proximity
-- Clickable — adds tag as filter
+- Remove hardcoded `VENUE_GEO` lookup
+- Derive geo tags from `screen.city`, `screen.state`, `screen.zip`, `screen.country`
+- Failed-geocode screens still appear in tag searches — only excluded from proximity
 
-**State**: `searchText`, `matchMode` ("any"|"all"), `proximityPOIs`, `proximityRadius`, `showProximity`, `poiSearchQuery`, `poiResults`, `selectedPOIs`
+### Phase 4 — Impression store (`src/data/impressionStore.ts`)
 
-**Filtering logic** (`useMemo`):
-- Text filter: split by spaces, match against screen name/id/tags
-- Proximity filter: `getScreensNearPOIs(selectedPOIs, allScreens, radius)`
-- AND mode: intersect text + proximity results
-- OR mode: union text + proximity results
+- Add `initFromScreenData()` to bulk-load multipliers from screen data
+- Call from `src/main.tsx` on boot
 
-### 3. Campaign Builder Step 2 (`src/pages/CampaignCreate.tsx`)
+### Phase 5 — Settings: Screen Data Tab (`src/pages/SettingsPage.tsx`)
 
-Add a third targeting card after "Target by Tags":
+**A. XLSX Importer** — Accept `.xlsx` via SheetJS, map columns, match by agent name + address, show results
 
-- **"Target by Proximity"** card with MapPin icon
-- Description: "Find screens near specific points of interest using Foursquare."
-- POI search input + radius dropdown + Search button (same UI pattern as Screens page)
-- Selected POIs as removable chips
-- "X screens match" count updates live
-- New state: `proximityPOIs`, `proximityRadius`, `poiSearch`, `poiResults`
-- Update `capacitySummary` to include proximity-matched screens (union with rule + tag screens)
+**B. Geocoding Issues** — Table of failed screens with inline lat/lng edit, retry per-row, download failed CSV, retry all bulk action
 
-### 4. Files
+### Phase 6 — Screen Detail (`src/pages/ScreenDetail.tsx`)
+
+- Show city/state/zip/country, active hours ("6:00 AM – 10:00 PM" or "Always On")
+- Geocode status badge: "📍 Location verified" or "⚠ Location missing"
+- Inline lat/lng input for failed screens
+
+### Phase 7 — Proximity search guard (`src/services/foursquareService.ts`)
+
+- `getScreensNearPOIs()` already checks `if (!screen.lat || !screen.lng) continue` — confirm this guard exists (it does in current code)
+
+### Files
 
 | File | Action |
 |------|--------|
-| `src/services/foursquareService.ts` | New — Foursquare API client + Haversine matching |
-| `src/pages/Screens.tsx` | Major rewrite — search bar, proximity filter, tag sidebar |
-| `src/pages/CampaignCreate.tsx` | Add "Target by Proximity" section to Step 2, update capacity calc |
+| `/tmp/generate_screens.py` | New — parse XLSX, geocode, output screens.ts |
+| `src/data/screens.ts` | Rewrite — all ~2,830 WU screens with geocoded coords |
+| `src/data/screenTags.ts` | Rewrite — derive geo from screen fields |
+| `src/data/impressionStore.ts` | Add `initFromScreenData()` |
+| `src/main.tsx` | Call `initFromScreenData()` on boot |
+| `src/pages/SettingsPage.tsx` | Add Screen Data tab with importer + geocoding issues |
+| `src/pages/ScreenDetail.tsx` | Show location fields, active hours, geocode status |
+| `package.json` | Add `xlsx` dependency |
 
 ### Technical notes
 
-- API key accessed via `import.meta.env.VITE_FOURSQUARE_API_KEY` (Vite convention for client-side env vars)
-- Radius conversion: miles to meters (1mi = 1609.34m) done in the service layer
-- POI search debounced or triggered on button click (button click chosen per spec)
-- The default center point for POI search uses the average lat/lng of matched screens, falling back to first screen's coordinates
+- Census Bureau batch handles all US rows in one HTTP request
+- Nominatim handles Canada/Brazil at 1 req/sec (~20-30 min runtime)
+- Screen count: 18 → ~2,830
+- All existing features (table, filters, Campaign Builder, proximity) reference `allScreens` and pick up new data automatically
 
