@@ -10,7 +10,7 @@ import { getAutoTags, getScreenAllTags } from "@/data/screenTags";
 import {
   searchPOIs,
   getScreensNearPOIs,
-  getDefaultCenter,
+  getRegionalSearchCenters,
   milesToMeters,
   POI,
 } from "@/services/foursquareService";
