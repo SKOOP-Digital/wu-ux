@@ -233,8 +233,12 @@ export default function CampaignCreate() {
     if (!poiSearch.trim()) return;
     setPoiLoading(true);
     try {
-      const center = getDefaultCenter(allScreens);
-      const results = await searchPOIs(poiSearch.trim(), center, milesToMeters(proximityRadius));
+      const searchCenters = getRegionalSearchCenters(allScreens);
+      const results = await searchPOIs(
+        poiSearch.trim(),
+        searchCenters,
+        100000
+      );
       setPoiResults(results);
     } catch (err) {
       console.error("POI search error:", err);
