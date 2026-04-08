@@ -265,7 +265,7 @@ export default function Screens() {
                   onChange={setPoiSearchQuery}
                   onSelect={(name) => {
                     setPoiSearchQuery(name);
-                    setTimeout(() => handlePoiSearch(), 0);
+                    handlePoiSearch(name);
                   }}
                   placeholder="e.g. Walmart, Family Dollar, CVS..."
                   className="text-sm"
