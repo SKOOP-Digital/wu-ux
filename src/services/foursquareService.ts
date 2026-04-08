@@ -38,6 +38,18 @@ function mapPOIResult(r: any): POI {
   };
 }
 
+const MILES_TO_METERS: Record<string, number> = {
+  "0.25": 402.336,
+  "0.5": 804.672,
+  "1": 1609.34,
+  "2": 3218.69,
+  "5": 8046.72,
+};
+
+export function milesToMeters(miles: number): number {
+  return MILES_TO_METERS[String(miles)] ?? miles * 1609.34;
+}
+
 export function getRegionalSearchCenters(screens: Screen[]): string[] {
   const withCoords = screens.filter(
     (screen): screen is Screen & { lat: number; lng: number } =>
