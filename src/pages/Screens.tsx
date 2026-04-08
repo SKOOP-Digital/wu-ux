@@ -290,7 +290,7 @@ export default function Screens() {
           )}
 
           {/* POI Results */}
-          {showProximity && poiResults.length > 0 && (
+          {showProximity && poiResults.length > 0 ? (
             <div className="flex flex-wrap gap-1.5">
               {poiResults.map((poi) => {
                 const isSelected = selectedPOIs.some(
@@ -317,6 +317,10 @@ export default function Screens() {
                 );
               })}
             </div>
+          ) : showProximity && poiSearchQuery.trim() && !poiLoading && poiResults.length === 0 && (
+            <p className="text-xs text-muted-foreground px-1 py-2">
+              No POIs found for "{poiSearchQuery.trim()}". Try a different search term or increase the radius.
+            </p>
           )}
 
           {/* Active Filter Chips */}
