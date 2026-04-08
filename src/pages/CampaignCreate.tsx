@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Megaphone, ArrowLeft, ArrowRight, Check, Info, AlertTriangle, Briefcase, Home, Plus, X, Upload, Tag, Search, Trash2, MapPin, Globe } from "lucide-react";
+import { Megaphone, ArrowLeft, ArrowRight, Check, Info, AlertTriangle, Briefcase, Home, Plus, X, Upload, Tag, Search, Trash2, MapPin, Globe, ChevronDown, ChevronRight } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StatusChip from "@/components/shared/StatusChip";
 import { Button } from "@/components/ui/button";
@@ -52,6 +52,8 @@ export default function CampaignCreate() {
   const [selectedRules, setSelectedRules] = useState<SelectedRule[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [tagSearch, setTagSearch] = useState("");
+  const [expandedTagGroups, setExpandedTagGroups] = useState<string[]>([]);
+  const [showAllTagGroups, setShowAllTagGroups] = useState<Record<string, boolean>>({});
   const [conflictAcknowledged, setConflictAcknowledged] = useState(false);
 
   // Step 2 — Proximity targeting
@@ -405,21 +407,73 @@ export default function CampaignCreate() {
           />
         </div>
 
-        <div className="flex flex-wrap gap-1.5">
-          {filteredTags.map((tag) => (
-            <button
-              key={tag.value}
-              onClick={() => { setSelectedTags((prev) => [...prev, tag.value]); setTagSearch(""); }}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-dashed border-border text-xs text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
-            >
-              {tag.type === "auto" ? <Globe size={10} className="shrink-0" /> : null}
-              + {tag.value}
-              <span className="text-[10px] opacity-60">({tag.screenCount})</span>
-            </button>
-          ))}
-          {filteredTags.length === 0 && tagSearch && (
-            <p className="text-xs text-muted-foreground">No matching tags found</p>
-          )}
+        <div className="space-y-1">
+          {(() => {
+            const groups: Record<string, typeof filteredTags> = {};
+            const order = ["Country", "State", "City", "ZIP", "Venue"];
+            filteredTags.forEach((tag) => {
+              const cat = tag.category || "Venue";
+              if (!groups[cat]) groups[cat] = [];
+              groups[cat].push(tag);
+            });
+            // Sort each group by screenCount desc
+            Object.values(groups).forEach(g => g.sort((a, b) => b.screenCount - a.screenCount));
+
+            const isSearching = tagSearch.trim().length > 0;
+            const visibleGroups = order.filter(g => groups[g]?.length);
+
+            if (visibleGroups.length === 0 && tagSearch) {
+              return <p className="text-xs text-muted-foreground">No matching tags found</p>;
+            }
+
+            return visibleGroups.map((groupName) => {
+              const tags = groups[groupName];
+              const isExpanded = isSearching || expandedTagGroups.includes(groupName);
+              const showAll = showAllTagGroups[groupName];
+              const CAP = 15;
+              const visibleTags = showAll ? tags : tags.slice(0, CAP);
+
+              return (
+                <div key={groupName} className="border border-border rounded-md">
+                  <button
+                    onClick={() => setExpandedTagGroups(prev =>
+                      prev.includes(groupName) ? prev.filter(g => g !== groupName) : [...prev, groupName]
+                    )}
+                    className="flex items-center justify-between w-full px-3 py-2 text-xs font-medium text-foreground hover:bg-muted/50 transition-colors"
+                  >
+                    <span className="flex items-center gap-1.5">
+                      {isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+                      {groupName}
+                      <span className="text-muted-foreground font-normal">({tags.length})</span>
+                    </span>
+                  </button>
+                  {isExpanded && (
+                    <div className="px-3 pb-2.5 flex flex-wrap gap-1.5">
+                      {visibleTags.map((tag) => (
+                        <button
+                          key={tag.value}
+                          onClick={() => { setSelectedTags((prev) => [...prev, tag.value]); setTagSearch(""); }}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-dashed border-border text-xs text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
+                        >
+                          {tag.type === "auto" ? <Globe size={10} className="shrink-0" /> : null}
+                          + {tag.value}
+                          <span className="text-[10px] opacity-60">({tag.screenCount})</span>
+                        </button>
+                      ))}
+                      {!showAll && tags.length > CAP && (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setShowAllTagGroups(prev => ({ ...prev, [groupName]: true })); }}
+                          className="text-xs text-primary hover:underline px-1"
+                        >
+                          Show all {tags.length}
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            });
+          })()}
         </div>
 
         {selectedTags.length > 0 && (
