@@ -52,6 +52,8 @@ export default function CampaignCreate() {
   const [selectedRules, setSelectedRules] = useState<SelectedRule[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [tagSearch, setTagSearch] = useState("");
+  const [expandedTagGroups, setExpandedTagGroups] = useState<string[]>([]);
+  const [showAllTagGroups, setShowAllTagGroups] = useState<Record<string, boolean>>({});
   const [conflictAcknowledged, setConflictAcknowledged] = useState(false);
 
   // Step 2 — Proximity targeting
