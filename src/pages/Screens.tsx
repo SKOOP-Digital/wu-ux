@@ -297,40 +297,23 @@ export default function Screens() {
               <Button size="sm" onClick={handlePoiSearch} disabled={poiLoading}>
                 {poiLoading ? "Searching..." : "Search"}
               </Button>
+              {activePoiQuery && (
+                <Button size="sm" variant="ghost" onClick={clearProximityFilter}>
+                  <X size={14} className="mr-1" /> Clear
+                </Button>
+              )}
             </div>
           )}
 
-          {/* POI Results */}
-          {showProximity && poiResults.length > 0 ? (
-            <div className="flex flex-wrap gap-1.5">
-              {poiResults.map((poi) => {
-                const isSelected = selectedPOIs.some(
-                  (p) => p.fsq_id === poi.fsq_id
-                );
-                return (
-                  <button
-                    key={poi.fsq_id}
-                    onClick={() => (isSelected ? removePOI(poi.fsq_id) : addPOI(poi))}
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
-                      isSelected
-                        ? "bg-primary/10 text-primary border border-primary/30"
-                        : "border border-dashed border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
-                    }`}
-                  >
-                    <MapPin size={10} />
-                    {poi.name}
-                    {poi.location.address && (
-                      <span className="text-[10px] opacity-60 max-w-[120px] truncate">
-                        · {poi.location.address}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          ) : showProximity && poiSearched && !poiLoading && poiResults.length === 0 && (
+          {/* POI search feedback */}
+          {showProximity && poiLoading && (
             <p className="text-xs text-muted-foreground px-1 py-2">
-              No POIs found for "{poiSearchQuery.trim()}". Try a different search term or increase the radius.
+              Searching for {poiSearchQuery.trim()} locations...
+            </p>
+          )}
+          {showProximity && poiSearched && !poiLoading && selectedPOIs.length === 0 && activePoiQuery && (
+            <p className="text-xs text-muted-foreground px-1 py-2">
+              No "{activePoiQuery}" locations found. Try a different search term.
             </p>
           )}
 
