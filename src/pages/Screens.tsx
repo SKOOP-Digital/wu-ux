@@ -38,6 +38,7 @@ export default function Screens() {
   const [proximityRadius, setProximityRadius] = useState(1);
   const [poiLoading, setPoiLoading] = useState(false);
   const [poiSearched, setPoiSearched] = useState(false);
+  const [activePoiQuery, setActivePoiQuery] = useState("");
 
   const hasFilters = searchText.trim().length > 0 || selectedPOIs.length > 0;
 
