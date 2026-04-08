@@ -12,6 +12,7 @@ import { allScreens } from "@/data/screens";
 import { getAllScreenTags, getScreensMatchingTags } from "@/data/screenTags";
 import { hasAnyImpressionData, getImpressionMultiplier } from "@/data/impressionStore";
 import { searchPOIs, getScreensNearPOIs, getRegionalSearchCenters, milesToMeters, POI } from "@/services/foursquareService";
+import POIAutocomplete from "@/components/shared/POIAutocomplete";
 
 type CampaignType = "direct" | "marketing" | "";
 
@@ -229,13 +230,14 @@ export default function CampaignCreate() {
   }, [hasImpressions, capacitySummary, estimatedDailyPlays, selectedRules, selectedTags, proximityMatchedScreens]);
 
   // POI search handler for campaign builder
-  const handleCampaignPoiSearch = async () => {
-    if (!poiSearch.trim()) return;
+  const handleCampaignPoiSearch = async (queryOverride?: string) => {
+    const query = queryOverride || poiSearch.trim();
+    if (!query) return;
     setPoiLoading(true);
     try {
       const searchCenters = getRegionalSearchCenters(allScreens);
       const results = await searchPOIs(
-        poiSearch.trim(),
+        query,
         searchCenters,
         100000
       );
@@ -446,12 +448,15 @@ export default function CampaignCreate() {
         <div className="flex items-end gap-3">
           <div className="flex-1">
             <label className="text-[11px] text-muted-foreground mb-1 block">Search POI</label>
-            <Input
+            <POIAutocomplete
+              value={poiSearch}
+              onChange={setPoiSearch}
+              onSelect={(name) => {
+                setPoiSearch(name);
+                handleCampaignPoiSearch(name);
+              }}
               placeholder="e.g. Walmart, Family Dollar, CVS..."
               className="text-xs"
-              value={poiSearch}
-              onChange={(e) => setPoiSearch(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") handleCampaignPoiSearch(); }}
             />
           </div>
           <div>
@@ -468,7 +473,7 @@ export default function CampaignCreate() {
               <option value={5}>5 mi</option>
             </select>
           </div>
-          <Button size="sm" onClick={handleCampaignPoiSearch} disabled={poiLoading}>
+          <Button size="sm" onClick={() => handleCampaignPoiSearch()} disabled={poiLoading}>
             {poiLoading ? "Searching..." : "Search"}
           </Button>
         </div>

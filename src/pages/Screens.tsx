@@ -14,6 +14,7 @@ import {
   milesToMeters,
   POI,
 } from "@/services/foursquareService";
+import POIAutocomplete from "@/components/shared/POIAutocomplete";
 
 const RADIUS_OPTIONS = [
   { label: "0.25 mi", value: 0.25 },
@@ -138,19 +139,20 @@ export default function Screens() {
       .sort((a, b) => b.count - a.count);
   }, [hasFilters, filteredScreens, proximityFilteredScreens, selectedPOIs, proximityRadius]);
 
-  const handlePoiSearch = async () => {
-    if (!poiSearchQuery.trim()) return;
+  const handlePoiSearch = async (queryOverride?: string) => {
+    const query = queryOverride || poiSearchQuery.trim();
+    if (!query) return;
     setPoiLoading(true);
     setPoiSearched(false);
     try {
       const searchCenters = getRegionalSearchCenters(allScreens);
       const results = await searchPOIs(
-        poiSearchQuery.trim(),
+        query,
         searchCenters,
         100000
       );
       setSelectedPOIs(results);
-      setActivePoiQuery(poiSearchQuery.trim());
+      setActivePoiQuery(query);
       setPoiSearched(true);
     } catch (err) {
       console.error("POI search error:", err);
@@ -258,14 +260,15 @@ export default function Screens() {
                 <label className="text-[11px] text-muted-foreground mb-1 block">
                   Search POI
                 </label>
-                <Input
+                <POIAutocomplete
+                  value={poiSearchQuery}
+                  onChange={setPoiSearchQuery}
+                  onSelect={(name) => {
+                    setPoiSearchQuery(name);
+                    handlePoiSearch(name);
+                  }}
                   placeholder="e.g. Walmart, Family Dollar, CVS..."
                   className="text-sm"
-                  value={poiSearchQuery}
-                  onChange={(e) => setPoiSearchQuery(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handlePoiSearch();
-                  }}
                 />
               </div>
               <div>
@@ -284,7 +287,7 @@ export default function Screens() {
                   ))}
                 </select>
               </div>
-              <Button size="sm" onClick={handlePoiSearch} disabled={poiLoading}>
+              <Button size="sm" onClick={() => handlePoiSearch()} disabled={poiLoading}>
                 {poiLoading ? "Searching..." : "Search"}
               </Button>
               {activePoiQuery && (
