@@ -3,8 +3,32 @@ import { allScreens, Screen } from "./screens";
 export interface GeoTags {
   country: string;
   state: string;
+  stateFullName: string;
   city: string;
   zip: string;
+}
+
+const STATE_ABBREV_TO_NAME: Record<string, string> = {
+  AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California",
+  CO: "Colorado", CT: "Connecticut", DE: "Delaware", FL: "Florida", GA: "Georgia",
+  HI: "Hawaii", ID: "Idaho", IL: "Illinois", IN: "Indiana", IA: "Iowa",
+  KS: "Kansas", KY: "Kentucky", LA: "Louisiana", ME: "Maine", MD: "Maryland",
+  MA: "Massachusetts", MI: "Michigan", MN: "Minnesota", MS: "Mississippi", MO: "Missouri",
+  MT: "Montana", NE: "Nebraska", NV: "Nevada", NH: "New Hampshire", NJ: "New Jersey",
+  NM: "New Mexico", NY: "New York", NC: "North Carolina", ND: "North Dakota", OH: "Ohio",
+  OK: "Oklahoma", OR: "Oregon", PA: "Pennsylvania", RI: "Rhode Island", SC: "South Carolina",
+  SD: "South Dakota", TN: "Tennessee", TX: "Texas", UT: "Utah", VT: "Vermont",
+  VA: "Virginia", WA: "Washington", WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming",
+  DC: "District of Columbia",
+  // Canadian provinces
+  AB: "Alberta", BC: "British Columbia", MB: "Manitoba", NB: "New Brunswick",
+  NL: "Newfoundland and Labrador", NS: "Nova Scotia", NT: "Northwest Territories",
+  NU: "Nunavut", ON: "Ontario", PE: "Prince Edward Island", QC: "Quebec",
+  SK: "Saskatchewan", YT: "Yukon",
+};
+
+export function getStateFullName(abbrev: string): string {
+  return STATE_ABBREV_TO_NAME[abbrev.toUpperCase()] || "";
 }
 
 export interface ScreenTag {
@@ -18,9 +42,11 @@ export const STANDARD_VENUE_TAGS = ["Indoor", "Outdoor"];
 
 export function getAutoTags(screen: Screen): GeoTags | null {
   if (!screen.city && !screen.state && !screen.zip && !screen.country) return null;
+  const stateAbbrev = screen.state || "";
   return {
     country: screen.country || "",
-    state: screen.state || "",
+    state: stateAbbrev,
+    stateFullName: getStateFullName(stateAbbrev),
     city: screen.city || "",
     zip: screen.zip || "",
   };
@@ -40,12 +66,16 @@ export function getAllScreenTags(): ScreenTag[] {
   allScreens.forEach((screen) => {
     const geo = getAutoTags(screen);
     if (geo) {
+      // Include both abbreviation and full name for state
       const geoEntries: [string, string][] = [
         [geo.country, "Country"],
         [geo.state, "State"],
         [geo.city, "City"],
         [geo.zip, "ZIP"],
       ];
+      if (geo.stateFullName && geo.stateFullName !== geo.state) {
+        geoEntries.push([geo.stateFullName, "State"]);
+      }
       geoEntries.forEach(([value, category]) => {
         if (!value) return;
         const existing = tagMap.get(value);
@@ -85,7 +115,7 @@ export function getScreensMatchingTags(tags: string[]): Screen[] {
   return allScreens.filter((screen) => {
     const geo = getAutoTags(screen);
     if (geo) {
-      const geoValues = [geo.country, geo.state, geo.city, geo.zip].filter(Boolean);
+      const geoValues = [geo.country, geo.state, geo.stateFullName, geo.city, geo.zip].filter(Boolean);
       if (geoValues.some((v) => tagSet.has(v.toLowerCase()))) return true;
     }
     if (screen.manualTags?.some((t) => tagSet.has(t.toLowerCase()))) return true;
