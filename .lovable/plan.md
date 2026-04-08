@@ -1,41 +1,47 @@
 
 
-## Fix Proximity UX — Show Screens Near POIs, Not POI Locations
+## Smart POI Search with Autocomplete Dropdown
 
-### The Problem
+### Problem
+Searching "Chase" vs "Chase Bank" returns different Nominatim results because the free-text query hits different OSM entries. Users need to see categorized suggestions as they type so they pick the right term.
 
-The current flow forces users through an unnecessary intermediate step:
-1. Search "CVS" → see a list of CVS store locations as clickable chips
-2. Manually click each CVS chip to "select" it
-3. Only then do screens filter
+### Approach
+Add a debounced autocomplete dropdown to the POI search input. As the user types (after 2+ characters), fire a lightweight Nominatim query against one regional center to get suggestions. Display them in a dropdown. When the user selects one, populate the input and auto-trigger the full multi-region search.
 
-This makes it look like we're showing CVS stores, not screens. The user expects: type "CVS", hit search → immediately see only the screens within X miles of any CVS.
+### Changes
 
-### The Fix
+**1. New component: `src/components/shared/POIAutocomplete.tsx`**
 
-**Auto-select all POI results on search** and hide the individual POI chips. The flow becomes:
+- Renders an `Input` with a `Popover`-based dropdown below it
+- On input change (debounced 300ms, min 2 chars), calls a new `suggestPOIs` function
+- Displays results in a list: name + category type (e.g. "Chase Bank — bank", "Chase Field — stadium")
+- On selection: sets input value to the selected name, calls `onSelect(selectedName)`
+- Shows loading spinner while fetching, "No results" when empty
+- Keyboard navigation (arrow keys + Enter)
 
-1. User types "CVS", picks radius (1 mi), clicks Search
-2. Edge function finds all CVS locations in the network area
-3. All returned POIs are automatically set as `selectedPOIs`
-4. `getScreensNearPOIs` filters screens → table updates instantly
-5. Banner shows: "78 screens within 1 mi of CVS"
+**2. Update `src/services/foursquareService.ts`**
 
-### Changes in `src/pages/Screens.tsx`
+- Add `suggestPOIs(query: string, screens: Screen[]): Promise<{name: string, type: string}[]>` 
+- Uses a single regional center (largest cluster) with a wide radius
+- Deduplicates results by name (case-insensitive) so "Chase Bank" appears once, not 50 times
+- Returns unique name + category pairs, sorted by frequency
 
-1. **In `handlePoiSearch`**: After fetching results, auto-set `setSelectedPOIs(results)` instead of just `setPoiResults(results)`. Store the search query for display in the banner.
+**3. Update `src/pages/Screens.tsx`**
 
-2. **Remove POI chips section**: Delete the section that displays individual POI results as selectable chips (lines ~296-327). Users don't need to see/select individual store locations.
+- Replace the plain `Input` for POI search with `<POIAutocomplete>`
+- On selection from dropdown, auto-set `poiSearchQuery` and call `handlePoiSearch()`
+- User can still type freely and press Enter/Search to skip suggestions
 
-3. **Update the banner**: Show the search term (e.g. "CVS") instead of listing individual POI names. Change from `selectedPOIs.map(p => p.name).join(', ')` to the original search query string.
+**4. Update `src/pages/CampaignCreate.tsx`**
 
-4. **Add a "clear" button** to the proximity section so users can reset and search again.
+- Same replacement of the POI input with `<POIAutocomplete>` for consistency
 
-5. **Show state feedback**: When searching, show "Searching for CVS locations..." then "Found 12 CVS locations — filtering screens..." then the final result in the banner.
-
-### Single file changed
+### Files changed
 
 | File | Change |
 |---|---|
-| `src/pages/Screens.tsx` | Auto-apply POIs on search, remove POI chip picker, update banner text |
+| `src/components/shared/POIAutocomplete.tsx` | New — autocomplete input with dropdown |
+| `src/services/foursquareService.ts` | Add `suggestPOIs` function |
+| `src/pages/Screens.tsx` | Swap POI input for `POIAutocomplete` |
+| `src/pages/CampaignCreate.tsx` | Swap POI input for `POIAutocomplete` |
 
