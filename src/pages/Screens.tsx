@@ -14,6 +14,7 @@ import {
   milesToMeters,
   POI,
 } from "@/services/foursquareService";
+import POIAutocomplete from "@/components/shared/POIAutocomplete";
 
 const RADIUS_OPTIONS = [
   { label: "0.25 mi", value: 0.25 },
