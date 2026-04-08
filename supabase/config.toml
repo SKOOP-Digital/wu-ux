@@ -1,1 +1,4 @@
 project_id = "lsrnnmnemdurzmfmpcze"
+
+[functions.foursquare-proxy]
+verify_jwt = false
