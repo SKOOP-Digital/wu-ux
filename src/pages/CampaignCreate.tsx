@@ -447,12 +447,15 @@ export default function CampaignCreate() {
         <div className="flex items-end gap-3">
           <div className="flex-1">
             <label className="text-[11px] text-muted-foreground mb-1 block">Search POI</label>
-            <Input
+            <POIAutocomplete
+              value={poiSearch}
+              onChange={setPoiSearch}
+              onSelect={(name) => {
+                setPoiSearch(name);
+                setTimeout(() => handleCampaignPoiSearch(), 0);
+              }}
               placeholder="e.g. Walmart, Family Dollar, CVS..."
               className="text-xs"
-              value={poiSearch}
-              onChange={(e) => setPoiSearch(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") handleCampaignPoiSearch(); }}
             />
           </div>
           <div>
