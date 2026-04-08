@@ -344,12 +344,11 @@ export default function Screens() {
         {hasFilters && (
           <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/5 border border-primary/20">
             <MapPin size={16} className="text-primary shrink-0" />
-            <div>
+            <div className="flex-1">
               <p className="text-sm font-semibold text-foreground">
                 {filteredScreens.length} screen{filteredScreens.length !== 1 ? 's' : ''}
-                {selectedPOIs.length > 0 && ` within ${proximityRadius} mi of ${selectedPOIs.map(p => p.name).join(', ')}`}
-                {searchText && selectedPOIs.length > 0 && ` matching "${searchText}"`}
-                {searchText && selectedPOIs.length === 0 && ` matching "${searchText}"`}
+                {activePoiQuery && ` within ${proximityRadius} mi of ${activePoiQuery}`}
+                {searchText && ` matching "${searchText}"`}
               </p>
               <p className="text-xs text-muted-foreground">
                 Showing only screens that match your filters
