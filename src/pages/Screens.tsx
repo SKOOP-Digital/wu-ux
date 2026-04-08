@@ -43,31 +43,52 @@ export default function Screens() {
 
   const hasFilters = searchText.trim().length > 0 || selectedPOIs.length > 0;
 
+  const normalizeFilterValue = useCallback((value: string) => {
+    return value.toLowerCase().trim().replace(/\s+/g, " ");
+  }, []);
+
+  const getScreenGeoValues = useCallback((screen: Screen): string[] => {
+    const auto = getAutoTags(screen);
+    if (!auto) return [];
+    return [auto.country, auto.state, auto.stateFullName, auto.city, auto.zip].filter(Boolean);
+  }, []);
+
   // Get all tags for a screen (for text matching)
   const getScreenTagValues = useCallback((screen: Screen): string[] => {
-    const tags: string[] = [];
-    const auto = getAutoTags(screen);
-    if (auto) {
-      tags.push(auto.country, auto.state, auto.city, auto.zip);
-    }
+    const tags = [...getScreenGeoValues(screen)];
     if (screen.manualTags) tags.push(...screen.manualTags);
     return tags;
-  }, []);
+  }, [getScreenGeoValues]);
+
+  const exactGeoTerms = useMemo(() => {
+    const geoTerms = new Set<string>();
+    allScreens.forEach((screen) => {
+      getScreenGeoValues(screen).forEach((value) => {
+        geoTerms.add(normalizeFilterValue(value));
+      });
+    });
+    return geoTerms;
+  }, [getScreenGeoValues, normalizeFilterValue]);
 
   // Text-filtered screens
   const textFilteredScreens = useMemo(() => {
-    if (!searchText.trim()) return null; // null means "no text filter"
-    const terms = searchText
-      .toLowerCase()
-      .split(/\s+/)
-      .filter(Boolean);
+    const trimmedSearch = searchText.trim();
+    if (!trimmedSearch) return null; // null means "no text filter"
+
+    const normalizedQuery = normalizeFilterValue(trimmedSearch);
+    const isExactGeoQuery = exactGeoTerms.has(normalizedQuery);
+    const terms = trimmedSearch.toLowerCase().split(/\s+/).filter(Boolean);
+
     return allScreens.filter((s) => {
-      const searchable = [
-        s.name,
-        s.id,
-        s.venue,
-        ...getScreenTagValues(s),
-      ].map((v) => v.toLowerCase());
+      const geoValues = getScreenGeoValues(s).map(normalizeFilterValue);
+
+      if (isExactGeoQuery) {
+        return geoValues.includes(normalizedQuery);
+      }
+
+      const searchable = [s.name, s.id, s.venue, ...getScreenTagValues(s)]
+        .filter((value): value is string => Boolean(value))
+        .map((value) => value.toLowerCase());
 
       if (matchMode === "all") {
         return terms.every((term) =>
@@ -78,7 +99,14 @@ export default function Screens() {
         searchable.some((field) => field.includes(term))
       );
     });
-  }, [searchText, matchMode, getScreenTagValues]);
+  }, [
+    searchText,
+    matchMode,
+    exactGeoTerms,
+    getScreenGeoValues,
+    getScreenTagValues,
+    normalizeFilterValue,
+  ]);
 
   // Proximity-filtered screens
   const proximityFilteredScreens = useMemo(() => {
@@ -116,9 +144,11 @@ export default function Screens() {
     filteredScreens.forEach((s) => {
       const auto = getAutoTags(s);
       if (auto) {
-        [auto.country, auto.state, auto.city, auto.zip].forEach((v) => {
-          counts.set(v, { count: (counts.get(v)?.count || 0) + 1, type: "auto" });
-        });
+        [auto.country, auto.state, auto.stateFullName, auto.city, auto.zip]
+          .filter(Boolean)
+          .forEach((v) => {
+            counts.set(v, { count: (counts.get(v)?.count || 0) + 1, type: "auto" });
+          });
       }
       (s.manualTags || []).forEach((t) => {
         counts.set(t, { count: (counts.get(t)?.count || 0) + 1, type: "manual" });
