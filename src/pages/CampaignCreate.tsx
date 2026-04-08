@@ -473,7 +473,7 @@ export default function CampaignCreate() {
               <option value={5}>5 mi</option>
             </select>
           </div>
-          <Button size="sm" onClick={handleCampaignPoiSearch} disabled={poiLoading}>
+          <Button size="sm" onClick={() => handleCampaignPoiSearch()} disabled={poiLoading}>
             {poiLoading ? "Searching..." : "Search"}
           </Button>
         </div>
