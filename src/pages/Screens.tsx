@@ -33,11 +33,12 @@ export default function Screens() {
   // Proximity state
   const [showProximity, setShowProximity] = useState(false);
   const [poiSearchQuery, setPoiSearchQuery] = useState("");
-  const [poiResults, setPoiResults] = useState<POI[]>([]);
+  
   const [selectedPOIs, setSelectedPOIs] = useState<POI[]>([]);
   const [proximityRadius, setProximityRadius] = useState(1);
   const [poiLoading, setPoiLoading] = useState(false);
   const [poiSearched, setPoiSearched] = useState(false);
+  const [activePoiQuery, setActivePoiQuery] = useState("");
 
   const hasFilters = searchText.trim().length > 0 || selectedPOIs.length > 0;
 
@@ -143,14 +144,14 @@ export default function Screens() {
     setPoiSearched(false);
     try {
       const center = getDefaultCenter(allScreens);
-      // Use 100km search radius for Foursquare API to find POIs across the network;
-      // the proximity radius is applied later when matching screens to POIs
       const results = await searchPOIs(
         poiSearchQuery.trim(),
         center,
         100000
       );
-      setPoiResults(results);
+      // Auto-select all POI results immediately
+      setSelectedPOIs(results);
+      setActivePoiQuery(poiSearchQuery.trim());
       setPoiSearched(true);
     } catch (err) {
       console.error("POI search error:", err);
@@ -159,15 +160,13 @@ export default function Screens() {
     }
   };
 
-  const addPOI = (poi: POI) => {
-    if (!selectedPOIs.find((p) => p.fsq_id === poi.fsq_id)) {
-      setSelectedPOIs((prev) => [...prev, poi]);
-    }
+  const clearProximityFilter = () => {
+    setSelectedPOIs([]);
+    setActivePoiQuery("");
+    setPoiSearchQuery("");
+    setPoiSearched(false);
   };
 
-  const removePOI = (fsqId: string) => {
-    setSelectedPOIs((prev) => prev.filter((p) => p.fsq_id !== fsqId));
-  };
 
   const addSearchTerm = (term: string) => {
     const current = searchText.trim();
@@ -185,15 +184,15 @@ export default function Screens() {
         onRemove: () => setSearchText(""),
       });
     }
-    selectedPOIs.forEach((poi) => {
+    if (activePoiQuery) {
       chips.push({
-        label: `Near ${poi.name}`,
+        label: `Within ${proximityRadius} mi of ${activePoiQuery}`,
         type: "poi",
-        onRemove: () => removePOI(poi.fsq_id),
+        onRemove: clearProximityFilter,
       });
-    });
+    }
     return chips;
-  }, [searchText, selectedPOIs]);
+  }, [searchText, activePoiQuery, proximityRadius]);
 
   return (
     <div>
@@ -289,40 +288,23 @@ export default function Screens() {
               <Button size="sm" onClick={handlePoiSearch} disabled={poiLoading}>
                 {poiLoading ? "Searching..." : "Search"}
               </Button>
+              {activePoiQuery && (
+                <Button size="sm" variant="ghost" onClick={clearProximityFilter}>
+                  <X size={14} className="mr-1" /> Clear
+                </Button>
+              )}
             </div>
           )}
 
-          {/* POI Results */}
-          {showProximity && poiResults.length > 0 ? (
-            <div className="flex flex-wrap gap-1.5">
-              {poiResults.map((poi) => {
-                const isSelected = selectedPOIs.some(
-                  (p) => p.fsq_id === poi.fsq_id
-                );
-                return (
-                  <button
-                    key={poi.fsq_id}
-                    onClick={() => (isSelected ? removePOI(poi.fsq_id) : addPOI(poi))}
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
-                      isSelected
-                        ? "bg-primary/10 text-primary border border-primary/30"
-                        : "border border-dashed border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
-                    }`}
-                  >
-                    <MapPin size={10} />
-                    {poi.name}
-                    {poi.location.address && (
-                      <span className="text-[10px] opacity-60 max-w-[120px] truncate">
-                        · {poi.location.address}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          ) : showProximity && poiSearched && !poiLoading && poiResults.length === 0 && (
+          {/* POI search feedback */}
+          {showProximity && poiLoading && (
             <p className="text-xs text-muted-foreground px-1 py-2">
-              No POIs found for "{poiSearchQuery.trim()}". Try a different search term or increase the radius.
+              Searching for {poiSearchQuery.trim()} locations...
+            </p>
+          )}
+          {showProximity && poiSearched && !poiLoading && selectedPOIs.length === 0 && activePoiQuery && (
+            <p className="text-xs text-muted-foreground px-1 py-2">
+              No "{activePoiQuery}" locations found. Try a different search term.
             </p>
           )}
 
@@ -353,12 +335,11 @@ export default function Screens() {
         {hasFilters && (
           <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/5 border border-primary/20">
             <MapPin size={16} className="text-primary shrink-0" />
-            <div>
+            <div className="flex-1">
               <p className="text-sm font-semibold text-foreground">
                 {filteredScreens.length} screen{filteredScreens.length !== 1 ? 's' : ''}
-                {selectedPOIs.length > 0 && ` within ${proximityRadius} mi of ${selectedPOIs.map(p => p.name).join(', ')}`}
-                {searchText && selectedPOIs.length > 0 && ` matching "${searchText}"`}
-                {searchText && selectedPOIs.length === 0 && ` matching "${searchText}"`}
+                {activePoiQuery && ` within ${proximityRadius} mi of ${activePoiQuery}`}
+                {searchText && ` matching "${searchText}"`}
               </p>
               <p className="text-xs text-muted-foreground">
                 Showing only screens that match your filters
