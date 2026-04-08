@@ -230,24 +230,29 @@ export default function CampaignCreate() {
     return Math.round(totalImpressions);
   }, [hasImpressions, capacitySummary, estimatedDailyPlays, selectedRules, selectedTags, proximityMatchedScreens]);
 
-  // POI search handler for campaign builder
+  // POI search handler for campaign builder — auto-apply all results
   const handleCampaignPoiSearch = async (queryOverride?: string) => {
     const query = queryOverride || poiSearch.trim();
     if (!query) return;
     setPoiLoading(true);
     try {
       const searchCenters = getRegionalSearchCenters(allScreens);
-      const results = await searchPOIs(
-        query,
-        searchCenters,
-        100000
-      );
-      setPoiResults(results);
+      const results = await searchPOIs(query, searchCenters, 100000);
+      setProximityPOIs(results);
+      setActivePoiQuery(query);
+      setPoiSearched(true);
     } catch (err) {
       console.error("POI search error:", err);
     } finally {
       setPoiLoading(false);
     }
+  };
+
+  const clearProximityFilter = () => {
+    setProximityPOIs([]);
+    setPoiSearch("");
+    setActivePoiQuery("");
+    setPoiSearched(false);
   };
 
 
