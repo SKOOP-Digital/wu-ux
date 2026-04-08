@@ -436,18 +436,20 @@ export default function CampaignCreate() {
           <MapPin size={16} className="text-muted-foreground" />
           <p className="skoop-section-header">Target by Proximity</p>
         </div>
-        <p className="text-xs text-muted-foreground">Find screens near specific points of interest using Foursquare.</p>
+        <p className="text-xs text-muted-foreground">Find screens near specific points of interest.</p>
 
-        {/* Selected POIs */}
-        {proximityPOIs.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
-            {proximityPOIs.map((poi) => (
-              <span key={poi.fsq_id} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                <MapPin size={10} />
-                {poi.name}
-                <button onClick={() => setProximityPOIs((prev) => prev.filter((p) => p.fsq_id !== poi.fsq_id))}><X size={10} /></button>
-              </span>
-            ))}
+        {/* Results banner */}
+        {poiSearched && !poiLoading && (
+          <div className="flex items-center justify-between gap-2 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
+            <div className="flex items-center gap-2">
+              <MapPin size={14} className="text-primary shrink-0" />
+              <p className="text-sm font-semibold text-foreground">
+                {proximityMatchedScreens.length} screen{proximityMatchedScreens.length !== 1 ? "s" : ""} within {proximityRadius} mi of {activePoiQuery}
+              </p>
+            </div>
+            <Button variant="ghost" size="sm" onClick={clearProximityFilter} className="text-xs h-7">
+              <X size={12} className="mr-1" /> Clear
+            </Button>
           </div>
         )}
 
@@ -483,40 +485,6 @@ export default function CampaignCreate() {
             {poiLoading ? "Searching..." : "Search"}
           </Button>
         </div>
-
-        {/* POI Results */}
-        {poiResults.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
-            {poiResults.map((poi) => {
-              const isSelected = proximityPOIs.some((p) => p.fsq_id === poi.fsq_id);
-              return (
-                <button
-                  key={poi.fsq_id}
-                  onClick={() => isSelected
-                    ? setProximityPOIs((prev) => prev.filter((p) => p.fsq_id !== poi.fsq_id))
-                    : setProximityPOIs((prev) => [...prev, poi])
-                  }
-                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
-                    isSelected
-                      ? "bg-primary/10 text-primary border border-primary/30"
-                      : "border border-dashed border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
-                  }`}
-                >
-                  <MapPin size={10} />
-                  {poi.name}
-                  {poi.location.address && <span className="text-[10px] opacity-60 max-w-[120px] truncate">· {poi.location.address}</span>}
-                </button>
-              );
-            })}
-          </div>
-        )}
-
-        {proximityMatchedScreens.length > 0 && (
-          <div className="flex items-center gap-2 bg-secondary rounded-md px-3 py-2">
-            <Info size={12} className="text-primary shrink-0" />
-            <p className="text-xs text-foreground font-medium tabular-nums">{proximityMatchedScreens.length} screen{proximityMatchedScreens.length !== 1 ? "s" : ""} near selected POIs</p>
-          </div>
-        )}
       </div>
     </div>
   );
