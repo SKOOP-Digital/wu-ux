@@ -25,9 +25,11 @@ const STATE_ABBREV_TO_NAME: Record<string, string> = {
   NL: "Newfoundland and Labrador", NS: "Nova Scotia", NT: "Northwest Territories",
   NU: "Nunavut", ON: "Ontario", PE: "Prince Edward Island", QC: "Quebec",
   SK: "Saskatchewan", YT: "Yukon",
-  // Brazilian states
-  PA: "Pará", SP: "São Paulo", RJ: "Rio de Janeiro", MG: "Minas Gerais",
 };
+
+export function getStateFullName(abbrev: string): string {
+  return STATE_ABBREV_TO_NAME[abbrev.toUpperCase()] || "";
+}
 
 export interface ScreenTag {
   value: string;
@@ -40,9 +42,11 @@ export const STANDARD_VENUE_TAGS = ["Indoor", "Outdoor"];
 
 export function getAutoTags(screen: Screen): GeoTags | null {
   if (!screen.city && !screen.state && !screen.zip && !screen.country) return null;
+  const stateAbbrev = screen.state || "";
   return {
     country: screen.country || "",
-    state: screen.state || "",
+    state: stateAbbrev,
+    stateFullName: getStateFullName(stateAbbrev),
     city: screen.city || "",
     zip: screen.zip || "",
   };
@@ -62,12 +66,16 @@ export function getAllScreenTags(): ScreenTag[] {
   allScreens.forEach((screen) => {
     const geo = getAutoTags(screen);
     if (geo) {
+      // Include both abbreviation and full name for state
       const geoEntries: [string, string][] = [
         [geo.country, "Country"],
         [geo.state, "State"],
         [geo.city, "City"],
         [geo.zip, "ZIP"],
       ];
+      if (geo.stateFullName && geo.stateFullName !== geo.state) {
+        geoEntries.push([geo.stateFullName, "State"]);
+      }
       geoEntries.forEach(([value, category]) => {
         if (!value) return;
         const existing = tagMap.get(value);
@@ -107,7 +115,7 @@ export function getScreensMatchingTags(tags: string[]): Screen[] {
   return allScreens.filter((screen) => {
     const geo = getAutoTags(screen);
     if (geo) {
-      const geoValues = [geo.country, geo.state, geo.city, geo.zip].filter(Boolean);
+      const geoValues = [geo.country, geo.state, geo.stateFullName, geo.city, geo.zip].filter(Boolean);
       if (geoValues.some((v) => tagSet.has(v.toLowerCase()))) return true;
     }
     if (screen.manualTags?.some((t) => tagSet.has(t.toLowerCase()))) return true;
