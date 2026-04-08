@@ -12,6 +12,7 @@ import { allScreens } from "@/data/screens";
 import { getAllScreenTags, getScreensMatchingTags } from "@/data/screenTags";
 import { hasAnyImpressionData, getImpressionMultiplier } from "@/data/impressionStore";
 import { searchPOIs, getScreensNearPOIs, getRegionalSearchCenters, milesToMeters, POI } from "@/services/foursquareService";
+import POIAutocomplete from "@/components/shared/POIAutocomplete";
 
 type CampaignType = "direct" | "marketing" | "";
 
