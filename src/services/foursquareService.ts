@@ -55,17 +55,8 @@ export async function searchPOIs(
   const cacheKey = `${query}|${ll}|${radiusMeters}`;
   if (poiCache.has(cacheKey)) return poiCache.get(cacheKey)!;
 
-  const params = new URLSearchParams({
-    query,
-    ll,
-    radius: String(Math.min(Math.round(radiusMeters), 100000)),
-    limit: "50",
-  });
-
   // Use Supabase Edge Function to proxy Foursquare requests (avoids CORS)
   const { data, error } = await supabase.functions.invoke("foursquare-proxy", {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
     body: { query, ll, radius: String(Math.min(Math.round(radiusMeters), 100000)), limit: "50" },
   });
 
@@ -74,8 +65,7 @@ export async function searchPOIs(
     return [];
   }
 
-  const data = await res.json();
-  const pois: POI[] = (data.results || []).map((r: any) => ({
+  const pois: POI[] = ((data?.results) || []).map((r: any) => ({
     fsq_id: r.fsq_place_id || r.fsq_id,
     name: r.name,
     location: {

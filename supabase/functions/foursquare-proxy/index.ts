@@ -8,11 +8,25 @@ Deno.serve(async (req: Request) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
-  const url = new URL(req.url)
-  const query = url.searchParams.get('query')
-  const ll = url.searchParams.get('ll')
-  const radius = url.searchParams.get('radius')
-  const limit = url.searchParams.get('limit') || '50'
+  let query: string | null = null
+  let ll: string | null = null
+  let radius: string | null = null
+  let limit = '50'
+
+  // Support both GET query params and POST body
+  if (req.method === 'POST') {
+    const body = await req.json()
+    query = body.query
+    ll = body.ll
+    radius = body.radius
+    limit = body.limit || '50'
+  } else {
+    const url = new URL(req.url)
+    query = url.searchParams.get('query')
+    ll = url.searchParams.get('ll')
+    radius = url.searchParams.get('radius')
+    limit = url.searchParams.get('limit') || '50'
+  }
 
   if (!query || !ll || !radius) {
     return new Response(JSON.stringify({ error: 'Missing query, ll, or radius' }), {
