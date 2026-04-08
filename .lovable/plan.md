@@ -1,47 +1,26 @@
 
 
-## Smart POI Search with Autocomplete Dropdown
+## Update Campaign Builder Proximity Search to Match Screens Page
 
 ### Problem
-Searching "Chase" vs "Chase Bank" returns different Nominatim results because the free-text query hits different OSM entries. Users need to see categorized suggestions as they type so they pick the right term.
-
-### Approach
-Add a debounced autocomplete dropdown to the POI search input. As the user types (after 2+ characters), fire a lightweight Nominatim query against one regional center to get suggestions. Display them in a dropdown. When the user selects one, populate the input and auto-trigger the full multi-region search.
+The Campaign Create page (Step 2) still uses the old POI search pattern:
+- Shows individual POI location chips that users must manually click to select
+- Displays POI addresses instead of focusing on screen counts
+- Doesn't auto-apply all found POIs on search
+- Missing the results banner showing "X screens within Y mi of Z"
+- Missing clear button
 
 ### Changes
 
-**1. New component: `src/components/shared/POIAutocomplete.tsx`**
+**Single file: `src/pages/CampaignCreate.tsx`**
 
-- Renders an `Input` with a `Popover`-based dropdown below it
-- On input change (debounced 300ms, min 2 chars), calls a new `suggestPOIs` function
-- Displays results in a list: name + category type (e.g. "Chase Bank — bank", "Chase Field — stadium")
-- On selection: sets input value to the selected name, calls `onSelect(selectedName)`
-- Shows loading spinner while fetching, "No results" when empty
-- Keyboard navigation (arrow keys + Enter)
+1. **Auto-apply POIs on search** — Update `handleCampaignPoiSearch` to set `proximityPOIs` directly with all results (like Screens page does with `setSelectedPOIs`), add `activePoiQuery` and `poiSearched` state, remove `poiResults` state entirely.
 
-**2. Update `src/services/foursquareService.ts`**
+2. **Remove the POI chip picker** — Delete the `poiResults` section (lines 482-506) that shows individual POI locations as selectable chips. Also remove the `selectedPOIs` chip display (lines 436-445).
 
-- Add `suggestPOIs(query: string, screens: Screen[]): Promise<{name: string, type: string}[]>` 
-- Uses a single regional center (largest cluster) with a wide radius
-- Deduplicates results by name (case-insensitive) so "Chase Bank" appears once, not 50 times
-- Returns unique name + category pairs, sorted by frequency
+3. **Add results banner** — After search completes, show a banner like: "144 screens within 1 mi of CVS" with a clear/reset button, matching the Screens page pattern.
 
-**3. Update `src/pages/Screens.tsx`**
+4. **Update description text** — Change "Find screens near specific points of interest using Foursquare" to just "Find screens near specific points of interest."
 
-- Replace the plain `Input` for POI search with `<POIAutocomplete>`
-- On selection from dropdown, auto-set `poiSearchQuery` and call `handlePoiSearch()`
-- User can still type freely and press Enter/Search to skip suggestions
-
-**4. Update `src/pages/CampaignCreate.tsx`**
-
-- Same replacement of the POI input with `<POIAutocomplete>` for consistency
-
-### Files changed
-
-| File | Change |
-|---|---|
-| `src/components/shared/POIAutocomplete.tsx` | New — autocomplete input with dropdown |
-| `src/services/foursquareService.ts` | Add `suggestPOIs` function |
-| `src/pages/Screens.tsx` | Swap POI input for `POIAutocomplete` |
-| `src/pages/CampaignCreate.tsx` | Swap POI input for `POIAutocomplete` |
+5. **Clean up unused state** — Remove `poiResults` / `setPoiResults` state since POIs are now auto-applied without user selection.
 
