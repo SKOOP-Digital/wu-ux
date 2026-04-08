@@ -259,14 +259,15 @@ export default function Screens() {
                 <label className="text-[11px] text-muted-foreground mb-1 block">
                   Search POI
                 </label>
-                <Input
+                <POIAutocomplete
+                  value={poiSearchQuery}
+                  onChange={setPoiSearchQuery}
+                  onSelect={(name) => {
+                    setPoiSearchQuery(name);
+                    setTimeout(() => handlePoiSearch(), 0);
+                  }}
                   placeholder="e.g. Walmart, Family Dollar, CVS..."
                   className="text-sm"
-                  value={poiSearchQuery}
-                  onChange={(e) => setPoiSearchQuery(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handlePoiSearch();
-                  }}
                 />
               </div>
               <div>
