@@ -36,30 +36,35 @@ Deno.serve(async (req: Request) => {
     }
 
     const [lat, lng] = ll.split(',').map(Number)
-    const radiusNum = Math.min(Number(radius), 100000)
+    const radiusKm = Math.min(Number(radius), 100000) / 1000
     const limitNum = Math.min(Number(limit), 50)
-    const escapedQuery = query.replace(/"/g, '\\"')
 
-    // Use Overpass API to search for POIs by name
-    const overpassQuery = `
-      [out:json][timeout:25];
-      (
-        nwr["name"~"${escapedQuery}",i](around:${radiusNum},${lat},${lng});
-      );
-      out center ${limitNum};
-    `
+    // Build a viewbox around the center point (radius in degrees, ~111km per degree)
+    const degOffset = radiusKm / 111
+    const viewbox = `${lng - degOffset},${lat - degOffset},${lng + degOffset},${lat + degOffset}`
 
-    const overpassUrl = 'https://overpass-api.de/api/interpreter'
-    const res = await fetch(overpassUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `data=${encodeURIComponent(overpassQuery)}`,
+    const params = new URLSearchParams({
+      q: query,
+      format: 'json',
+      limit: String(limitNum),
+      viewbox,
+      bounded: '1',
+      addressdetails: '1',
+    })
+
+    const nominatimUrl = `https://nominatim.openstreetmap.org/search?${params.toString()}`
+
+    const res = await fetch(nominatimUrl, {
+      headers: {
+        'User-Agent': 'LovableApp/1.0 (POI search)',
+        'Accept': 'application/json',
+      },
     })
 
     if (!res.ok) {
       const errText = await res.text()
-      console.error('Overpass error:', res.status, errText)
-      return new Response(JSON.stringify({ error: `Overpass API error: ${res.status}` }), {
+      console.error('Nominatim error:', res.status, errText)
+      return new Response(JSON.stringify({ error: `Nominatim API error: ${res.status}` }), {
         status: 502,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
@@ -67,24 +72,17 @@ Deno.serve(async (req: Request) => {
 
     const data = await res.json()
 
-    // Transform Overpass elements to a common POI format
-    const results = (data.elements || []).map((el: any) => {
-      const elLat = el.lat ?? el.center?.lat ?? 0
-      const elLng = el.lon ?? el.center?.lon ?? 0
-      return {
-        fsq_id: `osm-${el.type}-${el.id}`,
-        name: el.tags?.name || 'Unknown',
-        location: {
-          address: [el.tags?.['addr:housenumber'], el.tags?.['addr:street'], el.tags?.['addr:city'], el.tags?.['addr:state']].filter(Boolean).join(', ') || undefined,
-          lat: elLat,
-          lng: elLng,
-        },
-        categories: el.tags?.amenity ? [{ name: el.tags.amenity }]
-          : el.tags?.shop ? [{ name: el.tags.shop }]
-          : el.tags?.leisure ? [{ name: el.tags.leisure }]
-          : [],
-      }
-    })
+    // Transform Nominatim results to our common POI format
+    const results = (data || []).map((el: any) => ({
+      fsq_id: `osm-${el.osm_type}-${el.osm_id}`,
+      name: el.display_name?.split(',')[0] || el.name || 'Unknown',
+      location: {
+        address: el.display_name || undefined,
+        lat: Number(el.lat),
+        lng: Number(el.lon),
+      },
+      categories: el.type ? [{ name: el.type }] : [],
+    }))
 
     return new Response(JSON.stringify({ results }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
