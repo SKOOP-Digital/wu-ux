@@ -1,60 +1,41 @@
 
 
-## Proximity Filter UX — Show Only Matching Screens
+## Fix Proximity UX — Show Screens Near POIs, Not POI Locations
 
-### Problem
-When a user selects a POI like "CVS" with a 1-mile radius, the table already filters to matching screens, but there's no clear summary banner telling the user what they're looking at. The count is buried in small text next to filter chips.
+### The Problem
 
-### What changes
+The current flow forces users through an unnecessary intermediate step:
+1. Search "CVS" → see a list of CVS store locations as clickable chips
+2. Manually click each CVS chip to "select" it
+3. Only then do screens filter
 
-**1. Add a prominent results banner** (in `src/pages/Screens.tsx`)
+This makes it look like we're showing CVS stores, not screens. The user expects: type "CVS", hit search → immediately see only the screens within X miles of any CVS.
 
-When proximity filters are active, render a highlighted banner above the table:
+### The Fix
 
-```text
-┌─────────────────────────────────────────────────┐
-│  📍 78 screens within 1 mi of CVS               │
-│     Showing only screens that match your filters │
-└─────────────────────────────────────────────────┘
-```
+**Auto-select all POI results on search** and hide the individual POI chips. The flow becomes:
 
-- Uses `filteredScreens.length` for the count
-- Dynamically builds the message from `proximityRadius` and `selectedPOIs` names
-- When both text + proximity filters are active, the banner reads e.g. "78 screens match your filters (within 1 mi of CVS)"
-- Styled as an info-card with a MapPin icon and the primary accent color
+1. User types "CVS", picks radius (1 mi), clicks Search
+2. Edge function finds all CVS locations in the network area
+3. All returned POIs are automatically set as `selectedPOIs`
+4. `getScreensNearPOIs` filters screens → table updates instantly
+5. Banner shows: "78 screens within 1 mi of CVS"
 
-**2. Auto-apply POI on selection**
+### Changes in `src/pages/Screens.tsx`
 
-Currently the user must: search → click a POI chip to select it → the table filters. This already works. No change needed to the filtering logic itself — `proximityFilteredScreens` and `filteredScreens` already intersect/union correctly.
+1. **In `handlePoiSearch`**: After fetching results, auto-set `setSelectedPOIs(results)` instead of just `setPoiResults(results)`. Store the search query for display in the banner.
 
-**3. Hide unmatched screens (already working)**
+2. **Remove POI chips section**: Delete the section that displays individual POI results as selectable chips (lines ~296-327). Users don't need to see/select individual store locations.
 
-The existing `filteredScreens` array already excludes non-matching screens. The table renders only `filteredScreens`. No logic change needed — just the UX banner.
+3. **Update the banner**: Show the search term (e.g. "CVS") instead of listing individual POI names. Change from `selectedPOIs.map(p => p.name).join(', ')` to the original search query string.
+
+4. **Add a "clear" button** to the proximity section so users can reset and search again.
+
+5. **Show state feedback**: When searching, show "Searching for CVS locations..." then "Found 12 CVS locations — filtering screens..." then the final result in the banner.
 
 ### Single file changed
 
 | File | Change |
 |---|---|
-| `src/pages/Screens.tsx` | Add results summary banner between filter chips and the table |
-
-### Implementation detail
-
-Insert a new `div` between the filter toolbar card (line ~350) and the table section (line ~353). The banner renders conditionally when `hasFilters` is true:
-
-```tsx
-{hasFilters && (
-  <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/5 border border-primary/20">
-    <MapPin size={16} className="text-primary shrink-0" />
-    <div>
-      <p className="text-sm font-semibold text-foreground">
-        {filteredScreens.length} screen{filteredScreens.length !== 1 ? 's' : ''}
-        {selectedPOIs.length > 0 && ` within ${proximityRadius} mi of ${selectedPOIs.map(p => p.name).join(', ')}`}
-      </p>
-      <p className="text-xs text-muted-foreground">
-        Showing only screens that match your filters
-      </p>
-    </div>
-  </div>
-)}
-```
+| `src/pages/Screens.tsx` | Auto-apply POIs on search, remove POI chip picker, update banner text |
 
