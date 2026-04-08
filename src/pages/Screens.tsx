@@ -139,19 +139,20 @@ export default function Screens() {
       .sort((a, b) => b.count - a.count);
   }, [hasFilters, filteredScreens, proximityFilteredScreens, selectedPOIs, proximityRadius]);
 
-  const handlePoiSearch = async () => {
-    if (!poiSearchQuery.trim()) return;
+  const handlePoiSearch = async (queryOverride?: string) => {
+    const query = queryOverride || poiSearchQuery.trim();
+    if (!query) return;
     setPoiLoading(true);
     setPoiSearched(false);
     try {
       const searchCenters = getRegionalSearchCenters(allScreens);
       const results = await searchPOIs(
-        poiSearchQuery.trim(),
+        query,
         searchCenters,
         100000
       );
       setSelectedPOIs(results);
-      setActivePoiQuery(poiSearchQuery.trim());
+      setActivePoiQuery(query);
       setPoiSearched(true);
     } catch (err) {
       console.error("POI search error:", err);
