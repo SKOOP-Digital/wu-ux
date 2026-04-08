@@ -453,7 +453,7 @@ export default function CampaignCreate() {
               onChange={setPoiSearch}
               onSelect={(name) => {
                 setPoiSearch(name);
-                setTimeout(() => handleCampaignPoiSearch(), 0);
+                handleCampaignPoiSearch(name);
               }}
               placeholder="e.g. Walmart, Family Dollar, CVS..."
               className="text-xs"
