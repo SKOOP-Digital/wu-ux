@@ -167,15 +167,6 @@ export default function Screens() {
     setPoiSearched(false);
   };
 
-  const addPOI = (poi: POI) => {
-    if (!selectedPOIs.find((p) => p.fsq_id === poi.fsq_id)) {
-      setSelectedPOIs((prev) => [...prev, poi]);
-    }
-  };
-
-  const removePOI = (fsqId: string) => {
-    setSelectedPOIs((prev) => prev.filter((p) => p.fsq_id !== fsqId));
-  };
 
   const addSearchTerm = (term: string) => {
     const current = searchText.trim();
