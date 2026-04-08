@@ -63,18 +63,14 @@ export async function searchPOIs(
   });
 
   // Use Supabase Edge Function to proxy Foursquare requests (avoids CORS)
-  const fnUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/foursquare-proxy?${params.toString()}`;
-
-  const res = await fetch(fnUrl, {
-    headers: {
-      Accept: "application/json",
-      Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-      apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-    },
+  const { data, error } = await supabase.functions.invoke("foursquare-proxy", {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+    body: { query, ll, radius: String(Math.min(Math.round(radiusMeters), 100000)), limit: "50" },
   });
 
-  if (!res.ok) {
-    console.error(`Foursquare API error: ${res.status}`);
+  if (error) {
+    console.error("Foursquare proxy error:", error);
     return [];
   }
 
