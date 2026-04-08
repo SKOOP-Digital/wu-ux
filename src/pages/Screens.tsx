@@ -193,15 +193,15 @@ export default function Screens() {
         onRemove: () => setSearchText(""),
       });
     }
-    selectedPOIs.forEach((poi) => {
+    if (activePoiQuery) {
       chips.push({
-        label: `Near ${poi.name}`,
+        label: `Within ${proximityRadius} mi of ${activePoiQuery}`,
         type: "poi",
-        onRemove: () => removePOI(poi.fsq_id),
+        onRemove: clearProximityFilter,
       });
-    });
+    }
     return chips;
-  }, [searchText, selectedPOIs]);
+  }, [searchText, activePoiQuery, proximityRadius]);
 
   return (
     <div>
