@@ -33,7 +33,7 @@ export default function Screens() {
   // Proximity state
   const [showProximity, setShowProximity] = useState(false);
   const [poiSearchQuery, setPoiSearchQuery] = useState("");
-  const [poiResults, setPoiResults] = useState<POI[]>([]);
+  
   const [selectedPOIs, setSelectedPOIs] = useState<POI[]>([]);
   const [proximityRadius, setProximityRadius] = useState(1);
   const [poiLoading, setPoiLoading] = useState(false);
