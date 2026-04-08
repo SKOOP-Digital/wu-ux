@@ -144,20 +144,27 @@ export default function Screens() {
     setPoiSearched(false);
     try {
       const center = getDefaultCenter(allScreens);
-      // Use 100km search radius for Foursquare API to find POIs across the network;
-      // the proximity radius is applied later when matching screens to POIs
       const results = await searchPOIs(
         poiSearchQuery.trim(),
         center,
         100000
       );
-      setPoiResults(results);
+      // Auto-select all POI results immediately
+      setSelectedPOIs(results);
+      setActivePoiQuery(poiSearchQuery.trim());
       setPoiSearched(true);
     } catch (err) {
       console.error("POI search error:", err);
     } finally {
       setPoiLoading(false);
     }
+  };
+
+  const clearProximityFilter = () => {
+    setSelectedPOIs([]);
+    setActivePoiQuery("");
+    setPoiSearchQuery("");
+    setPoiSearched(false);
   };
 
   const addPOI = (poi: POI) => {
