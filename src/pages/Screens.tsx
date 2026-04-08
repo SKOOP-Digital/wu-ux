@@ -37,6 +37,7 @@ export default function Screens() {
   const [selectedPOIs, setSelectedPOIs] = useState<POI[]>([]);
   const [proximityRadius, setProximityRadius] = useState(1);
   const [poiLoading, setPoiLoading] = useState(false);
+  const [poiSearched, setPoiSearched] = useState(false);
 
   const hasFilters = searchText.trim().length > 0 || selectedPOIs.length > 0;
 
@@ -139,6 +140,7 @@ export default function Screens() {
   const handlePoiSearch = async () => {
     if (!poiSearchQuery.trim()) return;
     setPoiLoading(true);
+    setPoiSearched(false);
     try {
       const center = getDefaultCenter(allScreens);
       // Use 100km search radius for Foursquare API to find POIs across the network;
@@ -149,6 +151,7 @@ export default function Screens() {
         100000
       );
       setPoiResults(results);
+      setPoiSearched(true);
     } catch (err) {
       console.error("POI search error:", err);
     } finally {
@@ -290,7 +293,7 @@ export default function Screens() {
           )}
 
           {/* POI Results */}
-          {showProximity && poiResults.length > 0 && (
+          {showProximity && poiResults.length > 0 ? (
             <div className="flex flex-wrap gap-1.5">
               {poiResults.map((poi) => {
                 const isSelected = selectedPOIs.some(
@@ -317,6 +320,10 @@ export default function Screens() {
                 );
               })}
             </div>
+          ) : showProximity && poiSearched && !poiLoading && poiResults.length === 0 && (
+            <p className="text-xs text-muted-foreground px-1 py-2">
+              No POIs found for "{poiSearchQuery.trim()}". Try a different search term or increase the radius.
+            </p>
           )}
 
           {/* Active Filter Chips */}

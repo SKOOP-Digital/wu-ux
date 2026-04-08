@@ -11,6 +11,8 @@ export interface POI {
   categories: { name: string }[];
 }
 
+import { supabase } from "@/integrations/supabase/client";
+
 // In-memory cache keyed by "query|ll|radius"
 const poiCache = new Map<string, POI[]>();
 
@@ -53,37 +55,17 @@ export async function searchPOIs(
   const cacheKey = `${query}|${ll}|${radiusMeters}`;
   if (poiCache.has(cacheKey)) return poiCache.get(cacheKey)!;
 
-  const apiKey = import.meta.env.VITE_FOURSQUARE_API_KEY;
-  if (!apiKey) {
-    console.warn("VITE_FOURSQUARE_API_KEY not set — returning empty results");
-    return [];
-  }
-
-  const params = new URLSearchParams({
-    query,
-    ll,
-    radius: String(Math.min(Math.round(radiusMeters), 100000)),
-    limit: "50",
+  // Use Supabase Edge Function to proxy Foursquare requests (avoids CORS)
+  const { data, error } = await supabase.functions.invoke("foursquare-proxy", {
+    body: { query, ll, radius: String(Math.min(Math.round(radiusMeters), 100000)), limit: "50" },
   });
 
-  const res = await fetch(
-    `/fsq-proxy/places/search?${params.toString()}`,
-    {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        Accept: "application/json",
-        "X-Places-Api-Version": "2025-06-17",
-      },
-    }
-  );
-
-  if (!res.ok) {
-    console.error(`Foursquare API error: ${res.status}`);
+  if (error) {
+    console.error("Foursquare proxy error:", error);
     return [];
   }
 
-  const data = await res.json();
-  const pois: POI[] = (data.results || []).map((r: any) => ({
+  const pois: POI[] = ((data?.results) || []).map((r: any) => ({
     fsq_id: r.fsq_place_id || r.fsq_id,
     name: r.name,
     location: {
