@@ -11,7 +11,7 @@ import { allPlacements, calcPlaysPerDay, calcCapacityFromRule } from "@/data/pla
 import { allScreens } from "@/data/screens";
 import { getAllScreenTags, getScreensMatchingTags } from "@/data/screenTags";
 import { hasAnyImpressionData, getImpressionMultiplier } from "@/data/impressionStore";
-import { searchPOIs, getScreensNearPOIs, getDefaultCenter, milesToMeters, POI } from "@/services/foursquareService";
+import { searchPOIs, getScreensNearPOIs, getRegionalSearchCenters, milesToMeters, POI } from "@/services/foursquareService";
 
 type CampaignType = "direct" | "marketing" | "";
 

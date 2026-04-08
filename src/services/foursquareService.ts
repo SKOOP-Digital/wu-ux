@@ -21,7 +21,7 @@ const MIN_SCREENS_PER_CELL = 15;
 const MAX_SEARCH_CENTERS = 8;
 const SEARCH_LIMIT_PER_CENTER = 25;
 
-function toRadians(deg: number): number {
+export function toRadians(deg: number): number {
   return (deg * Math.PI) / 180;
 }
 
