@@ -230,13 +230,14 @@ export default function CampaignCreate() {
   }, [hasImpressions, capacitySummary, estimatedDailyPlays, selectedRules, selectedTags, proximityMatchedScreens]);
 
   // POI search handler for campaign builder
-  const handleCampaignPoiSearch = async () => {
-    if (!poiSearch.trim()) return;
+  const handleCampaignPoiSearch = async (queryOverride?: string) => {
+    const query = queryOverride || poiSearch.trim();
+    if (!query) return;
     setPoiLoading(true);
     try {
       const searchCenters = getRegionalSearchCenters(allScreens);
       const results = await searchPOIs(
-        poiSearch.trim(),
+        query,
         searchCenters,
         100000
       );
