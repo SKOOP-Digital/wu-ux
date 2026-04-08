@@ -143,13 +143,12 @@ export default function Screens() {
     setPoiLoading(true);
     setPoiSearched(false);
     try {
-      const center = getDefaultCenter(allScreens);
+      const searchCenters = getRegionalSearchCenters(allScreens);
       const results = await searchPOIs(
         poiSearchQuery.trim(),
-        center,
+        searchCenters,
         100000
       );
-      // Auto-select all POI results immediately
       setSelectedPOIs(results);
       setActivePoiQuery(poiSearchQuery.trim());
       setPoiSearched(true);
