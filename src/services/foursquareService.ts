@@ -70,8 +70,8 @@ export async function searchPOIs(
     name: r.name,
     location: {
       address: r.location?.formatted_address || r.location?.address,
-      lat: r.latitude ?? r.geocodes?.main?.latitude ?? 0,
-      lng: r.longitude ?? r.geocodes?.main?.longitude ?? 0,
+      lat: r.location?.lat ?? r.latitude ?? r.geocodes?.main?.latitude ?? 0,
+      lng: r.location?.lng ?? r.longitude ?? r.geocodes?.main?.longitude ?? 0,
     },
     categories: (r.categories || []).map((c: any) => ({ name: c.name })),
   }));
