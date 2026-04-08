@@ -287,7 +287,7 @@ export default function Screens() {
                   ))}
                 </select>
               </div>
-              <Button size="sm" onClick={handlePoiSearch} disabled={poiLoading}>
+              <Button size="sm" onClick={() => handlePoiSearch()} disabled={poiLoading}>
                 {poiLoading ? "Searching..." : "Search"}
               </Button>
               {activePoiQuery && (
