@@ -141,10 +141,12 @@ export default function Screens() {
     setPoiLoading(true);
     try {
       const center = getDefaultCenter(allScreens);
+      // Use 100km search radius for Foursquare API to find POIs across the network;
+      // the proximity radius is applied later when matching screens to POIs
       const results = await searchPOIs(
         poiSearchQuery.trim(),
         center,
-        milesToMeters(proximityRadius)
+        100000
       );
       setPoiResults(results);
     } catch (err) {
