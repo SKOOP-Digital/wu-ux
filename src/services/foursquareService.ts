@@ -169,6 +169,65 @@ export function getScreensNearPOIs(
   return result;
 }
 
+export interface POISuggestion {
+  name: string;
+  type: string;
+}
+
+const suggestCache = new Map<string, POISuggestion[]>();
+
+export async function suggestPOIs(
+  query: string,
+  screens: Screen[]
+): Promise<POISuggestion[]> {
+  const key = query.toLowerCase();
+  if (suggestCache.has(key)) return suggestCache.get(key)!;
+
+  // Use the single largest cluster center for fast suggestions
+  const centers = getRegionalSearchCenters(screens);
+  const ll = centers[0] || "0,0";
+
+  const { data, error } = await supabase.functions.invoke("foursquare-proxy", {
+    body: {
+      query,
+      ll,
+      radius: "100000",
+      limit: "40",
+    },
+  });
+
+  if (error || !data?.results) {
+    return [];
+  }
+
+  // Deduplicate by name (case-insensitive), count frequency, keep category
+  const nameMap = new Map<string, { name: string; type: string; count: number }>();
+  for (const r of data.results as any[]) {
+    const name = r.name?.trim();
+    if (!name) continue;
+    const normKey = name.toLowerCase();
+    const type =
+      r.categories?.[0]?.name ||
+      r.type ||
+      r.class ||
+      "";
+    const existing = nameMap.get(normKey);
+    if (existing) {
+      existing.count++;
+    } else {
+      nameMap.set(normKey, { name, type, count: 1 });
+    }
+  }
+
+  const suggestions = Array.from(nameMap.values())
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 10)
+    .map(({ name, type }) => ({ name, type }));
+
+  suggestCache.set(key, suggestions);
+  return suggestions;
+}
+
 export function getDefaultCenter(screens: Screen[]): string {
   const withCoords = screens.filter((s) => s.lat && s.lng);
   if (withCoords.length === 0) return "0,0";
