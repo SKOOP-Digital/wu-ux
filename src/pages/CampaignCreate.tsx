@@ -11,7 +11,7 @@ import { allPlacements, calcPlaysPerDay, calcCapacityFromRule } from "@/data/pla
 import { allScreens } from "@/data/screens";
 import { getAllScreenTags, getScreensMatchingTags } from "@/data/screenTags";
 import { hasAnyImpressionData, getImpressionMultiplier } from "@/data/impressionStore";
-import { searchPOIs, getScreensNearPOIs, getDefaultCenter, milesToMeters, POI } from "@/services/foursquareService";
+import { searchPOIs, getScreensNearPOIs, getRegionalSearchCenters, milesToMeters, POI } from "@/services/foursquareService";
 
 type CampaignType = "direct" | "marketing" | "";
 
@@ -233,8 +233,12 @@ export default function CampaignCreate() {
     if (!poiSearch.trim()) return;
     setPoiLoading(true);
     try {
-      const center = getDefaultCenter(allScreens);
-      const results = await searchPOIs(poiSearch.trim(), center, milesToMeters(proximityRadius));
+      const searchCenters = getRegionalSearchCenters(allScreens);
+      const results = await searchPOIs(
+        poiSearch.trim(),
+        searchCenters,
+        100000
+      );
       setPoiResults(results);
     } catch (err) {
       console.error("POI search error:", err);
