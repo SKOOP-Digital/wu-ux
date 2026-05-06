@@ -9,8 +9,6 @@ import Placements from "./pages/Placements";
 import PlacementDetail from "./pages/PlacementDetail";
 import Campaigns from "./pages/Campaigns";
 import CampaignCreate from "./pages/CampaignCreate";
-import ProgrammaticSlots from "./pages/ProgrammaticSlots";
-import PlaybackMix from "./pages/PlaybackMix";
 import ProofOfPlay from "./pages/ProofOfPlay";
 import SettingsPage from "./pages/SettingsPage";
 import PlaylistEditor from "./pages/PlaylistEditor";
@@ -35,6 +33,7 @@ const App = () => (
             <AppLayout>
               <Routes>
                 <Route path="/" element={<Overview />} />
+                <Route path="/overview" element={<Overview />} />
                 <Route path="/screens" element={<Screens />} />
                 <Route path="/screens/:id" element={<ScreenDetail />} />
                 <Route path="/media" element={<Media />} />
@@ -45,10 +44,7 @@ const App = () => (
                 <Route path="/campaigns" element={<Campaigns />} />
                 <Route path="/campaigns/create" element={<CampaignCreate />} />
                 <Route path="/campaigns/:id" element={<CampaignDetail />} />
-                <Route path="/programmatic" element={<ProgrammaticSlots />} />
-                <Route path="/playback-mix" element={<PlaybackMix />} />
                 <Route path="/proof-of-play" element={<ProofOfPlay />} />
-                <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

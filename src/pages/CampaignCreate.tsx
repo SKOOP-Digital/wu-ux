@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Megaphone, ArrowLeft, ArrowRight, Check, Info, AlertTriangle, Briefcase, Home, Plus, X, Upload, Tag, Search, Trash2, MapPin, Globe, ChevronDown, ChevronRight } from "lucide-react";
+import { Megaphone, ArrowLeft, ArrowRight, Check, Info, AlertTriangle, Plus, X, Upload, Tag, Search, Trash2, MapPin, Globe, ChevronDown, ChevronRight } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StatusChip from "@/components/shared/StatusChip";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ import { hasAnyImpressionData, getImpressionMultiplier } from "@/data/impression
 import { searchPOIs, getScreensNearPOIs, getRegionalSearchCenters, milesToMeters, POI } from "@/services/foursquareService";
 import POIAutocomplete from "@/components/shared/POIAutocomplete";
 
-type CampaignType = "direct" | "marketing" | "";
+type DeliveryMode = "sov" | "total" | "frequency" | "none";
 
 const STEPS = [
   "Campaign Details",
@@ -43,7 +43,6 @@ const DAYPARTS = ["Morning", "Midday", "Afternoon", "Evening", "Late Night"];
 
 export default function CampaignCreate() {
   const navigate = useNavigate();
-  const [campaignType, setCampaignType] = useState<CampaignType>("");
   const [step, setStep] = useState(0);
   const [campaignName, setCampaignName] = useState("");
   const [advertiser, setAdvertiser] = useState("");
@@ -71,7 +70,7 @@ export default function CampaignCreate() {
   const [activeDayparts, setActiveDayparts] = useState<string[]>(["Morning", "Midday", "Afternoon"]);
 
   // Step 4 — How Much It Plays
-  const [deliveryMode, setDeliveryMode] = useState<"sov" | "total" | "frequency">("sov");
+  const [deliveryMode, setDeliveryMode] = useState<DeliveryMode>("sov");
   const [sov, setSov] = useState(15);
   const [totalPlays, setTotalPlays] = useState(5000);
   const [playFrequencyValue, setPlayFrequencyValue] = useState(4);
@@ -264,47 +263,19 @@ export default function CampaignCreate() {
   const renderStep1 = () => (
     <div className="space-y-5">
       <div className="skoop-card p-5 space-y-4">
-        <p className="skoop-section-header">Campaign Type</p>
-        <p className="text-xs text-muted-foreground">Choose the type of campaign. This determines what steps you'll configure.</p>
-        <div className="grid grid-cols-2 gap-3">
-          {([
-            { type: "direct" as CampaignType, icon: Briefcase, label: "Direct Ad", desc: "Booked campaign with an advertiser, guaranteed delivery against your network rules" },
-            { type: "marketing" as CampaignType, icon: Home, label: "Marketing", desc: "Western Union brand content with guaranteed screen time" },
-          ]).map((tc) => (
-            <button
-              key={tc.type}
-              onClick={() => setCampaignType(tc.type)}
-              className={`text-left rounded-lg border-2 p-4 transition-all ${
-                campaignType === tc.type
-                  ? "border-primary bg-primary/5"
-                  : "border-border hover:border-primary/30 hover:bg-secondary/30"
-              }`}
-            >
-              <div className={`w-9 h-9 rounded-lg flex items-center justify-center mb-3 ${
-                campaignType === tc.type ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
-              }`}>
-                <tc.icon size={18} />
-              </div>
-              <p className="text-sm font-semibold text-foreground">{tc.label}</p>
-              <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">{tc.desc}</p>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="skoop-card p-5 space-y-4">
         <p className="skoop-section-header">Campaign Details</p>
+        <p className="text-xs text-muted-foreground">
+          Name your campaign and optionally add an advertiser. If you set a delivery target in step 4, this becomes a sold campaign tracked against that target. Leave the target blank to run as house fill.
+        </p>
         <div className="space-y-3">
           <div>
-            <label className="text-xs text-muted-foreground">Campaign Name</label>
+            <label className="text-xs text-muted-foreground">Campaign Name <span className="text-destructive">*</span></label>
             <Input placeholder="e.g. Summer Brand Push" className="mt-1" value={campaignName} onChange={(e) => setCampaignName(e.target.value)} />
           </div>
-          {campaignType === "direct" && (
-            <div>
-              <label className="text-xs text-muted-foreground">Advertiser / Partner</label>
-              <Input placeholder="e.g. Nike Australia" className="mt-1" value={advertiser} onChange={(e) => setAdvertiser(e.target.value)} />
-            </div>
-          )}
+          <div>
+            <label className="text-xs text-muted-foreground">Advertiser / Partner <span className="text-muted-foreground/50">(optional — leave blank for house content)</span></label>
+            <Input placeholder="e.g. Nike, Coca-Cola, or leave blank for WU house content" className="mt-1" value={advertiser} onChange={(e) => setAdvertiser(e.target.value)} />
+          </div>
         </div>
       </div>
     </div>
@@ -593,15 +564,26 @@ export default function CampaignCreate() {
   const renderStep4 = () => (
     <div className="skoop-card p-5 space-y-5">
       <p className="skoop-section-header">How Much It Plays</p>
-      <p className="text-xs text-muted-foreground">Define how this campaign's content is delivered across the selected rules.</p>
+      <p className="text-xs text-muted-foreground">Set a delivery target for a sold campaign, or leave blank to run as house fill.</p>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         <button onClick={() => setDeliveryMode("sov")} className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "sov" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>% of Screen Time</button>
         <button onClick={() => setDeliveryMode("total")} className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "total" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>Total Plays</button>
         <button onClick={() => setDeliveryMode("frequency")} className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "frequency" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>Play Frequency</button>
+        <button onClick={() => setDeliveryMode("none")} className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "none" ? "bg-skoop-slate text-white" : "bg-secondary text-muted-foreground"}`}>No Target (House Fill)</button>
       </div>
 
-      {deliveryMode === "sov" ? (
+      {deliveryMode === "none" ? (
+        <div className="flex items-start gap-3 bg-secondary/70 border border-border rounded-lg px-4 py-4">
+          <Info size={14} className="text-muted-foreground mt-0.5 shrink-0" />
+          <div>
+            <p className="text-sm font-medium text-foreground">House Fill campaign</p>
+            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+              No delivery target is set. This campaign fills remaining slots after sold and programmatic inventory is placed. It runs continuously with no end date required. The network rule needs at least one active house fill campaign to go live.
+            </p>
+          </div>
+        </div>
+      ) : deliveryMode === "sov" ? (
         <div className="space-y-3">
           <div className="flex justify-between text-sm"><span>% of Screen Time</span><span className="font-medium tabular-nums">{sov}%</span></div>
           <Slider value={[sov]} onValueChange={([v]) => { setSov(v); setConflictAcknowledged(false); }} max={50} step={1} />
@@ -622,7 +604,7 @@ export default function CampaignCreate() {
               {hasImpressions ? (
                 <p className="text-sm font-medium tabular-nums">~{estimatedDailyImpressions.toLocaleString()}</p>
               ) : (
-                <p className="text-[11px] text-muted-foreground italic">— Waiting for impression data. Upload your audience data in Settings to enable.</p>
+                <p className="text-[11px] text-muted-foreground italic">— Upload audience data in Settings to enable.</p>
               )}
             </div>
           </div>
@@ -650,7 +632,7 @@ export default function CampaignCreate() {
               {hasImpressions ? (
                 <p className="text-sm font-medium tabular-nums">~{estimatedDailyImpressions.toLocaleString()}</p>
               ) : (
-                <p className="text-[11px] text-muted-foreground italic">— Waiting for impression data. Upload your audience data in Settings to enable.</p>
+                <p className="text-[11px] text-muted-foreground italic">— Upload audience data in Settings to enable.</p>
               )}
             </div>
           </div>
@@ -697,7 +679,7 @@ export default function CampaignCreate() {
               {hasImpressions ? (
                 <p className="text-sm font-medium tabular-nums">~{estimatedDailyImpressions.toLocaleString()}</p>
               ) : (
-                <p className="text-[11px] text-muted-foreground italic">— Waiting for impression data. Upload your audience data in Settings to enable.</p>
+                <p className="text-[11px] text-muted-foreground italic">— Upload audience data in Settings to enable.</p>
               )}
             </div>
           </div>
@@ -761,9 +743,9 @@ export default function CampaignCreate() {
           <p className="skoop-section-header">Campaign Summary</p>
           <div className="grid grid-cols-2 gap-4">
             <div><p className="text-xs text-muted-foreground">Campaign Name</p><p className="text-sm font-medium">{campaignName || "Untitled"}</p></div>
-            <div><p className="text-xs text-muted-foreground">Type</p><StatusChip status={campaignType || "direct"} label={campaignType === "marketing" ? "Marketing" : "Direct Ad"} /></div>
-            {campaignType === "direct" && (
-              <div><p className="text-xs text-muted-foreground">Advertiser</p><p className="text-sm font-medium">{advertiser || "—"}</p></div>
+            <div><p className="text-xs text-muted-foreground">Type</p><StatusChip status={deliveryMode === "none" ? "house-fill" : "sold"} label={deliveryMode === "none" ? "House Fill" : "Sold"} /></div>
+            {advertiser && (
+              <div><p className="text-xs text-muted-foreground">Advertiser</p><p className="text-sm font-medium">{advertiser}</p></div>
             )}
             <div className="col-span-2">
               <p className="text-xs text-muted-foreground">Network Rules</p>
@@ -787,7 +769,7 @@ export default function CampaignCreate() {
             <div><p className="text-xs text-muted-foreground">Screens</p><p className="text-sm font-medium tabular-nums">{capacitySummary?.totalScreens.toLocaleString() || 0}</p></div>
             <div><p className="text-xs text-muted-foreground">Schedule</p><p className="text-sm font-medium">{startDate || "—"} → {endDate || "—"}</p></div>
             <div><p className="text-xs text-muted-foreground">Active Days</p><p className="text-sm font-medium">{activeDays.join(", ")}</p></div>
-            <div><p className="text-xs text-muted-foreground">Delivery Target</p><p className="text-sm font-medium tabular-nums">{deliveryMode === "sov" || campaignType === "marketing" ? `${sov}% screen time` : deliveryMode === "frequency" ? `Every ${playFrequencyValue} ${playFrequencyUnit}` : `${totalPlays.toLocaleString()} total plays`}</p></div>
+            <div><p className="text-xs text-muted-foreground">Delivery Target</p><p className="text-sm font-medium tabular-nums">{deliveryMode === "none" ? "None (House Fill)" : deliveryMode === "sov" ? `${sov}% screen time` : deliveryMode === "frequency" ? `Every ${playFrequencyValue} ${playFrequencyUnit}` : `${totalPlays.toLocaleString()} total plays`}</p></div>
             <div><p className="text-xs text-muted-foreground">Creatives</p><p className="text-sm font-medium">{creatives.length} asset{creatives.length !== 1 ? "s" : ""} uploaded</p></div>
             <div><p className="text-xs text-muted-foreground">Proof of Play</p><p className="text-sm font-medium text-primary">Enabled</p></div>
           </div>
@@ -965,7 +947,7 @@ export default function CampaignCreate() {
             <div className="flex justify-between mt-8">
               <Button variant="outline" size="sm" onClick={prev} disabled={step === 0}><ArrowLeft size={14} className="mr-1" /> Previous</Button>
               {!isLastStep ? (
-                <Button size="sm" onClick={next} disabled={step === 0 && !campaignType}>
+                <Button size="sm" onClick={next} disabled={step === 0 && !campaignName.trim()}>
                   {capacitySummary && !capacitySummary.fits && step >= 3 && <AlertTriangle size={14} className="mr-1" />}
                   Next <ArrowRight size={14} className="ml-1" />
                 </Button>

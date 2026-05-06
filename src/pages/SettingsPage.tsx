@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { allScreens } from "@/data/screens";
 import { bulkSetImpressions, getLastImportTime } from "@/data/impressionStore";
 
-const tabs = ["Mix Policy", "Delivery Rules", "Daypart Templates", "Revenue Splits", "SSP Connectors", "Proof of Play", "Audience & Impressions"];
+const tabs = ["Mix Policy", "Delivery Rules", "Daypart Templates", "SSP Connectors", "Proof of Play", "Audience & Impressions"];
 
 export default function SettingsPage() {
   const [tab, setTab] = useState("Mix Policy");
@@ -101,15 +101,18 @@ export default function SettingsPage() {
         {tab === "Mix Policy" && (
           <div className="skoop-card p-5 space-y-5">
             <p className="skoop-section-header">Default Playback Mix</p>
-            <p className="text-sm text-muted-foreground">Set the network-wide default allocation. Individual placements can override.</p>
+            <p className="text-sm text-muted-foreground">Set the network-wide default allocation. Individual network rules can override these defaults. House Fill is automatically calculated as the remainder.</p>
             <div className="grid grid-cols-3 gap-4">
-              <div><label className="text-xs text-muted-foreground">Marketing %</label><Input type="number" defaultValue="50" className="mt-1" /></div>
-              <div><label className="text-xs text-muted-foreground">Direct %</label><Input type="number" defaultValue="30" className="mt-1" /></div>
-              <div><label className="text-xs text-muted-foreground">Programmatic %</label><Input type="number" defaultValue="20" className="mt-1" /></div>
+              <div><label className="text-xs text-muted-foreground">Sold %</label><Input type="number" defaultValue="30" min="0" max="100" className="mt-1" /></div>
+              <div><label className="text-xs text-muted-foreground">Programmatic %</label><Input type="number" defaultValue="20" min="0" max="100" className="mt-1" /></div>
+              <div>
+                <label className="text-xs text-muted-foreground">House Fill % <span className="text-[10px] font-normal text-muted-foreground/60">(auto)</span></label>
+                <div className="mt-1 h-10 flex items-center px-3 rounded-md border border-border bg-secondary/50 text-sm text-muted-foreground">50%</div>
+              </div>
             </div>
-            <MixBar owned={50} direct={30} programmatic={20} height="h-3" showLabels />
+            <MixBar houseFill={50} sold={30} programmatic={20} height="h-3" showLabels />
             <div className="flex items-center justify-between pt-2">
-              <div><p className="text-sm font-medium">No-fill Fallback</p><p className="text-xs text-muted-foreground">When programmatic has no fill, use marketing content</p></div>
+              <div><p className="text-sm font-medium">No-fill Fallback</p><p className="text-xs text-muted-foreground">When programmatic has no fill, fall back to house fill campaigns</p></div>
               <Switch defaultChecked />
             </div>
           </div>
@@ -131,49 +134,42 @@ export default function SettingsPage() {
         )}
 
         {tab === "Daypart Templates" && (
-          <div className="skoop-card p-5 space-y-3">
-            <p className="skoop-section-header mb-2">Reusable Daypart Templates</p>
+          <div className="skoop-card p-5 space-y-4">
+            <div className="flex items-center gap-3">
+              <p className="skoop-section-header">Reusable Daypart Templates</p>
+              <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-secondary text-muted-foreground">Coming soon</span>
+            </div>
+            <p className="text-sm text-muted-foreground">Save and reuse time-window patterns across multiple network rules. Available in a future update.</p>
             {[
               { name: "Standard Business", hours: "6:00 AM – 6:00 PM" },
               { name: "Extended Hours", hours: "6:00 AM – 11:00 PM" },
               { name: "Peak Trading", hours: "11:00 AM – 2:00 PM, 5:00 PM – 8:00 PM" },
             ].map((d) => (
-              <div key={d.name} className="flex items-center justify-between py-3 px-4 rounded-md bg-secondary/50">
+              <div key={d.name} className="flex items-center justify-between py-3 px-4 rounded-md bg-secondary/30 opacity-60">
                 <div><p className="text-sm font-medium">{d.name}</p><p className="text-xs text-muted-foreground">{d.hours}</p></div>
-                <Button variant="outline" size="sm">Edit</Button>
+                <Button variant="outline" size="sm" disabled>Edit</Button>
               </div>
             ))}
-            <Button variant="outline" size="sm" className="mt-2">+ Add Template</Button>
-          </div>
-        )}
-
-        {tab === "Revenue Splits" && (
-          <div className="skoop-card p-5 space-y-4">
-            <p className="skoop-section-header">Default Revenue Split Templates</p>
-            {[
-              { name: "Standard Partner", split: "70 / 30", desc: "Partner gets 70%, Skoop gets 30%" },
-              { name: "Premium Partner", split: "75 / 25", desc: "Premium tier partners" },
-              { name: "Managed Network", split: "60 / 40", desc: "Fully managed locations" },
-            ].map((s) => (
-              <div key={s.name} className="flex items-center justify-between py-3 border-b border-border last:border-0">
-                <div><p className="text-sm font-medium">{s.name}</p><p className="text-xs text-muted-foreground">{s.desc}</p></div>
-                <span className="text-sm font-medium tabular-nums">{s.split}</span>
-              </div>
-            ))}
+            <Button variant="outline" size="sm" className="mt-2 opacity-60 cursor-not-allowed" disabled>+ Add Template</Button>
           </div>
         )}
 
         {tab === "SSP Connectors" && (
           <div className="space-y-4">
+            <div className="skoop-card p-5 space-y-2">
+              <p className="skoop-section-header">Programmatic Partners</p>
+              <p className="text-xs text-muted-foreground">Each partner uses a VAST tag iframe. The backend resolver injects partner ad content into the content feed as web items and logs plays for Proof of Play.</p>
+            </div>
             {[
-              { name: "Google Ad Manager", status: "Connected", endpoint: "https://admanager.googleapis.com/..." },
-              { name: "Vistar Media", status: "Connected", endpoint: "https://api.vistarmedia.com/..." },
-              { name: "Hivestack", status: "Disconnected", endpoint: "—" },
+              { name: "Vistar Media", status: "Connected", endpoint: "https://api.vistarmedia.com/vast/...", note: "VAST tag injection" },
+              { name: "Vengo", status: "Connected", endpoint: "https://api.vengo.tv/vast/...", note: "VAST tag injection" },
+              { name: "Screenverse", status: "Disconnected", endpoint: "—", note: "" },
             ].map((c) => (
               <div key={c.name} className="skoop-card p-5 flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium">{c.name}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">{c.endpoint}</p>
+                  {c.note && <p className="text-[10px] text-muted-foreground/70 mt-0.5">{c.note}</p>}
                 </div>
                 <div className="flex items-center gap-3">
                   <span className={`text-xs font-medium ${c.status === "Connected" ? "text-skoop-aqua" : "text-muted-foreground"}`}>{c.status}</span>

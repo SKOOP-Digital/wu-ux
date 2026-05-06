@@ -6,8 +6,8 @@ export interface Placement {
   venueType: string;
   region: string;
   model: "Loop" | "Ad-break";
-  owned: number;
-  direct: number;
+  houseFill: number;
+  sold: number;
   prog: number;
   dayparts: string;
   activeHours: number;
@@ -39,7 +39,7 @@ export const allPlacements: Placement[] = [
     venueType: "financial.banks",
     region: "New York, Boston, Philadelphia",
     model: "Loop",
-    owned: 50, direct: 30, prog: 20,
+    houseFill: 50, sold: 30, prog: 20,
     dayparts: "8am–6pm",
     activeHours: 10,
     status: "Healthy",
@@ -56,7 +56,7 @@ export const allPlacements: Placement[] = [
     venueType: "outdoor.urban_panels",
     region: "National",
     model: "Loop",
-    owned: 40, direct: 35, prog: 25,
+    houseFill: 40, sold: 35, prog: 25,
     dayparts: "6am–11pm",
     activeHours: 17,
     status: "Overbooked",
@@ -72,8 +72,8 @@ export const allPlacements: Placement[] = [
     venue: "Midwest & South",
     venueType: "retail.convenience_store",
     region: "Chicago, Dallas, Houston, Atlanta",
-    model: "Ad-break",
-    owned: 50, direct: 25, prog: 25,
+    model: "Loop",
+    houseFill: 50, sold: 25, prog: 25,
     dayparts: "7am–10pm",
     activeHours: 15,
     status: "Healthy",
@@ -89,8 +89,8 @@ export const allPlacements: Placement[] = [
     venue: "West Coast",
     venueType: "retail.grocery",
     region: "Los Angeles, San Francisco, Seattle, Portland",
-    model: "Ad-break",
-    owned: 55, direct: 25, prog: 20,
+    model: "Loop",
+    houseFill: 55, sold: 25, prog: 20,
     dayparts: "8am–9pm",
     activeHours: 13,
     status: "Healthy",
@@ -107,7 +107,7 @@ export const allPlacements: Placement[] = [
     venueType: "retail.pharmacies",
     region: "National",
     model: "Loop",
-    owned: 60, direct: 20, prog: 20,
+    houseFill: 60, sold: 20, prog: 20,
     dayparts: "9am–8pm",
     activeHours: 11,
     status: "At Risk",
@@ -124,7 +124,7 @@ export const allPlacements: Placement[] = [
     venueType: "financial.banks",
     region: "Denver, Phoenix, Las Vegas, Salt Lake City, Albuquerque",
     model: "Loop",
-    owned: 50, direct: 30, prog: 20,
+    houseFill: 50, sold: 30, prog: 20,
     dayparts: "8am–6pm",
     activeHours: 10,
     status: "Healthy",

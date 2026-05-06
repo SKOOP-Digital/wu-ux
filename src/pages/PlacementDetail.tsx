@@ -24,9 +24,9 @@ import { toast } from "@/hooks/use-toast";
 
 
 const mockCampaigns = [
-  { id: "1", name: "Nike Summer Push", type: "Direct", target: "5,000 plays", delivered: "3,100", pct: 62, status: "Live" },
-  { id: "2", name: "Coca-Cola Lobby Spots", type: "Direct", target: "SoV 15%", delivered: "1,800", pct: 72, status: "Under-delivering" },
-  { id: "3", name: "Brand Awareness — Q1", type: "Marketing", target: "SoV 50%", delivered: "48,000", pct: 96, status: "Live" },
+  { id: "1", name: "Nike Summer Push", type: "Sold", target: "5,000 plays", delivered: "3,100", pct: 62, status: "Live" },
+  { id: "2", name: "Coca-Cola Lobby Spots", type: "Sold", target: "SoV 15%", delivered: "1,800", pct: 72, status: "Under-delivering" },
+  { id: "3", name: "WU Brand Awareness", type: "House Fill", target: "—", delivered: "48,000", pct: 100, status: "Live" },
 ];
 
 export default function PlacementDetail() {
@@ -43,8 +43,8 @@ export default function PlacementDetail() {
     venueType: "",
     region: "",
     model: "Loop",
-    owned: 50,
-    direct: 30,
+    houseFill: 50,
+    sold: 30,
     prog: 20,
     dayparts: "All Day",
     activeHours: 16,
@@ -62,8 +62,9 @@ export default function PlacementDetail() {
   const stateColor = isDraft ? "bg-skoop-amber-light text-skoop-amber" : "bg-skoop-aqua-light text-skoop-aqua";
 
   
-  const [owned, setOwned] = useState(placement.owned);
-  const [direct, setDirect] = useState(placement.direct);
+  const [sold, setSold] = useState(placement.sold);
+  const [prog, setProg] = useState(placement.prog);
+  const houseFill = Math.max(0, 100 - sold - prog);
   const [screenIds, setScreenIds] = useState<string[]>(placement.screenIds);
   const [placementName, setPlacementName] = useState(isNew ? "" : placement.name);
   
@@ -150,9 +151,9 @@ export default function PlacementDetail() {
       venueType: "",
       region: venues.join(", "),
       model: playbackModel,
-      owned,
-      direct,
-      prog: Math.max(0, 100 - owned - direct),
+      houseFill: Math.max(0, 100 - sold - prog),
+      sold,
+      prog,
       dayparts: dayparts.filter(d => d.active).map(d => d.name).join(", ") || "All Day",
       activeHours: activeHours,
       status: "Healthy",
@@ -169,8 +170,6 @@ export default function PlacementDetail() {
   const handleSaveDraft = () => {
     toast({ title: "Draft saved", description: `${placementName || "Untitled"} saved as draft.` });
   };
-
-  const prog = 100 - owned - direct;
 
 
   const assignedScreens = useMemo(
@@ -217,9 +216,9 @@ export default function PlacementDetail() {
     return `${assignedScreens.length} screen${assignedScreens.length !== 1 ? "s" : ""} × ${hrs} active hours × ${playDurationSeconds}s play duration = ${totalPlaysPerDay.toLocaleString()} plays/day`;
   }, [assignedScreens, totalPlaysPerDay, activeHours, playDurationSeconds]);
 
-  const ownedCap = Math.round(totalPlaysPerDay * owned / 100);
-  const directCap = Math.round(totalPlaysPerDay * direct / 100);
+  const soldCap = Math.round(totalPlaysPerDay * sold / 100);
   const progCap = Math.round(totalPlaysPerDay * Math.max(0, prog) / 100);
+  const houseFillCap = Math.round(totalPlaysPerDay * houseFill / 100);
 
   const forecastItems = useMemo(() => {
     const items: { label: string; status: string; statusLabel: string }[] = [];
@@ -232,7 +231,7 @@ export default function PlacementDetail() {
     else if (utilPct < 90) items.push({ label: "Overall utilisation", status: "at-risk", statusLabel: "Direct allocation nearing limit" });
     else items.push({ label: "Overall utilisation", status: "overbooked", statusLabel: "Capacity near maximum" });
     if (prog > 10) items.push({ label: "Programmatic", status: "healthy", statusLabel: "Backfill available" });
-    if (direct > 40) items.push({ label: "Direct campaigns", status: "at-risk", statusLabel: "Under-delivery risk for booked direct" });
+    if (sold > 40) items.push({ label: "Sold campaigns", status: "at-risk", statusLabel: "Under-delivery risk for booked sold" });
     if (items.length === 0) items.push({ label: "Status", status: "healthy", statusLabel: "No conflicts detected" });
     return items;
   }, [capacity, prog, direct, isDraft]);
@@ -431,7 +430,7 @@ export default function PlacementDetail() {
                 {(() => {
                   const activeDaypartCount = dayparts.filter(d => d.active).length;
                   const s2Complete = activeDaypartCount > 0;
-                  const s2Summary = s2Complete
+                      const s2Summary = s2Complete
                     ? `${playbackModel === "Loop" ? "Continuous Loop" : "Ad Breaks"} · ${Math.round(activeHours)} active hours/day`
                     : "Not configured yet";
                   return (
@@ -464,17 +463,13 @@ export default function PlacementDetail() {
                                 <p className="font-medium">{playbackModel === "Loop" ? "✓ " : ""}Continuous Loop</p>
                                 <p className="text-xs mt-0.5 font-normal opacity-70">Content plays in a repeating loop</p>
                               </button>
-                              <button
-                                onClick={() => setPlaybackModel("Ad-break")}
-                                className={`flex-1 px-4 py-3 rounded-lg border text-sm font-medium text-left transition-colors ${
-                                  playbackModel === "Ad-break"
-                                    ? "border-primary bg-primary/5 text-primary"
-                                    : "border-border bg-background text-muted-foreground hover:bg-secondary/50"
-                                }`}
-                              >
-                                <p className="font-medium">{playbackModel === "Ad-break" ? "✓ " : ""}Ad Breaks</p>
+                              <div className="flex-1 px-4 py-3 rounded-lg border border-border bg-secondary/30 text-sm text-left opacity-60 cursor-not-allowed select-none">
+                                <div className="flex items-center gap-2">
+                                  <p className="font-medium text-muted-foreground">Ad Breaks</p>
+                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-secondary text-muted-foreground">Coming soon</span>
+                                </div>
                                 <p className="text-xs mt-0.5 font-normal opacity-70">Ads play in scheduled break windows</p>
-                              </button>
+                              </div>
                             </div>
                           </div>
 
@@ -581,7 +576,7 @@ export default function PlacementDetail() {
 
                 {/* ===== SECTION 3: Content Split & Rules ===== */}
                 {(() => {
-                  const s3Summary = `Marketing ${owned}% · Direct ${direct}% · Programmatic ${Math.max(0, prog)}%`;
+                  const s3Summary = `House Fill ${houseFill}% · Sold ${sold}% · Programmatic ${Math.max(0, prog)}%`;
                   return (
                     <Collapsible open={section3Open} onOpenChange={setSection3Open}>
                       <CollapsibleTrigger className="w-full rounded-lg border border-l-[3px] border-l-primary border-y-border border-r-border bg-background transition-colors">
@@ -593,8 +588,8 @@ export default function PlacementDetail() {
                             <div className="flex items-center gap-2 mt-0.5">
                               {/* Mini inline bar */}
                               <div className="flex h-2 w-24 rounded-full overflow-hidden">
-                                <div className="bg-skoop-slate" style={{ width: `${owned}%` }} />
-                                <div className="bg-skoop-blue" style={{ width: `${direct}%` }} />
+                                <div className="bg-skoop-slate" style={{ width: `${houseFill}%` }} />
+                                <div className="bg-skoop-blue" style={{ width: `${sold}%` }} />
                                 <div className="bg-skoop-purple" style={{ width: `${Math.max(0, prog)}%` }} />
                               </div>
                               <p className="text-xs text-muted-foreground truncate">{s3Summary}</p>
@@ -613,11 +608,11 @@ export default function PlacementDetail() {
                                 <TooltipTrigger asChild>
                                   <Info size={14} className="text-muted-foreground cursor-help" />
                                 </TooltipTrigger>
-                                <TooltipContent side="right" className="max-w-[240px]">
+                                <TooltipContent side="right" className="max-w-[260px]">
                                   <p className="text-xs leading-relaxed">
-                                    <strong>Marketing</strong> — Your own brand content<br />
-                                    <strong>Direct</strong> — Booked campaigns<br />
-                                    <strong>Programmatic</strong> — Automated ads
+                                    <strong>Sold</strong> — Booked campaigns with a delivery target<br />
+                                    <strong>Programmatic</strong> — SSP partner fill (Vengo, Vistar, etc.)<br />
+                                    <strong>House Fill</strong> — Auto-calculated remainder; your own always-on content
                                   </p>
                                 </TooltipContent>
                               </Tooltip>
@@ -626,31 +621,31 @@ export default function PlacementDetail() {
                             <div className="space-y-4">
                               <div>
                                 <div className="flex justify-between text-sm mb-1">
-                                  <span>Marketing</span>
-                                  <span className="tabular-nums font-medium">{owned}%{hasScreens ? ` · ${ownedCap.toLocaleString()} plays/day` : ""}</span>
+                                  <span>Sold</span>
+                                  <span className="tabular-nums font-medium">{sold}%{hasScreens ? ` · ${soldCap.toLocaleString()} plays/day` : ""}</span>
                                 </div>
-                                <Slider value={[owned]} onValueChange={([v]) => { if (v + direct <= 100) setOwned(v); }} max={100} step={5} className="[&_[role=slider]]:bg-skoop-slate" />
-                              </div>
-                              <div>
-                                <div className="flex justify-between text-sm mb-1">
-                                  <span>Direct</span>
-                                  <span className="tabular-nums font-medium">{direct}%{hasScreens ? ` · ${directCap.toLocaleString()} plays/day` : ""}</span>
-                                </div>
-                                <Slider value={[direct]} onValueChange={([v]) => { if (owned + v <= 100) setDirect(v); }} max={100} step={5} className="[&_[role=slider]]:bg-skoop-blue" />
+                                <Slider value={[sold]} onValueChange={([v]) => { if (v + prog <= 100) setSold(v); }} max={100} step={5} className="[&_[role=slider]]:bg-skoop-blue" />
                               </div>
                               <div>
                                 <div className="flex justify-between text-sm mb-1">
                                   <span>Programmatic</span>
                                   <span className="tabular-nums font-medium">{Math.max(0, prog)}%{hasScreens ? ` · ${progCap.toLocaleString()} plays/day` : ""}</span>
                                 </div>
-                                <div className="h-2 rounded-full bg-secondary overflow-hidden">
-                                  <div className="h-full bg-skoop-purple rounded-full transition-all" style={{ width: `${Math.max(0, prog)}%` }} />
+                                <Slider value={[prog]} onValueChange={([v]) => { if (sold + v <= 100) setProg(v); }} max={100} step={5} className="[&_[role=slider]]:bg-skoop-purple" />
+                              </div>
+                              <div>
+                                <div className="flex justify-between text-sm mb-1">
+                                  <span className="flex items-center gap-1.5">House Fill <span className="text-xs font-normal text-muted-foreground">(auto)</span></span>
+                                  <span className="tabular-nums font-medium">{houseFill}%{hasScreens ? ` · ${houseFillCap.toLocaleString()} plays/day` : ""}</span>
                                 </div>
-                                <p className="text-xs text-muted-foreground mt-1">Auto-calculated from remaining allocation</p>
+                                <div className="h-2 rounded-full bg-secondary overflow-hidden">
+                                  <div className="h-full bg-skoop-slate rounded-full transition-all" style={{ width: `${houseFill}%` }} />
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-1">Remainder after sold and programmatic allocation</p>
                               </div>
                             </div>
 
-                            <MixBar owned={owned} direct={direct} programmatic={Math.max(0, prog)} height="h-3" showLabels />
+                            <MixBar houseFill={houseFill} sold={sold} programmatic={Math.max(0, prog)} height="h-3" showLabels />
                           </div>
 
                           {/* Advanced Serving Rules — nested collapsible */}
@@ -744,7 +739,7 @@ export default function PlacementDetail() {
                                 <div className="flex items-center justify-between px-4 py-3.5">
                                   <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium text-foreground">If No Ad Available, Show:</p>
-                                    <p className="text-xs text-muted-foreground mt-0.5">Fall back to owned content when programmatic has no fill</p>
+                                    <p className="text-xs text-muted-foreground mt-0.5">Fall back to house fill content when programmatic has no fill</p>
                                   </div>
                                   <Switch checked={noFillFallback} onCheckedChange={setNoFillFallback} />
                                 </div>
@@ -816,8 +811,8 @@ export default function PlacementDetail() {
                 {hasScreens && (
                   <div className="skoop-card p-5 space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                     <p className="skoop-section-header">Capacity by Type</p>
-                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Marketing ({owned}%)</span><span className="tabular-nums font-medium">{ownedCap.toLocaleString()} plays/day</span></div>
-                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Direct ({direct}%)</span><span className="tabular-nums font-medium">{directCap.toLocaleString()} plays/day</span></div>
+                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">House Fill ({houseFill}%)</span><span className="tabular-nums font-medium">{houseFillCap.toLocaleString()} plays/day</span></div>
+                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Sold ({sold}%)</span><span className="tabular-nums font-medium">{soldCap.toLocaleString()} plays/day</span></div>
                     <div className="flex justify-between text-sm"><span className="text-muted-foreground">Programmatic ({Math.max(0, prog)}%)</span><span className="tabular-nums font-medium">{progCap.toLocaleString()} plays/day</span></div>
                   </div>
                 )}
@@ -831,15 +826,14 @@ export default function PlacementDetail() {
 
   // ===== EXISTING PLACEMENT: collapsible sections + Active Campaigns =====
 
-  // Use rule-level data for capacity on existing rules
   const existingTotalPlays = placement.screenCount > 0
     ? Math.round(placement.screenCount * (3600 / (placement.defaultPlayDuration || 15)) * (placement.activeHours || 16))
     : totalPlaysPerDay;
   const existingBookedPlays = Math.round(existingTotalPlays * (placement.capacityUsagePct / 100));
   const existingAvailPlays = existingTotalPlays - existingBookedPlays;
-  const existingOwnedCap = Math.round(existingTotalPlays * owned / 100);
-  const existingDirectCap = Math.round(existingTotalPlays * direct / 100);
+  const existingSoldCap = Math.round(existingTotalPlays * sold / 100);
   const existingProgCap = Math.round(existingTotalPlays * Math.max(0, prog) / 100);
+  const existingHouseFillCap = Math.round(existingTotalPlays * houseFill / 100);
 
   return (
     <TooltipProvider>
@@ -1076,17 +1070,13 @@ export default function PlacementDetail() {
                             <p className="font-medium">{playbackModel === "Loop" ? "✓ " : ""}Continuous Loop</p>
                             <p className="text-xs mt-0.5 font-normal opacity-70">Content plays in a repeating loop</p>
                           </button>
-                          <button
-                            onClick={() => setPlaybackModel("Ad-break")}
-                            className={`flex-1 px-4 py-3 rounded-lg border text-sm font-medium text-left transition-colors ${
-                              playbackModel === "Ad-break"
-                                ? "border-primary bg-primary/5 text-primary"
-                                : "border-border bg-background text-muted-foreground hover:bg-secondary/50"
-                            }`}
-                          >
-                            <p className="font-medium">{playbackModel === "Ad-break" ? "✓ " : ""}Ad Breaks</p>
+                          <div className="flex-1 px-4 py-3 rounded-lg border border-border bg-secondary/30 text-sm text-left opacity-60 cursor-not-allowed select-none">
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium text-muted-foreground">Ad Breaks</p>
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-secondary text-muted-foreground">Coming soon</span>
+                            </div>
                             <p className="text-xs mt-0.5 font-normal opacity-70">Ads play in scheduled break windows</p>
-                          </button>
+                          </div>
                         </div>
                       </div>
 
@@ -1193,7 +1183,7 @@ export default function PlacementDetail() {
 
             {/* ===== SECTION 3: Content Split & Rules ===== */}
             {(() => {
-              const s3Summary = `Marketing ${owned}% · Direct ${direct}% · Programmatic ${Math.max(0, prog)}%`;
+              const s3Summary = `House Fill ${houseFill}% · Sold ${sold}% · Programmatic ${Math.max(0, prog)}%`;
               return (
                 <Collapsible open={section3Open} onOpenChange={setSection3Open}>
                   <CollapsibleTrigger className="w-full rounded-lg border border-l-[3px] border-l-primary border-y-border border-r-border bg-background transition-colors">
@@ -1204,8 +1194,8 @@ export default function PlacementDetail() {
                         <p className="text-sm font-semibold text-foreground">Content Split & Rules</p>
                         <div className="flex items-center gap-2 mt-0.5">
                           <div className="flex h-2 w-24 rounded-full overflow-hidden">
-                            <div className="bg-skoop-slate" style={{ width: `${owned}%` }} />
-                            <div className="bg-skoop-blue" style={{ width: `${direct}%` }} />
+                            <div className="bg-skoop-slate" style={{ width: `${houseFill}%` }} />
+                            <div className="bg-skoop-blue" style={{ width: `${sold}%` }} />
                             <div className="bg-skoop-purple" style={{ width: `${Math.max(0, prog)}%` }} />
                           </div>
                           <p className="text-xs text-muted-foreground truncate">{s3Summary}</p>
@@ -1224,11 +1214,11 @@ export default function PlacementDetail() {
                             <TooltipTrigger asChild>
                               <Info size={14} className="text-muted-foreground cursor-help" />
                             </TooltipTrigger>
-                            <TooltipContent side="right" className="max-w-[240px]">
+                            <TooltipContent side="right" className="max-w-[260px]">
                               <p className="text-xs leading-relaxed">
-                                <strong>Marketing</strong> — Your own brand content<br />
-                                <strong>Direct</strong> — Booked campaigns<br />
-                                <strong>Programmatic</strong> — Automated ads
+                                <strong>Sold</strong> — Booked campaigns with a delivery target<br />
+                                <strong>Programmatic</strong> — SSP partner fill (Vengo, Vistar, etc.)<br />
+                                <strong>House Fill</strong> — Auto-calculated remainder; your own always-on content
                               </p>
                             </TooltipContent>
                           </Tooltip>
@@ -1237,31 +1227,31 @@ export default function PlacementDetail() {
                         <div className="space-y-4">
                           <div>
                             <div className="flex justify-between text-sm mb-1">
-                              <span>Marketing</span>
-                              <span className="tabular-nums font-medium">{owned}% · {existingOwnedCap.toLocaleString()} plays/day</span>
+                              <span>Sold</span>
+                              <span className="tabular-nums font-medium">{sold}% · {existingSoldCap.toLocaleString()} plays/day</span>
                             </div>
-                            <Slider value={[owned]} onValueChange={([v]) => { if (v + direct <= 100) setOwned(v); }} max={100} step={5} className="[&_[role=slider]]:bg-skoop-slate" />
-                          </div>
-                          <div>
-                            <div className="flex justify-between text-sm mb-1">
-                              <span>Direct</span>
-                              <span className="tabular-nums font-medium">{direct}% · {existingDirectCap.toLocaleString()} plays/day</span>
-                            </div>
-                            <Slider value={[direct]} onValueChange={([v]) => { if (owned + v <= 100) setDirect(v); }} max={100} step={5} className="[&_[role=slider]]:bg-skoop-blue" />
+                            <Slider value={[sold]} onValueChange={([v]) => { if (v + prog <= 100) setSold(v); }} max={100} step={5} className="[&_[role=slider]]:bg-skoop-blue" />
                           </div>
                           <div>
                             <div className="flex justify-between text-sm mb-1">
                               <span>Programmatic</span>
                               <span className="tabular-nums font-medium">{Math.max(0, prog)}% · {existingProgCap.toLocaleString()} plays/day</span>
                             </div>
-                            <div className="h-2 rounded-full bg-secondary overflow-hidden">
-                              <div className="h-full bg-skoop-purple rounded-full transition-all" style={{ width: `${Math.max(0, prog)}%` }} />
+                            <Slider value={[prog]} onValueChange={([v]) => { if (sold + v <= 100) setProg(v); }} max={100} step={5} className="[&_[role=slider]]:bg-skoop-purple" />
+                          </div>
+                          <div>
+                            <div className="flex justify-between text-sm mb-1">
+                              <span className="flex items-center gap-1.5">House Fill <span className="text-xs font-normal text-muted-foreground">(auto)</span></span>
+                              <span className="tabular-nums font-medium">{houseFill}% · {existingHouseFillCap.toLocaleString()} plays/day</span>
                             </div>
-                            <p className="text-xs text-muted-foreground mt-1">Auto-calculated from remaining allocation</p>
+                            <div className="h-2 rounded-full bg-secondary overflow-hidden">
+                              <div className="h-full bg-skoop-slate rounded-full transition-all" style={{ width: `${houseFill}%` }} />
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1">Remainder after sold and programmatic allocation</p>
                           </div>
                         </div>
 
-                        <MixBar owned={owned} direct={direct} programmatic={Math.max(0, prog)} height="h-3" showLabels />
+                        <MixBar houseFill={houseFill} sold={sold} programmatic={Math.max(0, prog)} height="h-3" showLabels />
                       </div>
 
                       {/* Advanced Serving Rules */}
@@ -1349,7 +1339,7 @@ export default function PlacementDetail() {
                             <div className="flex items-center justify-between px-4 py-3.5">
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium text-foreground">If No Ad Available, Show:</p>
-                                <p className="text-xs text-muted-foreground mt-0.5">Fall back to owned content when programmatic has no fill</p>
+                                  <p className="text-xs text-muted-foreground mt-0.5">Fall back to house fill content when programmatic has no fill</p>
                               </div>
                               <Switch checked={noFillFallback} onCheckedChange={setNoFillFallback} />
                             </div>

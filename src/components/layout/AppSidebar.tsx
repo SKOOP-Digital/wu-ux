@@ -1,19 +1,21 @@
 import { NavLink, useLocation } from "react-router-dom";
 import {
-  LayoutDashboard, MapPin, Megaphone, Radio, Shuffle, FileCheck,
+  LayoutDashboard, MapPin, Megaphone, FileCheck,
   Settings, Monitor, Image, ListVideo, BarChart3
 } from "lucide-react";
 
 const mainNav = [
-  { icon: Monitor, label: "Screens", to: "/screens", section: "cms" },
-  { icon: Image, label: "Media", to: "/media", section: "cms" },
-  { icon: ListVideo, label: "Playlists", to: "/playlists", section: "cms" },
-  { icon: BarChart3, label: "Analytics", to: "/analytics", section: "cms" },
+  { icon: Monitor, label: "Screens", to: "/screens" },
+  { icon: Image, label: "Media", to: "/media" },
+  { icon: ListVideo, label: "Playlists", to: "/playlists" },
+  { icon: BarChart3, label: "Analytics", to: "/analytics" },
 ];
 
 const monetNav = [
+  { icon: LayoutDashboard, label: "Overview", to: "/overview" },
   { icon: MapPin, label: "Network Rules", to: "/placements" },
   { icon: Megaphone, label: "Campaigns", to: "/campaigns" },
+  { icon: FileCheck, label: "Proof of Play", to: "/proof-of-play" },
   { icon: Settings, label: "Settings", to: "/settings" },
 ];
 
@@ -21,7 +23,7 @@ export default function AppSidebar() {
   const location = useLocation();
 
   const linkClass = (path: string) => {
-    const active = location.pathname === path;
+    const active = location.pathname === path || location.pathname.startsWith(path + "/");
     return `flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors duration-150 ${
       active
         ? "bg-primary text-primary-foreground"
