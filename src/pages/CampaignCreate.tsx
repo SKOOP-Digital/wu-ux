@@ -5,7 +5,6 @@ import PageHeader from "@/components/layout/PageHeader";
 import StatusChip from "@/components/shared/StatusChip";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Slider } from "@/components/ui/slider";
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb";
 import { allPlacements, calcPlaysPerDay, calcCapacityFromRule } from "@/data/placements";
 import { allScreens } from "@/data/screens";
@@ -14,7 +13,7 @@ import { hasAnyImpressionData, getImpressionMultiplier } from "@/data/impression
 import { searchPOIs, getScreensNearPOIs, getRegionalSearchCenters, milesToMeters, POI } from "@/services/foursquareService";
 import POIAutocomplete from "@/components/shared/POIAutocomplete";
 
-type DeliveryMode = "sov" | "total" | "frequency" | "none";
+type DeliveryMode = "total" | "none";
 
 const STEPS = [
   "Campaign Details",
@@ -70,11 +69,8 @@ export default function CampaignCreate() {
   const [activeDayparts, setActiveDayparts] = useState<string[]>(["Morning", "Midday", "Afternoon"]);
 
   // Step 4 — How Much It Plays
-  const [deliveryMode, setDeliveryMode] = useState<DeliveryMode>("sov");
-  const [sov, setSov] = useState(15);
+  const [deliveryMode, setDeliveryMode] = useState<DeliveryMode>("total");
   const [totalPlays, setTotalPlays] = useState(5000);
-  const [playFrequencyValue, setPlayFrequencyValue] = useState(4);
-  const [playFrequencyUnit, setPlayFrequencyUnit] = useState<"minutes" | "hours">("minutes");
 
   // Step 5 — Creatives
   const [creatives, setCreatives] = useState<Creative[]>([]);
@@ -155,13 +151,7 @@ export default function CampaignCreate() {
     let requested = 0;
     const activeHoursPerDay = 16;
     if (deliveryMode === "sov") {
-      requested = Math.round(totalCapacity * sov / 100);
-    } else if (deliveryMode === "total") {
       requested = totalPlays;
-    } else {
-      const freqMinutes = playFrequencyUnit === "hours" ? playFrequencyValue * 60 : playFrequencyValue;
-      const playsPerDayPerScreen = freqMinutes > 0 ? Math.floor((activeHoursPerDay * 60) / freqMinutes) : 0;
-      requested = playsPerDayPerScreen * totalScreens;
     }
     const fits = requested <= totalAvailable;
     const dailyPacing = deliveryMode === "total" && startDate && endDate
@@ -169,18 +159,12 @@ export default function CampaignCreate() {
       : 0;
 
     return { totalScreens, totalAvailable, totalCapacity, availablePct, bookedPct, requested, fits, dailyPacing };
-  }, [selectedRules, selectedTags, tagMatchedScreens, proximityMatchedScreens, deliveryMode, sov, totalPlays, startDate, endDate, playFrequencyValue, playFrequencyUnit, proximityPOIs]);
+  }, [selectedRules, selectedTags, tagMatchedScreens, proximityMatchedScreens, deliveryMode, totalPlays, startDate, endDate, proximityPOIs]);
 
   const estimatedDailyPlays = useMemo(() => {
     if (!capacitySummary) return 0;
-    if (deliveryMode === "sov") return Math.round(capacitySummary.totalCapacity * sov / 100);
-    if (deliveryMode === "frequency") {
-      const freqMinutes = playFrequencyUnit === "hours" ? playFrequencyValue * 60 : playFrequencyValue;
-      const playsPerDayPerScreen = freqMinutes > 0 ? Math.floor((16 * 60) / freqMinutes) : 0;
-      return playsPerDayPerScreen * capacitySummary.totalScreens;
-    }
-    return capacitySummary.dailyPacing || totalPlays;
-  }, [capacitySummary, deliveryMode, sov, totalPlays, playFrequencyValue, playFrequencyUnit]);
+    return capacitySummary.dailyPacing || Math.round(totalPlays / 30);
+  }, [capacitySummary, totalPlays]);
 
   const addRule = (ruleId: string) => {
     if (selectedRules.find((r) => r.id === ruleId)) return;
@@ -563,14 +547,22 @@ export default function CampaignCreate() {
 
   const renderStep4 = () => (
     <div className="skoop-card p-5 space-y-5">
-      <p className="skoop-section-header">How Much It Plays</p>
-      <p className="text-xs text-muted-foreground">Set a delivery target for a sold campaign, or leave blank to run as house fill.</p>
+      <p className="skoop-section-header">Delivery Target</p>
+      <p className="text-xs text-muted-foreground">Set how many plays this campaign should get. If targeted screens don't have enough available capacity, you'll see a warning below.</p>
 
-      <div className="flex gap-2 flex-wrap">
-        <button onClick={() => setDeliveryMode("sov")} className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "sov" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>% of Screen Time</button>
-        <button onClick={() => setDeliveryMode("total")} className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "total" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>Total Plays</button>
-        <button onClick={() => setDeliveryMode("frequency")} className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "frequency" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>Play Frequency</button>
-        <button onClick={() => setDeliveryMode("none")} className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "none" ? "bg-skoop-slate text-white" : "bg-secondary text-muted-foreground"}`}>No Target (House Fill)</button>
+      <div className="flex gap-2">
+        <button
+          onClick={() => setDeliveryMode("total")}
+          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "total" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}
+        >
+          Set Play Target
+        </button>
+        <button
+          onClick={() => setDeliveryMode("none")}
+          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "none" ? "bg-skoop-slate text-white" : "bg-secondary text-muted-foreground"}`}
+        >
+          No Target (House Fill)
+        </button>
       </div>
 
       {deliveryMode === "none" ? (
@@ -579,110 +571,61 @@ export default function CampaignCreate() {
           <div>
             <p className="text-sm font-medium text-foreground">House Fill campaign</p>
             <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-              No delivery target is set. This campaign fills remaining slots after sold and programmatic inventory is placed. It runs continuously with no end date required. The network rule needs at least one active house fill campaign to go live.
+              No delivery target. This campaign fills remaining slots after all other campaigns have been served. It runs continuously as an always-on fallback with no end date required.
             </p>
           </div>
         </div>
-      ) : deliveryMode === "sov" ? (
-        <div className="space-y-3">
-          <div className="flex justify-between text-sm"><span>% of Screen Time</span><span className="font-medium tabular-nums">{sov}%</span></div>
-          <Slider value={[sov]} onValueChange={([v]) => { setSov(v); setConflictAcknowledged(false); }} max={50} step={1} />
-          <div className="bg-secondary rounded-md p-4 space-y-2">
-            <p className="text-xs font-medium text-foreground">Estimated Delivery</p>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <p className="text-[11px] text-muted-foreground">Total rule capacity</p>
-                <p className="text-sm font-medium tabular-nums">{capacitySummary ? capacitySummary.totalCapacity.toLocaleString() : "—"} plays/day</p>
-              </div>
-              <div>
-                <p className="text-[11px] text-muted-foreground">Estimated daily plays</p>
-                <p className="text-sm font-medium tabular-nums">~{estimatedDailyPlays.toLocaleString()} plays/day</p>
-              </div>
-            </div>
-            <div>
-              <p className="text-[11px] text-muted-foreground">Estimated daily impressions</p>
-              {hasImpressions ? (
-                <p className="text-sm font-medium tabular-nums">~{estimatedDailyImpressions.toLocaleString()}</p>
-              ) : (
-                <p className="text-[11px] text-muted-foreground italic">— Upload audience data in Settings to enable.</p>
-              )}
-            </div>
-          </div>
-        </div>
-      ) : deliveryMode === "total" ? (
-        <div className="space-y-3">
-          <div>
-            <label className="text-xs text-muted-foreground">Target Total Plays</label>
-            <Input type="number" placeholder="e.g. 5000" className="mt-1 w-48" value={totalPlays} onChange={(e) => setTotalPlays(Number(e.target.value))} />
-          </div>
-          <div className="bg-secondary rounded-md p-4 space-y-2">
-            <p className="text-xs font-medium text-foreground">Estimated Pacing</p>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <p className="text-[11px] text-muted-foreground">Daily pacing estimate</p>
-                <p className="text-sm font-medium tabular-nums">~{capacitySummary?.dailyPacing?.toLocaleString() || "—"} plays/day</p>
-              </div>
-              <div>
-                <p className="text-[11px] text-muted-foreground">Available capacity</p>
-                <p className="text-sm font-medium tabular-nums">{capacitySummary ? capacitySummary.totalAvailable.toLocaleString() : "—"} plays/day</p>
-              </div>
-            </div>
-            <div>
-              <p className="text-[11px] text-muted-foreground">Estimated daily impressions</p>
-              {hasImpressions ? (
-                <p className="text-sm font-medium tabular-nums">~{estimatedDailyImpressions.toLocaleString()}</p>
-              ) : (
-                <p className="text-[11px] text-muted-foreground italic">— Upload audience data in Settings to enable.</p>
-              )}
-            </div>
-          </div>
-        </div>
       ) : (
-        <div className="space-y-3">
-          <div className="flex items-end gap-3">
-            <div>
-              <label className="text-xs text-muted-foreground">Play every</label>
+        <div className="space-y-4">
+          <div className="flex items-end gap-4">
+            <div className="flex-1 max-w-xs">
+              <label className="text-xs text-muted-foreground">Target Total Plays</label>
               <Input
                 type="number"
-                min={1}
-                placeholder="e.g. 4"
-                className="mt-1 w-28"
-                value={playFrequencyValue}
-                onChange={(e) => { setPlayFrequencyValue(Number(e.target.value)); setConflictAcknowledged(false); }}
+                placeholder="e.g. 5000"
+                className="mt-1"
+                value={totalPlays}
+                onChange={(e) => { setTotalPlays(Number(e.target.value)); setConflictAcknowledged(false); }}
               />
             </div>
-            <div>
-              <select
-                className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
-                value={playFrequencyUnit}
-                onChange={(e) => { setPlayFrequencyUnit(e.target.value as "minutes" | "hours"); setConflictAcknowledged(false); }}
-              >
-                <option value="minutes">Minutes</option>
-                <option value="hours">Hours</option>
-              </select>
-            </div>
+            {startDate && endDate && (
+              <p className="text-xs text-muted-foreground pb-2">
+                ~{estimatedDailyPlays.toLocaleString()} plays/day over the campaign period
+              </p>
+            )}
           </div>
-          <div className="bg-secondary rounded-md p-4 space-y-2">
-            <p className="text-xs font-medium text-foreground">Estimated Delivery</p>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <p className="text-[11px] text-muted-foreground">Estimated daily plays</p>
-                <p className="text-sm font-medium tabular-nums">~{estimatedDailyPlays.toLocaleString()} plays/day</p>
+
+          {capacitySummary && (
+            <div className={`rounded-lg border px-4 py-4 space-y-3 ${capacitySummary.fits ? "border-border bg-secondary/40" : "border-destructive/40 bg-destructive/5"}`}>
+              <p className="text-xs font-medium text-foreground">Availability Check</p>
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <p className="text-[11px] text-muted-foreground">Available capacity</p>
+                  <p className="text-sm font-medium tabular-nums">{capacitySummary.totalAvailable.toLocaleString()} plays/day</p>
+                </div>
+                <div>
+                  <p className="text-[11px] text-muted-foreground">Daily pacing needed</p>
+                  <p className={`text-sm font-medium tabular-nums ${!capacitySummary.fits ? "text-destructive" : ""}`}>
+                    {capacitySummary.dailyPacing?.toLocaleString() || "—"} plays/day
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[11px] text-muted-foreground">Est. daily impressions</p>
+                  {hasImpressions ? (
+                    <p className="text-sm font-medium tabular-nums">~{estimatedDailyImpressions.toLocaleString()}</p>
+                  ) : (
+                    <p className="text-[11px] text-muted-foreground italic">—</p>
+                  )}
+                </div>
               </div>
-              <div>
-                <p className="text-[11px] text-muted-foreground">Total over campaign</p>
-                <p className="text-sm font-medium tabular-nums">~{(estimatedDailyPlays * (startDate && endDate ? Math.max(1, Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / 86400000)) : 30)).toLocaleString()} plays</p>
-              </div>
-            </div>
-            <div>
-              <p className="text-[11px] text-muted-foreground">Estimated daily impressions</p>
-              {hasImpressions ? (
-                <p className="text-sm font-medium tabular-nums">~{estimatedDailyImpressions.toLocaleString()}</p>
-              ) : (
-                <p className="text-[11px] text-muted-foreground italic">— Upload audience data in Settings to enable.</p>
+              {!capacitySummary.fits && (
+                <div className="flex items-start gap-2 text-xs text-destructive">
+                  <AlertTriangle size={12} className="mt-0.5 shrink-0" />
+                  <span>Requested plays exceed available capacity on the selected screens. Reduce the target or add more screens in the previous step.</span>
+                </div>
               )}
             </div>
-          </div>
+          )}
         </div>
       )}
     </div>
@@ -769,7 +712,7 @@ export default function CampaignCreate() {
             <div><p className="text-xs text-muted-foreground">Screens</p><p className="text-sm font-medium tabular-nums">{capacitySummary?.totalScreens.toLocaleString() || 0}</p></div>
             <div><p className="text-xs text-muted-foreground">Schedule</p><p className="text-sm font-medium">{startDate || "—"} → {endDate || "—"}</p></div>
             <div><p className="text-xs text-muted-foreground">Active Days</p><p className="text-sm font-medium">{activeDays.join(", ")}</p></div>
-            <div><p className="text-xs text-muted-foreground">Delivery Target</p><p className="text-sm font-medium tabular-nums">{deliveryMode === "none" ? "None (House Fill)" : deliveryMode === "sov" ? `${sov}% screen time` : deliveryMode === "frequency" ? `Every ${playFrequencyValue} ${playFrequencyUnit}` : `${totalPlays.toLocaleString()} total plays`}</p></div>
+            <div><p className="text-xs text-muted-foreground">Delivery Target</p><p className="text-sm font-medium tabular-nums">{deliveryMode === "none" ? "None (House Fill)" : `${totalPlays.toLocaleString()} total plays`}</p></div>
             <div><p className="text-xs text-muted-foreground">Creatives</p><p className="text-sm font-medium">{creatives.length} asset{creatives.length !== 1 ? "s" : ""} uploaded</p></div>
             <div><p className="text-xs text-muted-foreground">Proof of Play</p><p className="text-sm font-medium text-primary">Enabled</p></div>
           </div>

@@ -234,7 +234,7 @@ export default function PlacementDetail() {
     if (sold > 40) items.push({ label: "Sold campaigns", status: "at-risk", statusLabel: "Under-delivery risk for booked sold" });
     if (items.length === 0) items.push({ label: "Status", status: "healthy", statusLabel: "No conflicts detected" });
     return items;
-  }, [capacity, prog, direct, isDraft]);
+  }, [capacity, prog, sold, isDraft]);
 
   const activeCampaigns = isDraft ? [] : mockCampaigns;
 
@@ -784,7 +784,7 @@ export default function PlacementDetail() {
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm"><span className="text-muted-foreground">Screens</span><span className="font-medium tabular-nums">{screenIds.length}</span></div>
                       <div className="flex justify-between text-sm"><span className="text-muted-foreground">Capacity</span><span className="font-medium tabular-nums">{totalPlaysPerDay.toLocaleString()} plays/day</span></div>
-                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Content Split</span><span className="font-medium tabular-nums">{owned}/{direct}/{Math.max(0, prog)}</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-muted-foreground">Content Split</span><span className="font-medium tabular-nums">{houseFill}/{sold}/{Math.max(0, prog)}</span></div>
                       <div className="flex justify-between text-sm"><span className="text-muted-foreground">Active Hours</span><span className="font-medium tabular-nums">{dayparts.filter(d => d.active).length} windows</span></div>
                     </div>
                   </div>

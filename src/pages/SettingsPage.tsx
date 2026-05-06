@@ -1,18 +1,16 @@
 import { Settings as SettingsIcon, Upload, Download, CheckCircle, AlertTriangle } from "lucide-react";
 import { useState, useRef } from "react";
 import PageHeader from "@/components/layout/PageHeader";
-import MixBar from "@/components/shared/MixBar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { allScreens } from "@/data/screens";
 import { bulkSetImpressions, getLastImportTime } from "@/data/impressionStore";
 
-const tabs = ["Mix Policy", "Delivery Rules", "Daypart Templates", "SSP Connectors", "Proof of Play", "Audience & Impressions"];
+const tabs = ["Delivery Rules", "Daypart Templates", "SSP Connectors", "Proof of Play", "Audience & Impressions"];
 
 export default function SettingsPage() {
-  const [tab, setTab] = useState("Mix Policy");
+  const [tab, setTab] = useState("Delivery Rules");
 
   // Audience & Impressions state
   const [importResult, setImportResult] = useState<{ type: "success"; count: number; time: Date } | { type: "error"; matched: number; unmatched: string[] } | null>(null);
@@ -98,38 +96,12 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {tab === "Mix Policy" && (
-          <div className="skoop-card p-5 space-y-5">
-            <p className="skoop-section-header">Default Playback Mix</p>
-            <p className="text-sm text-muted-foreground">Set the network-wide default allocation. Individual network rules can override these defaults. House Fill is automatically calculated as the remainder.</p>
-            <div className="grid grid-cols-3 gap-4">
-              <div><label className="text-xs text-muted-foreground">Sold %</label><Input type="number" defaultValue="30" min="0" max="100" className="mt-1" /></div>
-              <div><label className="text-xs text-muted-foreground">Programmatic %</label><Input type="number" defaultValue="20" min="0" max="100" className="mt-1" /></div>
-              <div>
-                <label className="text-xs text-muted-foreground">House Fill % <span className="text-[10px] font-normal text-muted-foreground/60">(auto)</span></label>
-                <div className="mt-1 h-10 flex items-center px-3 rounded-md border border-border bg-secondary/50 text-sm text-muted-foreground">50%</div>
-              </div>
-            </div>
-            <MixBar houseFill={50} sold={30} programmatic={20} height="h-3" showLabels />
-            <div className="flex items-center justify-between pt-2">
-              <div><p className="text-sm font-medium">No-fill Fallback</p><p className="text-xs text-muted-foreground">When programmatic has no fill, fall back to house fill campaigns</p></div>
-              <Switch defaultChecked />
-            </div>
-          </div>
-        )}
-
         {tab === "Delivery Rules" && (
           <div className="space-y-4">
-            {[
-              { label: "Default Frequency Cap", desc: "Max plays per creative per hour", input: "4" },
-              { label: "Category Separation Gap", desc: "Minimum slots between competing brands", input: "2" },
-              { label: "Back-to-back Prevention", desc: "Prevent same creative playing consecutively", toggle: true },
-            ].map((r) => (
-              <div key={r.label} className="skoop-card p-5 flex items-center justify-between">
-                <div><p className="text-sm font-medium">{r.label}</p><p className="text-xs text-muted-foreground mt-0.5">{r.desc}</p></div>
-                {r.toggle ? <Switch defaultChecked /> : <Input defaultValue={r.input} className="w-20 text-center" />}
-              </div>
-            ))}
+            <div className="skoop-card p-5 flex items-center justify-between">
+              <div><p className="text-sm font-medium">Back-to-back Prevention</p><p className="text-xs text-muted-foreground mt-0.5">Prevent the same creative playing consecutively</p></div>
+              <Switch defaultChecked />
+            </div>
           </div>
         )}
 

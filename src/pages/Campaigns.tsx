@@ -8,26 +8,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 
-// deliveryTarget: null = house fill (no delivery target), number = sold campaign
 const campaigns = [
-  { id: "1", name: "Pepsi Q2 Push", deliveryTarget: 5000, advertiser: "PepsiCo", dates: "Apr 1 – Jun 30", goal: "SoV 40%", delivered: 3200, target: 5000, status: "Live" },
-  { id: "2", name: "Nike Spring", deliveryTarget: 5000, advertiser: "Nike", dates: "Mar 1 – May 31", goal: "5,000 plays", delivered: 3100, target: 5000, status: "Live" },
-  { id: "3", name: "WU Brand Awareness", deliveryTarget: null, advertiser: "Western Union", dates: "Jan 1 –", goal: "House fill", delivered: 48000, target: null, status: "Live" },
-  { id: "4", name: "Coca-Cola Summer", deliveryTarget: 4000, advertiser: "Coca-Cola", dates: "May 1 – Aug 31", goal: "SoV 20%", delivered: 0, target: 4000, status: "Scheduled" },
-  { id: "5", name: "WU Remittance Promo", deliveryTarget: 3000, advertiser: "Western Union", dates: "Mar 1 – Mar 31", goal: "3,000 plays", delivered: 1200, target: 3000, status: "Under-delivering" },
+  { id: "1", name: "Pepsi Q2 Push", deliveryTarget: 5000, advertiser: "PepsiCo", dates: "Apr 1 – Jun 30", screens: 1132, venues: "Northeast, National", delivered: 3200, target: 5000, status: "Live" },
+  { id: "2", name: "Nike Spring", deliveryTarget: 5000, advertiser: "Nike", dates: "Mar 1 – May 31", screens: 411, venues: "Midwest & South", delivered: 3100, target: 5000, status: "Live" },
+  { id: "3", name: "WU Brand Awareness", deliveryTarget: null, advertiser: "Western Union", dates: "Jan 1 –", screens: 1189, venues: "Northeast, Southwest", delivered: 48000, target: null, status: "Live" },
+  { id: "4", name: "Coca-Cola Summer", deliveryTarget: 4000, advertiser: "Coca-Cola", dates: "May 1 – Aug 31", screens: 377, venues: "West Coast", delivered: 0, target: 4000, status: "Scheduled" },
+  { id: "5", name: "WU Remittance Promo", deliveryTarget: 3000, advertiser: "Western Union", dates: "Mar 1 – Mar 31", screens: 71, venues: "National", delivered: 1200, target: 3000, status: "Under-delivering" },
 ];
 
-const statusFilters = ["All", "Live", "Scheduled", "Draft", "Under-delivering", "Completed", "At Risk"];
-
-function statusLabel(delivered: number, target: number | null, status: string) {
-  if (status === "Scheduled") return "Scheduled";
-  if (status === "Completed") return "Completed";
-  if (status === "Under-delivering") return "Under-delivering";
-  if (target === null) return "Live · House Fill";
-  const pct = target > 0 ? delivered / target : 0;
-  if (pct >= 0.6) return "Live · On Track";
-  return "Live · Behind Pace";
-}
+const statusFilters = ["All", "Live", "Scheduled", "Draft", "Under-delivering", "Completed"];
 
 export default function Campaigns() {
   const navigate = useNavigate();
@@ -44,7 +33,7 @@ export default function Campaigns() {
     <div>
       <PageHeader
         title="Campaigns"
-        subtitle="Define what content runs and how it is delivered"
+        subtitle="Create campaigns that target screens and track delivery"
         icon={<Megaphone size={20} />}
         actions={<Button size="sm" onClick={() => navigate("/campaigns/create")}><Plus size={14} className="mr-1" /> Create Campaign</Button>}
       />
@@ -71,19 +60,19 @@ export default function Campaigns() {
             <thead>
               <tr className="skoop-table-header">
                 <th className="skoop-table-cell text-left" style={{ width: "22%" }}>Campaign</th>
-                <th className="skoop-table-cell text-left" style={{ width: "12%" }}>Type</th>
-                <th className="skoop-table-cell text-left" style={{ width: "15%" }}>Advertiser</th>
-                <th className="skoop-table-cell text-left" style={{ width: "13%" }}>Dates</th>
+                <th className="skoop-table-cell text-left" style={{ width: "10%" }}>Type</th>
+                <th className="skoop-table-cell text-left" style={{ width: "14%" }}>Advertiser</th>
+                <th className="skoop-table-cell text-left" style={{ width: "13%" }}>Screens</th>
+                <th className="skoop-table-cell text-left" style={{ width: "11%" }}>Dates</th>
                 <th className="skoop-table-cell text-left" style={{ width: "10%" }}>Target</th>
-                <th className="skoop-table-cell text-left" style={{ width: "14%" }}>Progress</th>
-                <th className="skoop-table-cell text-left" style={{ width: "14%" }}>Status</th>
+                <th className="skoop-table-cell text-left" style={{ width: "13%" }}>Progress</th>
+                <th className="skoop-table-cell text-left" style={{ width: "7%" }}>Status</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((c) => {
                 const isHouseFill = c.deliveryTarget === null;
                 const pct = c.target && c.target > 0 ? Math.round((c.delivered / c.target) * 100) : null;
-                const fullStatus = statusLabel(c.delivered, c.target, c.status);
                 return (
                   <tr key={c.id} className="skoop-table-row cursor-pointer" onClick={() => navigate(`/campaigns/${c.id}`)}>
                     <td className="skoop-table-cell font-medium text-foreground">
@@ -92,14 +81,20 @@ export default function Campaigns() {
                     <td className="skoop-table-cell">
                       <StatusChip status={isHouseFill ? "house-fill" : "sold"} label={isHouseFill ? "House Fill" : "Sold"} />
                     </td>
-                    <td className="skoop-table-cell text-muted-foreground">
-                      <span className="line-clamp-2">{c.advertiser}</span>
+                    <td className="skoop-table-cell text-muted-foreground text-sm">
+                      <span className="line-clamp-1">{c.advertiser}</span>
+                    </td>
+                    <td className="skoop-table-cell">
+                      <p className="text-sm font-medium tabular-nums">{c.screens.toLocaleString()}</p>
+                      <p className="text-xs text-muted-foreground line-clamp-1">{c.venues}</p>
                     </td>
                     <td className="skoop-table-cell text-muted-foreground text-xs whitespace-nowrap">{c.dates}</td>
-                    <td className="skoop-table-cell text-xs text-muted-foreground">{c.goal}</td>
+                    <td className="skoop-table-cell text-xs text-muted-foreground">
+                      {isHouseFill ? <span className="italic">No target</span> : c.target?.toLocaleString() + " plays"}
+                    </td>
                     <td className="skoop-table-cell group/progress relative">
                       {isHouseFill ? (
-                        <span className="text-xs text-muted-foreground italic">No target</span>
+                        <span className="text-xs text-muted-foreground italic">Always on</span>
                       ) : (
                         <div className="relative">
                           <Progress value={pct ?? 0} className="h-1.5" />
@@ -107,7 +102,7 @@ export default function Campaigns() {
                         </div>
                       )}
                     </td>
-                    <td className="skoop-table-cell"><StatusChip status={c.status.toLowerCase().replace(" ", "-")} label={fullStatus} /></td>
+                    <td className="skoop-table-cell"><StatusChip status={c.status.toLowerCase().replace(" ", "-")} label={c.status} /></td>
                   </tr>
                 );
               })}

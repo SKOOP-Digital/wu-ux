@@ -1,8 +1,7 @@
-import { LayoutDashboard, Plus, MapPin, Megaphone, Radio, AlertTriangle, Monitor, Play, ArrowRight, Download } from "lucide-react";
+import { LayoutDashboard, Plus, Megaphone, Radio, AlertTriangle, Monitor, Play, Download, ArrowRight } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import PageHeader from "@/components/layout/PageHeader";
 import KPICard from "@/components/shared/KPICard";
-import MixBar from "@/components/shared/MixBar";
 import StatusChip from "@/components/shared/StatusChip";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -31,8 +30,7 @@ const topVenues = [
 
 const flowSteps = [
   { icon: Monitor, label: "Screens", desc: "Physical devices", to: "/screens", color: "bg-muted text-foreground" },
-  { icon: MapPin, label: "Network Rules", desc: "Rules & inventory", to: "/placements", color: "bg-primary/10 text-primary" },
-  { icon: Megaphone, label: "Campaigns", desc: "Content & delivery", to: "/campaigns", color: "bg-skoop-blue/10 text-skoop-blue" },
+  { icon: Megaphone, label: "Campaigns", desc: "Target screens & set plays", to: "/campaigns", color: "bg-skoop-blue/10 text-skoop-blue" },
   { icon: Play, label: "Proof of Play", desc: "Delivery records", to: "/proof-of-play", color: "bg-skoop-purple/10 text-skoop-purple" },
 ];
 
@@ -45,9 +43,6 @@ export default function Overview() {
         icon={<LayoutDashboard size={20} />}
         actions={
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => navigate("/placements")}>
-              <Plus size={14} className="mr-1" /> New Rule
-            </Button>
             <Button size="sm" onClick={() => navigate("/campaigns/create")}>
               <Plus size={14} className="mr-1" /> Create Campaign
             </Button>
@@ -59,7 +54,7 @@ export default function Overview() {
         {/* Flow Diagram */}
         <div className="skoop-card p-5">
           <p className="skoop-section-header mb-1">How Monetisation Works</p>
-          <p className="text-xs text-muted-foreground mb-4">Screens are devices → Network Rules define inventory → Campaigns use that inventory → System manages playback automatically</p>
+          <p className="text-xs text-muted-foreground mb-4">Screens are physical devices → Campaigns target those screens and set a play count → System tracks delivery automatically</p>
           <div className="flex items-center gap-0">
             {flowSteps.map((step, i) => (
               <div key={step.label} className="flex items-center flex-1 min-w-0">
@@ -83,21 +78,10 @@ export default function Overview() {
           </div>
         </div>
 
-        {/* Network Mix Bar */}
-        <div className="skoop-card p-5">
-          <p className="skoop-section-header mb-1">Network Content Split</p>
-          <p className="text-xs text-muted-foreground mb-3">
-            <span className="font-medium text-foreground">House Fill:</span> Always-on brand content &nbsp;·&nbsp;
-            <span className="font-medium text-foreground">Sold:</span> Booked campaigns &nbsp;·&nbsp;
-            <span className="font-medium text-foreground">Programmatic:</span> SSP partner fill
-          </p>
-          <MixBar houseFill={48} sold={32} programmatic={20} height="h-3" showLabels />
-        </div>
-
         {/* KPIs */}
         <div className="grid grid-cols-4 gap-4">
-          <KPICard label="Active Network Rules" value="24" change="+3 this month" changeType="positive" icon={<MapPin size={16} />} />
-          <KPICard label="Campaigns Live" value="4" change="3 sold · 1 house fill" changeType="positive" icon={<Megaphone size={16} />} />
+          <KPICard label="Active Campaigns" value="4" change="3 sold · 1 house fill" changeType="positive" icon={<Megaphone size={16} />} />
+          <KPICard label="Screens Targeted" value="1,639" change="+48 this month" changeType="positive" icon={<Monitor size={16} />} />
           <KPICard label="Programmatic Fill Rate" value="88.4%" change="-2.1% vs target" changeType="negative" icon={<Radio size={16} />} />
           <KPICard label="Under-delivery Alerts" value="2" change="2 campaigns at risk" changeType="negative" icon={<AlertTriangle size={16} />} />
         </div>
@@ -167,9 +151,6 @@ export default function Overview() {
         <div className="skoop-card p-5">
           <p className="skoop-section-header mb-3">Quick Actions</p>
           <div className="flex gap-3">
-            <Button variant="outline" size="sm" onClick={() => navigate("/placements")}>
-              <MapPin size={14} className="mr-1.5" /> New Rule
-            </Button>
             <Button variant="outline" size="sm" onClick={() => navigate("/campaigns/create")}>
               <Megaphone size={14} className="mr-1.5" /> Create Campaign
             </Button>

@@ -1,4 +1,4 @@
-import { Megaphone, ArrowLeft, MapPin, ExternalLink } from "lucide-react";
+import { Megaphone, ArrowLeft, Monitor, ExternalLink } from "lucide-react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import PageHeader from "@/components/layout/PageHeader";
 import StatusChip from "@/components/shared/StatusChip";
@@ -11,17 +11,14 @@ const campaignData: Record<string, {
   name: string; deliveryTarget: number | null; advertiser: string; dates: string; dayparts: string;
   goal: string; delivered: number; target: number | null;
   status: string; sov: number | null;
-  placements: { name: string; id: string; screens: number; venue: string }[];
+  screens: { count: number; venues: string; tags: string[] };
   creatives: { name: string; type: string; status: string; duration: string }[];
 }> = {
   "1": {
     name: "Pepsi Q2 Push", deliveryTarget: 5000, advertiser: "PepsiCo",
-    dates: "Apr 1 – Jun 30", dayparts: "All Day", goal: "SoV 40%",
-    delivered: 3200, target: 5000, status: "Live", sov: 40,
-    placements: [
-      { name: "Financial Banks · Northeast", id: "pl-1", screens: 480, venue: "Northeast" },
-      { name: "Urban Panels · National", id: "pl-2", screens: 652, venue: "National" },
-    ],
+    dates: "Apr 1 – Jun 30", dayparts: "All Day", goal: "5,000 plays",
+    delivered: 3200, target: 5000, status: "Live", sov: null,
+    screens: { count: 1132, venues: "Northeast, National", tags: ["venue:financial.banks", "region:northeast", "region:national"] },
     creatives: [
       { name: "Pepsi_Q2_16x9.mp4", type: "Video", status: "Approved", duration: "15s" },
       { name: "Pepsi_Logo_Static.jpg", type: "Image", status: "Approved", duration: "10s" },
@@ -30,18 +27,15 @@ const campaignData: Record<string, {
   "2": {
     name: "Nike Spring", deliveryTarget: 5000, advertiser: "Nike",
     dates: "Mar 1 – May 31", dayparts: "All Day", goal: "5,000 plays",
-    delivered: 3100, target: 5000, status: "Live", sov: 13,
-    placements: [{ name: "Convenience Stores · Midwest & South", id: "pl-3", screens: 411, venue: "Midwest & South" }],
+    delivered: 3100, target: 5000, status: "Live", sov: null,
+    screens: { count: 411, venues: "Midwest & South", tags: ["region:midwest", "region:south"] },
     creatives: [{ name: "Nike_Spring_16x9.mp4", type: "Video", status: "Approved", duration: "15s" }],
   },
   "3": {
     name: "WU Brand Awareness", deliveryTarget: null, advertiser: "Western Union",
     dates: "Jan 1 –", dayparts: "All Day", goal: "House fill",
     delivered: 48000, target: null, status: "Live", sov: null,
-    placements: [
-      { name: "Financial Banks · Northeast", id: "pl-1", screens: 480, venue: "Northeast" },
-      { name: "Financial Banks · Southwest & Rocky Mountain", id: "pl-6", screens: 709, venue: "Southwest" },
-    ],
+    screens: { count: 1189, venues: "Northeast, Southwest", tags: ["venue:financial.banks"] },
     creatives: [
       { name: "WU_Brand_16x9.mp4", type: "Video", status: "Approved", duration: "15s" },
       { name: "WU_Remittance_Static.jpg", type: "Image", status: "Approved", duration: "10s" },
@@ -49,16 +43,16 @@ const campaignData: Record<string, {
   },
   "4": {
     name: "Coca-Cola Summer", deliveryTarget: 4000, advertiser: "Coca-Cola",
-    dates: "May 1 – Aug 31", dayparts: "11am–9pm", goal: "SoV 20%",
-    delivered: 0, target: 4000, status: "Scheduled", sov: 20,
-    placements: [{ name: "Grocery Retail · West Coast", id: "pl-4", screens: 377, venue: "West Coast" }],
+    dates: "May 1 – Aug 31", dayparts: "11am–9pm", goal: "4,000 plays",
+    delivered: 0, target: 4000, status: "Scheduled", sov: null,
+    screens: { count: 377, venues: "West Coast", tags: ["region:west-coast"] },
     creatives: [{ name: "CocaCola_Summer.mp4", type: "Video", status: "Pending", duration: "15s" }],
   },
   "5": {
     name: "WU Remittance Promo", deliveryTarget: 3000, advertiser: "Western Union",
     dates: "Mar 1 – Mar 31", dayparts: "8am–6pm", goal: "3,000 plays",
-    delivered: 1200, target: 3000, status: "Under-delivering", sov: 10,
-    placements: [{ name: "Pharmacies · National", id: "pl-5", screens: 71, venue: "National" }],
+    delivered: 1200, target: 3000, status: "Under-delivering", sov: null,
+    screens: { count: 71, venues: "National", tags: ["venue:pharmacies"] },
     creatives: [{ name: "WU_Remit_Promo.mp4", type: "Video", status: "Approved", duration: "15s" }],
   },
 };
@@ -119,28 +113,20 @@ export default function CampaignDetail() {
                   <p className="text-xs text-muted-foreground">Delivery Target</p>
                   <p className="text-sm font-medium">{isHouseFill ? <span className="text-muted-foreground italic">None — house fill</span> : campaign.goal}</p>
                 </div>
-              </div>
-            </div>
+              </div>            </div>
 
             <div className="skoop-card p-5 space-y-3">
-              <p className="skoop-section-header">This campaign runs on</p>
-              <p className="text-xs text-muted-foreground">Network rules that provide inventory for this campaign</p>
-              <div className="space-y-2">
-                {campaign.placements.map((p) => (
-                  <div
-                    key={p.id}
-                    className="flex items-center justify-between py-3 px-4 border border-border rounded-md hover:bg-secondary/30 transition-colors cursor-pointer"
-                    onClick={() => navigate(`/placements/${p.id}`)}
-                  >
-                    <div className="flex items-center gap-3">
-                      <MapPin size={14} className="text-muted-foreground" />
-                      <div>
-                        <p className="text-sm font-medium">{p.name}</p>
-                        <p className="text-xs text-muted-foreground">{p.screens} screens · {p.venue}</p>
-                      </div>
-                    </div>
-                    <span className="text-xs text-primary">View Rule</span>
-                  </div>
+              <p className="skoop-section-header">Targeted Screens</p>
+              <div className="flex items-center gap-4 py-3 px-4 rounded-md bg-secondary/50">
+                <Monitor size={16} className="text-muted-foreground shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold tabular-nums">{campaign.screens.count.toLocaleString()} screens</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{campaign.screens.venues}</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {campaign.screens.tags.map((t) => (
+                  <span key={t} className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-secondary text-muted-foreground">{t}</span>
                 ))}
               </div>
             </div>
@@ -186,19 +172,12 @@ export default function CampaignDetail() {
           <div className="space-y-4">
             <div className="skoop-card p-5 space-y-3">
               <p className="skoop-section-header">Delivery Summary</p>
-              {campaign.sov !== null ? (
-                <div><p className="text-xs text-muted-foreground">Share of Voice</p><p className="text-sm font-medium tabular-nums">{campaign.sov}%</p></div>
-              ) : null}
               <div><p className="text-xs text-muted-foreground">Delivery Target</p><p className="text-sm font-medium">{isHouseFill ? "None (house fill)" : campaign.goal}</p></div>
+              <div><p className="text-xs text-muted-foreground">Screens Targeted</p><p className="text-sm font-medium tabular-nums">{campaign.screens.count.toLocaleString()}</p></div>
               <div><p className="text-xs text-muted-foreground">Active Hours</p><p className="text-sm font-medium">{campaign.dayparts}</p></div>
             </div>
             <div className="skoop-card p-5 space-y-3">
               <p className="skoop-section-header">Quick Links</p>
-              {campaign.placements.map((p) => (
-                <button key={p.id} onClick={() => navigate(`/placements/${p.id}`)} className="flex items-center gap-2 text-xs text-primary hover:underline w-full">
-                  <MapPin size={12} /> {p.name}
-                </button>
-              ))}
               <button onClick={() => navigate("/proof-of-play")} className="flex items-center gap-2 text-xs text-primary hover:underline w-full">
                 <ExternalLink size={12} /> Proof of Play
               </button>
