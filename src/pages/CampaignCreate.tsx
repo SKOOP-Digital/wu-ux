@@ -5,6 +5,7 @@ import PageHeader from "@/components/layout/PageHeader";
 import StatusChip from "@/components/shared/StatusChip";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb";
 import { allPlacements, calcPlaysPerDay, calcCapacityFromRule } from "@/data/placements";
 import { allScreens } from "@/data/screens";
@@ -13,7 +14,7 @@ import { hasAnyImpressionData, getImpressionMultiplier } from "@/data/impression
 import { searchPOIs, getScreensNearPOIs, getRegionalSearchCenters, milesToMeters, POI } from "@/services/foursquareService";
 import POIAutocomplete from "@/components/shared/POIAutocomplete";
 
-type DeliveryMode = "total" | "none";
+type DeliveryMode = "sov" | "total" | "none";
 
 const STEPS = [
   "Campaign Details",
@@ -70,6 +71,7 @@ export default function CampaignCreate() {
 
   // Step 4 — How Much It Plays
   const [deliveryMode, setDeliveryMode] = useState<DeliveryMode>("total");
+  const [sov, setSov] = useState(15);
   const [totalPlays, setTotalPlays] = useState(5000);
 
   // Step 5 — Creatives
@@ -149,22 +151,26 @@ export default function CampaignCreate() {
     const bookedPct = 100 - availablePct;
 
     let requested = 0;
-    const activeHoursPerDay = 16;
     if (deliveryMode === "sov") {
+      requested = Math.round(totalCapacity * sov / 100);
+    } else if (deliveryMode === "total") {
       requested = totalPlays;
     }
-    const fits = requested <= totalAvailable;
+    const fits = deliveryMode === "none" || requested <= totalAvailable;
     const dailyPacing = deliveryMode === "total" && startDate && endDate
       ? Math.round(totalPlays / Math.max(1, Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / 86400000)))
+      : deliveryMode === "sov"
+      ? Math.round(totalCapacity * sov / 100)
       : 0;
 
     return { totalScreens, totalAvailable, totalCapacity, availablePct, bookedPct, requested, fits, dailyPacing };
-  }, [selectedRules, selectedTags, tagMatchedScreens, proximityMatchedScreens, deliveryMode, totalPlays, startDate, endDate, proximityPOIs]);
+  }, [selectedRules, selectedTags, tagMatchedScreens, proximityMatchedScreens, deliveryMode, sov, totalPlays, startDate, endDate, proximityPOIs]);
 
   const estimatedDailyPlays = useMemo(() => {
     if (!capacitySummary) return 0;
+    if (deliveryMode === "sov") return Math.round(capacitySummary.totalCapacity * sov / 100);
     return capacitySummary.dailyPacing || Math.round(totalPlays / 30);
-  }, [capacitySummary, totalPlays]);
+  }, [capacitySummary, deliveryMode, sov, totalPlays]);
 
   const addRule = (ruleId: string) => {
     if (selectedRules.find((r) => r.id === ruleId)) return;
@@ -548,14 +554,20 @@ export default function CampaignCreate() {
   const renderStep4 = () => (
     <div className="skoop-card p-5 space-y-5">
       <p className="skoop-section-header">Delivery Target</p>
-      <p className="text-xs text-muted-foreground">Set how many plays this campaign should get. If targeted screens don't have enough available capacity, you'll see a warning below.</p>
+      <p className="text-xs text-muted-foreground">Choose how to express the delivery target for this campaign.</p>
 
       <div className="flex gap-2">
+        <button
+          onClick={() => setDeliveryMode("sov")}
+          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "sov" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}
+        >
+          % of Screen Time
+        </button>
         <button
           onClick={() => setDeliveryMode("total")}
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "total" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}
         >
-          Set Play Target
+          Total Plays
         </button>
         <button
           onClick={() => setDeliveryMode("none")}
@@ -574,6 +586,51 @@ export default function CampaignCreate() {
               No delivery target. This campaign fills remaining slots after all other campaigns have been served. It runs continuously as an always-on fallback with no end date required.
             </p>
           </div>
+        </div>
+      ) : deliveryMode === "sov" ? (
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span>Share of screen time</span>
+              <span className="font-semibold tabular-nums">{sov}%</span>
+            </div>
+            <Slider
+              value={[sov]}
+              onValueChange={([v]) => { setSov(v); setConflictAcknowledged(false); }}
+              min={1}
+              max={50}
+              step={1}
+              className="[&_[role=slider]]:bg-primary"
+            />
+            <div className="flex justify-between text-[11px] text-muted-foreground">
+              <span>1%</span>
+              <span>50% max</span>
+            </div>
+          </div>
+
+          {capacitySummary && (
+            <div className={`rounded-lg border px-4 py-4 space-y-3 ${capacitySummary.fits ? "border-border bg-secondary/40" : "border-destructive/40 bg-destructive/5"}`}>
+              <p className="text-xs font-medium text-foreground">Estimated Delivery</p>
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <p className="text-[11px] text-muted-foreground">Screens targeted</p>
+                  <p className="text-sm font-medium tabular-nums">{capacitySummary.totalScreens.toLocaleString()}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] text-muted-foreground">Est. plays/day</p>
+                  <p className="text-sm font-medium tabular-nums">~{estimatedDailyPlays.toLocaleString()}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] text-muted-foreground">Est. impressions/day</p>
+                  {hasImpressions ? (
+                    <p className="text-sm font-medium tabular-nums">~{estimatedDailyImpressions.toLocaleString()}</p>
+                  ) : (
+                    <p className="text-[11px] text-muted-foreground italic">—</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <div className="space-y-4">
@@ -712,7 +769,7 @@ export default function CampaignCreate() {
             <div><p className="text-xs text-muted-foreground">Screens</p><p className="text-sm font-medium tabular-nums">{capacitySummary?.totalScreens.toLocaleString() || 0}</p></div>
             <div><p className="text-xs text-muted-foreground">Schedule</p><p className="text-sm font-medium">{startDate || "—"} → {endDate || "—"}</p></div>
             <div><p className="text-xs text-muted-foreground">Active Days</p><p className="text-sm font-medium">{activeDays.join(", ")}</p></div>
-            <div><p className="text-xs text-muted-foreground">Delivery Target</p><p className="text-sm font-medium tabular-nums">{deliveryMode === "none" ? "None (House Fill)" : `${totalPlays.toLocaleString()} total plays`}</p></div>
+            <div><p className="text-xs text-muted-foreground">Delivery Target</p><p className="text-sm font-medium tabular-nums">{deliveryMode === "none" ? "None (House Fill)" : deliveryMode === "sov" ? `${sov}% of screen time` : `${totalPlays.toLocaleString()} total plays`}</p></div>
             <div><p className="text-xs text-muted-foreground">Creatives</p><p className="text-sm font-medium">{creatives.length} asset{creatives.length !== 1 ? "s" : ""} uploaded</p></div>
             <div><p className="text-xs text-muted-foreground">Proof of Play</p><p className="text-sm font-medium text-primary">Enabled</p></div>
           </div>
