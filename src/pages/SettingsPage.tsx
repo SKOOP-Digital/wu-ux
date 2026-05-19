@@ -2,15 +2,15 @@ import { Settings as SettingsIcon, Upload, Download, CheckCircle, AlertTriangle 
 import { useState, useRef } from "react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { allScreens } from "@/data/screens";
 import { bulkSetImpressions, getLastImportTime } from "@/data/impressionStore";
 
-const tabs = ["Delivery Rules", "Daypart Templates", "SSP Connectors", "Proof of Play", "Audience & Impressions"];
+const tabs = ["Delivery Rules", "Revenue Splits", "Audience & Impressions"];
 
 export default function SettingsPage() {
-  const [tab, setTab] = useState("Delivery Rules");
+  const [tab, setTab] = useState("Mix Policy");
 
   // Audience & Impressions state
   const [importResult, setImportResult] = useState<{ type: "success"; count: number; time: Date } | { type: "error"; matched: number; unmatched: string[] } | null>(null);
@@ -96,82 +96,38 @@ export default function SettingsPage() {
           </div>
         </div>
 
+
         {tab === "Delivery Rules" && (
           <div className="space-y-4">
-            <div className="skoop-card p-5 flex items-center justify-between">
-              <div><p className="text-sm font-medium">Back-to-back Prevention</p><p className="text-xs text-muted-foreground mt-0.5">Prevent the same creative playing consecutively</p></div>
-              <Switch defaultChecked />
-            </div>
-          </div>
-        )}
-
-        {tab === "Daypart Templates" && (
-          <div className="skoop-card p-5 space-y-4">
-            <div className="flex items-center gap-3">
-              <p className="skoop-section-header">Reusable Daypart Templates</p>
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-secondary text-muted-foreground">Coming soon</span>
-            </div>
-            <p className="text-sm text-muted-foreground">Save and reuse time-window patterns across multiple network rules. Available in a future update.</p>
             {[
-              { name: "Standard Business", hours: "6:00 AM – 6:00 PM" },
-              { name: "Extended Hours", hours: "6:00 AM – 11:00 PM" },
-              { name: "Peak Trading", hours: "11:00 AM – 2:00 PM, 5:00 PM – 8:00 PM" },
-            ].map((d) => (
-              <div key={d.name} className="flex items-center justify-between py-3 px-4 rounded-md bg-secondary/30 opacity-60">
-                <div><p className="text-sm font-medium">{d.name}</p><p className="text-xs text-muted-foreground">{d.hours}</p></div>
-                <Button variant="outline" size="sm" disabled>Edit</Button>
-              </div>
-            ))}
-            <Button variant="outline" size="sm" className="mt-2 opacity-60 cursor-not-allowed" disabled>+ Add Template</Button>
-          </div>
-        )}
-
-        {tab === "SSP Connectors" && (
-          <div className="space-y-4">
-            <div className="skoop-card p-5 space-y-2">
-              <p className="skoop-section-header">Programmatic Partners</p>
-              <p className="text-xs text-muted-foreground">Each partner uses a VAST tag iframe. The backend resolver injects partner ad content into the content feed as web items and logs plays for Proof of Play.</p>
-            </div>
-            {[
-              { name: "Vistar Media", status: "Connected", endpoint: "https://api.vistarmedia.com/vast/...", note: "VAST tag injection" },
-              { name: "Vengo", status: "Connected", endpoint: "https://api.vengo.tv/vast/...", note: "VAST tag injection" },
-              { name: "Screenverse", status: "Disconnected", endpoint: "—", note: "" },
-            ].map((c) => (
-              <div key={c.name} className="skoop-card p-5 flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium">{c.name}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{c.endpoint}</p>
-                  {c.note && <p className="text-[10px] text-muted-foreground/70 mt-0.5">{c.note}</p>}
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className={`text-xs font-medium ${c.status === "Connected" ? "text-skoop-aqua" : "text-muted-foreground"}`}>{c.status}</span>
-                  <Button variant="outline" size="sm">{c.status === "Connected" ? "Configure" : "Connect"}</Button>
-                </div>
+              { label: "Back-to-back Prevention", desc: "Prevent the same creative from playing in consecutive slots", toggle: true, defaultOn: true },
+              { label: "Offer freed inventory to programmatic", desc: "When a campaign hits its target and stops, offer freed slots to Screenverse before falling back to house fill", toggle: true, defaultOn: true },
+            ].map((r) => (
+              <div key={r.label} className="skoop-card p-5 flex items-center justify-between">
+                <div><p className="text-sm font-medium">{r.label}</p><p className="text-xs text-muted-foreground mt-0.5">{r.desc}</p></div>
+                <Switch defaultChecked={r.defaultOn} />
               </div>
             ))}
           </div>
         )}
 
-        {tab === "Proof of Play" && (
+
+        {tab === "Revenue Splits" && (
           <div className="skoop-card p-5 space-y-4">
-            <p className="skoop-section-header">Export Settings</p>
-            <div className="space-y-3">
-              <div><label className="text-xs text-muted-foreground">Default Export Format</label>
-                <Select><SelectTrigger className="mt-1"><SelectValue placeholder="CSV" /></SelectTrigger>
-                  <SelectContent><SelectItem value="csv">CSV</SelectItem><SelectItem value="json">JSON</SelectItem><SelectItem value="xml">XML</SelectItem></SelectContent>
-                </Select>
+            <p className="skoop-section-header">Default Revenue Split Templates</p>
+            {[
+              { name: "Standard Partner", split: "70 / 30", desc: "Partner gets 70%, Skoop gets 30%" },
+              { name: "Premium Partner", split: "75 / 25", desc: "Premium tier partners" },
+              { name: "Managed Network", split: "60 / 40", desc: "Fully managed locations" },
+            ].map((s) => (
+              <div key={s.name} className="flex items-center justify-between py-3 border-b border-border last:border-0">
+                <div><p className="text-sm font-medium">{s.name}</p><p className="text-xs text-muted-foreground">{s.desc}</p></div>
+                <span className="text-sm font-medium tabular-nums">{s.split}</span>
               </div>
-              <div className="flex items-center justify-between">
-                <div><p className="text-sm font-medium">Scheduled Daily Export</p><p className="text-xs text-muted-foreground">Automatically export proof of play data daily</p></div>
-                <Switch />
-              </div>
-              <div className="flex items-center justify-between">
-                <div><p className="text-sm font-medium">Include Backfill Events</p><p className="text-xs text-muted-foreground">Include marketing content backfill in PoP reports</p></div>
-                <Switch defaultChecked />
-              </div>
-            </div>
+            ))}
           </div>
         )}
+
 
         {tab === "Audience & Impressions" && (
           <div className="space-y-4">

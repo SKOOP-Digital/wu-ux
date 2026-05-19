@@ -20,11 +20,9 @@ const variants: Record<string, string> = {
   pending: "bg-skoop-amber-light text-skoop-amber",
   approved: "bg-skoop-aqua-light text-skoop-aqua",
   rejected: "bg-skoop-risk-light text-skoop-risk",
-  // campaign pool types
-  sold: "bg-skoop-blue-light text-skoop-blue",
-  "house-fill": "bg-skoop-green-light text-skoop-green",
+  owned: "bg-skoop-green-light text-skoop-green",
+  direct: "bg-skoop-blue-light text-skoop-blue",
   programmatic: "bg-skoop-purple-light text-skoop-purple",
-  // playback model
   loop: "bg-secondary text-muted-foreground",
   "ad-break": "bg-skoop-blue-light text-skoop-blue",
 };

@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { allPlacements, calcCapacityFromRule } from "@/data/placements";
 
-const filters = ["All", "Healthy", "Overbooked", "At Risk", "Continuous"];
+const filters = ["All", "Healthy", "Overbooked", "At Risk", "Continuous", "Ad Breaks"];
 
 const statusTooltips: Record<string, string> = {
   Healthy: "Capacity within safe range",
@@ -41,13 +41,14 @@ export default function Placements() {
     if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
     if (activeFilter === "All") return true;
     if (activeFilter === "Continuous") return p.model === "Loop";
+    if (activeFilter === "Ad Breaks") return p.model === "Ad-break";
     return p.status === activeFilter;
   });
 
   return (
     <div>
       <PageHeader
-        title="Network Rules"
+        title="Placements"
         subtitle="Control how ads run across your screen network"
         icon={<MapPin size={20} />}
         actions={
@@ -85,7 +86,7 @@ export default function Placements() {
             <table className="w-full table-fixed">
               <thead>
                 <tr className="skoop-table-header">
-                  <th className="skoop-table-cell text-left" style={{ width: "22%" }}>Network Rule</th>
+                  <th className="skoop-table-cell text-left" style={{ width: "22%" }}>Placement</th>
                   <th className="skoop-table-cell text-left" style={{ width: "14%" }}>Screens</th>
                   <th className="skoop-table-cell text-left whitespace-nowrap" style={{ width: "13%" }}>How Ads Play</th>
                   <th className="skoop-table-cell text-left" style={{ width: "18%" }}>Content Split</th>
@@ -107,7 +108,7 @@ export default function Placements() {
                       <StatusChip status={p.model.toLowerCase()} label={modelLabel(p.model)} />
                     </td>
                     <td className="skoop-table-cell">
-                      <MixBar houseFill={p.houseFill} sold={p.sold} programmatic={p.prog} showHoverTooltip />
+                      <MixBar owned={p.owned} direct={p.direct} programmatic={p.prog} showHoverTooltip />
                     </td>
                     <td className="skoop-table-cell text-muted-foreground text-xs">{p.dayparts}</td>
                     <td className="skoop-table-cell text-sm tabular-nums font-medium">{p.capacityPct}%</td>
@@ -137,7 +138,7 @@ export default function Placements() {
                   <Monitor size={12} />
                   <span className="text-xs">{p.screenCount.toLocaleString()} screens · {p.region}</span>
                 </div>
-                <MixBar houseFill={p.houseFill} sold={p.sold} programmatic={p.prog} showLabels />
+                <MixBar owned={p.owned} direct={p.direct} programmatic={p.prog} showLabels />
                 <div className="flex justify-between mt-3 text-xs text-muted-foreground">
                   <span className="tabular-nums">{p.capacityPct}% capacity</span>
                 </div>

@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Megaphone, ArrowLeft, ArrowRight, Check, Info, AlertTriangle, Plus, X, Upload, Tag, Search, Trash2, MapPin, Globe, ChevronDown, ChevronRight } from "lucide-react";
+import { Megaphone, ArrowLeft, ArrowRight, Check, Info, AlertTriangle, Plus, X, Upload, Tag, Search, Trash2, MapPin, Globe, ChevronDown, ChevronRight, Clock } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StatusChip from "@/components/shared/StatusChip";
 import { Button } from "@/components/ui/button";
@@ -13,8 +13,6 @@ import { getAllScreenTags, getScreensMatchingTags } from "@/data/screenTags";
 import { hasAnyImpressionData, getImpressionMultiplier } from "@/data/impressionStore";
 import { searchPOIs, getScreensNearPOIs, getRegionalSearchCenters, milesToMeters, POI } from "@/services/foursquareService";
 import POIAutocomplete from "@/components/shared/POIAutocomplete";
-
-type DeliveryMode = "sov" | "total" | "none";
 
 const STEPS = [
   "Campaign Details",
@@ -39,13 +37,26 @@ interface Creative {
   file: File;
 }
 
-const DAYPARTS = ["Morning", "Midday", "Afternoon", "Evening", "Late Night"];
+const ALL_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+interface TimeWindow {
+  id: string;
+  days: string[];
+  startTime: string;
+  endTime: string;
+}
+
+function newWindow(days = ALL_DAYS.slice(0, 5)): TimeWindow {
+  return { id: crypto.randomUUID(), days, startTime: "08:00", endTime: "20:00" };
+}
 
 export default function CampaignCreate() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [campaignName, setCampaignName] = useState("");
+  const [isPaid, setIsPaid] = useState(false);
   const [advertiser, setAdvertiser] = useState("");
+  const [dealValue, setDealValue] = useState("");
 
   // Step 2 — Where It Runs
   const [selectedRules, setSelectedRules] = useState<SelectedRule[]>([]);
@@ -66,13 +77,16 @@ export default function CampaignCreate() {
   // Step 3 — Schedule
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [activeDays, setActiveDays] = useState<string[]>(["Mon", "Tue", "Wed", "Thu", "Fri"]);
-  const [activeDayparts, setActiveDayparts] = useState<string[]>(["Morning", "Midday", "Afternoon"]);
+  const [timeWindows, setTimeWindows] = useState<TimeWindow[]>([newWindow()]);
 
-  // Step 4 — How Much It Plays
-  const [deliveryMode, setDeliveryMode] = useState<DeliveryMode>("total");
-  const [sov, setSov] = useState(15);
+  // Step 4 — Delivery
+  const [fillEnabled, setFillEnabled] = useState(true);
+  const [hasTarget, setHasTarget] = useState(false);
+  const [deliveryGoalType, setDeliveryGoalType] = useState<"sov" | "total" | "plays-per-day">("total");
+  const [sovValue, setSovValue] = useState(15);
   const [totalPlays, setTotalPlays] = useState(5000);
+  const [playsPerDay, setPlaysPerDay] = useState(200);
+  const [progFallback, setProgFallback] = useState(true);
 
   // Step 5 — Creatives
   const [creatives, setCreatives] = useState<Creative[]>([]);
@@ -100,8 +114,16 @@ export default function CampaignCreate() {
 
   const removeCreative = (id: string) => setCreatives((prev) => prev.filter((c) => c.id !== id));
 
-  const toggleDay = (d: string) => setActiveDays((prev) => prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]);
-  const toggleDaypart = (d: string) => setActiveDayparts((prev) => prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]);
+  const addWindow = () => setTimeWindows((prev) => [...prev, newWindow()]);
+  const removeWindow = (id: string) => setTimeWindows((prev) => prev.filter((w) => w.id !== id));
+  const updateWindow = (id: string, patch: Partial<TimeWindow>) =>
+    setTimeWindows((prev) => prev.map((w) => w.id === id ? { ...w, ...patch } : w));
+  const toggleWindowDay = (id: string, day: string) =>
+    updateWindow(id, {
+      days: timeWindows.find((w) => w.id === id)!.days.includes(day)
+        ? timeWindows.find((w) => w.id === id)!.days.filter((d) => d !== day)
+        : [...timeWindows.find((w) => w.id === id)!.days, day],
+    });
 
   const next = () => setStep((s) => Math.min(s + 1, STEPS.length - 1));
   const prev = () => setStep((s) => Math.max(s - 1, 0));
@@ -151,26 +173,30 @@ export default function CampaignCreate() {
     const bookedPct = 100 - availablePct;
 
     let requested = 0;
-    if (deliveryMode === "sov") {
-      requested = Math.round(totalCapacity * sov / 100);
-    } else if (deliveryMode === "total") {
-      requested = totalPlays;
+    if (hasTarget) {
+      if (deliveryGoalType === "sov") {
+        requested = Math.round(totalCapacity * sovValue / 100);
+      } else if (deliveryGoalType === "total") {
+        requested = totalPlays;
+      } else {
+        requested = playsPerDay * totalScreens;
+      }
     }
-    const fits = deliveryMode === "none" || requested <= totalAvailable;
-    const dailyPacing = deliveryMode === "total" && startDate && endDate
+    const fits = !hasTarget || requested <= totalAvailable;
+    const dailyPacing = hasTarget && deliveryGoalType === "total" && startDate && endDate
       ? Math.round(totalPlays / Math.max(1, Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / 86400000)))
-      : deliveryMode === "sov"
-      ? Math.round(totalCapacity * sov / 100)
+      : hasTarget && deliveryGoalType === "plays-per-day" ? playsPerDay * totalScreens
       : 0;
 
     return { totalScreens, totalAvailable, totalCapacity, availablePct, bookedPct, requested, fits, dailyPacing };
-  }, [selectedRules, selectedTags, tagMatchedScreens, proximityMatchedScreens, deliveryMode, sov, totalPlays, startDate, endDate, proximityPOIs]);
+  }, [selectedRules, selectedTags, tagMatchedScreens, proximityMatchedScreens, hasTarget, deliveryGoalType, sovValue, totalPlays, playsPerDay, startDate, endDate, proximityPOIs]);
 
   const estimatedDailyPlays = useMemo(() => {
-    if (!capacitySummary) return 0;
-    if (deliveryMode === "sov") return Math.round(capacitySummary.totalCapacity * sov / 100);
-    return capacitySummary.dailyPacing || Math.round(totalPlays / 30);
-  }, [capacitySummary, deliveryMode, sov, totalPlays]);
+    if (!capacitySummary || !hasTarget) return 0;
+    if (deliveryGoalType === "sov") return Math.round(capacitySummary.totalCapacity * sovValue / 100);
+    if (deliveryGoalType === "plays-per-day") return playsPerDay * capacitySummary.totalScreens;
+    return capacitySummary.dailyPacing || totalPlays;
+  }, [capacitySummary, hasTarget, deliveryGoalType, sovValue, totalPlays, playsPerDay]);
 
   const addRule = (ruleId: string) => {
     if (selectedRules.find((r) => r.id === ruleId)) return;
@@ -251,22 +277,59 @@ export default function CampaignCreate() {
   // ── STEP RENDERERS ──
 
   const renderStep1 = () => (
-    <div className="space-y-5">
-      <div className="skoop-card p-5 space-y-4">
-        <p className="skoop-section-header">Campaign Details</p>
-        <p className="text-xs text-muted-foreground">
-          Name your campaign and optionally add an advertiser. If you set a delivery target in step 4, this becomes a sold campaign tracked against that target. Leave the target blank to run as house fill.
-        </p>
-        <div className="space-y-3">
+    <div className="skoop-card p-5 space-y-4">
+      <p className="skoop-section-header">Campaign Details</p>
+      <div className="space-y-4">
+        <div>
+          <label className="text-xs text-muted-foreground">Campaign Name <span className="text-destructive">*</span></label>
+          <Input placeholder="e.g. Summer Brand Push" className="mt-1" value={campaignName} onChange={(e) => setCampaignName(e.target.value)} />
+        </div>
+
+        <div className="flex items-center justify-between rounded-lg border border-border px-4 py-3">
           <div>
-            <label className="text-xs text-muted-foreground">Campaign Name <span className="text-destructive">*</span></label>
-            <Input placeholder="e.g. Summer Brand Push" className="mt-1" value={campaignName} onChange={(e) => setCampaignName(e.target.value)} />
+            <p className="text-sm font-medium text-foreground">Paid campaign</p>
+            <p className="text-xs text-muted-foreground mt-0.5">This campaign is booked by an external advertiser or partner.</p>
           </div>
-          <div>
-            <label className="text-xs text-muted-foreground">Advertiser / Partner <span className="text-muted-foreground/50">(optional — leave blank for house content)</span></label>
-            <Input placeholder="e.g. Nike, Coca-Cola, or leave blank for WU house content" className="mt-1" value={advertiser} onChange={(e) => setAdvertiser(e.target.value)} />
+          <div className="flex gap-1 shrink-0">
+            <button
+              onClick={() => setIsPaid(true)}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${isPaid ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}
+            >ON</button>
+            <button
+              onClick={() => { setIsPaid(false); setAdvertiser(""); setDealValue(""); }}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${!isPaid ? "bg-skoop-slate text-white" : "bg-secondary text-muted-foreground"}`}
+            >OFF</button>
           </div>
         </div>
+
+        {isPaid && (
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs text-muted-foreground">Advertiser / Partner <span className="text-muted-foreground/60">(optional)</span></label>
+              <Input
+                placeholder="e.g. Nike Australia"
+                className="mt-1"
+                value={advertiser}
+                onChange={(e) => setAdvertiser(e.target.value)}
+                autoFocus
+              />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Deal Value <span className="text-muted-foreground/60">(optional)</span></label>
+              <div className="relative mt-1">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
+                <Input
+                  type="number"
+                  min={0}
+                  placeholder="0.00"
+                  className="pl-7"
+                  value={dealValue}
+                  onChange={(e) => setDealValue(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -279,8 +342,8 @@ export default function CampaignCreate() {
     <div className="space-y-5">
       {/* Network Rules */}
       <div className="skoop-card p-5 space-y-4">
-        <p className="skoop-section-header">Network Rules</p>
-        <p className="text-xs text-muted-foreground">Select one or more Network Rules to define where this campaign plays. Optionally narrow with tags per rule.</p>
+        <p className="skoop-section-header">Placements</p>
+        <p className="text-xs text-muted-foreground">Select one or more placements to define where this campaign plays. Optionally narrow with tags per placement.</p>
 
         <div className="space-y-2">
           {allPlacements.map((rule) => {
@@ -505,188 +568,272 @@ export default function CampaignCreate() {
   );
 
   const renderStep3 = () => (
-    <div className="skoop-card p-5 space-y-4">
-      <p className="skoop-section-header">Schedule</p>
-      <p className="text-xs text-muted-foreground">Campaign only competes for inventory during selected days and dayparts.</p>
-      <div className="grid grid-cols-2 gap-4">
-        <div><label className="text-xs text-muted-foreground">Start Date</label><Input type="date" className="mt-1" value={startDate} onChange={(e) => setStartDate(e.target.value)} /></div>
-        <div><label className="text-xs text-muted-foreground">End Date</label><Input type="date" className="mt-1" value={endDate} onChange={(e) => setEndDate(e.target.value)} /></div>
-      </div>
-      <div>
-        <label className="text-xs text-muted-foreground">Active Days</label>
-        <div className="flex gap-2 mt-2">
-          {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
-            <button
-              key={d}
-              onClick={() => toggleDay(d)}
-              className={`w-10 h-8 rounded border text-xs font-medium transition-colors ${
-                activeDays.includes(d)
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "border-border text-muted-foreground hover:bg-secondary"
-              }`}
-            >
-              {d}
-            </button>
-          ))}
+    <div className="space-y-4">
+      {/* Campaign dates */}
+      <div className="skoop-card p-5 space-y-4">
+        <p className="skoop-section-header">Campaign Dates</p>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="text-xs text-muted-foreground">Start Date</label>
+            <Input type="date" className="mt-1" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+          </div>
+          <div>
+            <label className="text-xs text-muted-foreground">End Date</label>
+            <Input type="date" className="mt-1" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+          </div>
         </div>
       </div>
-      <div>
-        <label className="text-xs text-muted-foreground">Dayparts</label>
-        <div className="flex flex-wrap gap-2 mt-2">
-          {DAYPARTS.map((dp) => (
-            <button
-              key={dp}
-              onClick={() => toggleDaypart(dp)}
-              className={`px-3 py-1.5 rounded-md border text-xs font-medium transition-colors ${
-                activeDayparts.includes(dp)
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "border-border text-muted-foreground hover:bg-secondary"
-              }`}
-            >
-              {dp}
-            </button>
+
+      {/* Time windows */}
+      <div className="skoop-card p-5 space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="skoop-section-header">Active Hours</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Campaign only competes for inventory within these windows.</p>
+          </div>
+          <Button variant="outline" size="sm" className="text-xs" onClick={addWindow}>
+            <Plus size={13} className="mr-1" /> Add window
+          </Button>
+        </div>
+
+        <div className="space-y-3">
+          {timeWindows.map((w, idx) => (
+            <div key={w.id} className="rounded-lg border border-border p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                  <Clock size={12} /> Window {idx + 1}
+                </span>
+                {timeWindows.length > 1 && (
+                  <button onClick={() => removeWindow(w.id)} className="text-muted-foreground hover:text-destructive transition-colors">
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
+
+              {/* Day picker */}
+              <div className="flex gap-1.5">
+                {ALL_DAYS.map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => toggleWindowDay(w.id, d)}
+                    className={`w-10 h-8 rounded border text-xs font-medium transition-colors ${
+                      w.days.includes(d)
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "border-border text-muted-foreground hover:bg-secondary"
+                    }`}
+                  >
+                    {d}
+                  </button>
+                ))}
+                <button
+                  onClick={() => updateWindow(w.id, { days: w.days.length === ALL_DAYS.length ? [] : ALL_DAYS })}
+                  className="ml-1 px-2 h-8 rounded border border-dashed border-border text-[10px] text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
+                >
+                  {w.days.length === ALL_DAYS.length ? "Clear" : "All"}
+                </button>
+              </div>
+
+              {/* Time range */}
+              <div className="flex items-center gap-3">
+                <div>
+                  <label className="text-[11px] text-muted-foreground">From</label>
+                  <Input
+                    type="time"
+                    className="mt-0.5 w-32 text-sm"
+                    value={w.startTime}
+                    onChange={(e) => updateWindow(w.id, { startTime: e.target.value })}
+                  />
+                </div>
+                <span className="text-muted-foreground mt-5">→</span>
+                <div>
+                  <label className="text-[11px] text-muted-foreground">To</label>
+                  <Input
+                    type="time"
+                    className="mt-0.5 w-32 text-sm"
+                    value={w.endTime}
+                    onChange={(e) => updateWindow(w.id, { endTime: e.target.value })}
+                  />
+                </div>
+                {w.startTime && w.endTime && (
+                  <div className="mt-5 text-xs text-muted-foreground tabular-nums">
+                    {(() => {
+                      const [sh, sm] = w.startTime.split(":").map(Number);
+                      const [eh, em] = w.endTime.split(":").map(Number);
+                      const hrs = ((eh * 60 + em) - (sh * 60 + sm)) / 60;
+                      return hrs > 0 ? `${hrs}h / day` : null;
+                    })()}
+                  </div>
+                )}
+              </div>
+            </div>
           ))}
         </div>
       </div>
     </div>
   );
 
-  const renderStep4 = () => (
-    <div className="skoop-card p-5 space-y-5">
-      <p className="skoop-section-header">Delivery Target</p>
-      <p className="text-xs text-muted-foreground">Choose how to express the delivery target for this campaign.</p>
+  const renderStep4 = () => {
+    const effectiveFill = fillEnabled || !hasTarget;
+    return (
+      <div className="space-y-4">
+        {/* Section 1 — Fill & target toggles */}
+        <div className="skoop-card p-5 space-y-5">
+          <p className="skoop-section-header">Delivery Settings</p>
 
-      <div className="flex gap-2">
-        <button
-          onClick={() => setDeliveryMode("sov")}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "sov" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}
-        >
-          % of Screen Time
-        </button>
-        <button
-          onClick={() => setDeliveryMode("total")}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "total" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}
-        >
-          Total Plays
-        </button>
-        <button
-          onClick={() => setDeliveryMode("none")}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryMode === "none" ? "bg-skoop-slate text-white" : "bg-secondary text-muted-foreground"}`}
-        >
-          No Target (House Fill)
-        </button>
-      </div>
-
-      {deliveryMode === "none" ? (
-        <div className="flex items-start gap-3 bg-secondary/70 border border-border rounded-lg px-4 py-4">
-          <Info size={14} className="text-muted-foreground mt-0.5 shrink-0" />
-          <div>
-            <p className="text-sm font-medium text-foreground">House Fill campaign</p>
-            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-              No delivery target. This campaign fills remaining slots after all other campaigns have been served. It runs continuously as an always-on fallback with no end date required.
-            </p>
-          </div>
-        </div>
-      ) : deliveryMode === "sov" ? (
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span>Share of screen time</span>
-              <span className="font-semibold tabular-nums">{sov}%</span>
-            </div>
-            <Slider
-              value={[sov]}
-              onValueChange={([v]) => { setSov(v); setConflictAcknowledged(false); }}
-              min={1}
-              max={50}
-              step={1}
-              className="[&_[role=slider]]:bg-primary"
-            />
-            <div className="flex justify-between text-[11px] text-muted-foreground">
-              <span>1%</span>
-              <span>50% max</span>
-            </div>
-          </div>
-
-          {capacitySummary && (
-            <div className={`rounded-lg border px-4 py-4 space-y-3 ${capacitySummary.fits ? "border-border bg-secondary/40" : "border-destructive/40 bg-destructive/5"}`}>
-              <p className="text-xs font-medium text-foreground">Estimated Delivery</p>
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <p className="text-[11px] text-muted-foreground">Screens targeted</p>
-                  <p className="text-sm font-medium tabular-nums">{capacitySummary.totalScreens.toLocaleString()}</p>
-                </div>
-                <div>
-                  <p className="text-[11px] text-muted-foreground">Est. plays/day</p>
-                  <p className="text-sm font-medium tabular-nums">~{estimatedDailyPlays.toLocaleString()}</p>
-                </div>
-                <div>
-                  <p className="text-[11px] text-muted-foreground">Est. impressions/day</p>
-                  {hasImpressions ? (
-                    <p className="text-sm font-medium tabular-nums">~{estimatedDailyImpressions.toLocaleString()}</p>
-                  ) : (
-                    <p className="text-[11px] text-muted-foreground italic">—</p>
-                  )}
-                </div>
+          <div className="space-y-4">
+            {/* Fill enabled toggle */}
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-sm font-medium text-foreground">Fill enabled</p>
+                <p className="text-xs text-muted-foreground mt-0.5">This campaign can play in available fill slots when not reserved for other campaigns.</p>
+              </div>
+              <div className="flex gap-1 shrink-0">
+                <button
+                  onClick={() => { setFillEnabled(true); setConflictAcknowledged(false); }}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${fillEnabled ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}
+                >ON</button>
+                <button
+                  onClick={() => { setFillEnabled(false); setConflictAcknowledged(false); }}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${!fillEnabled ? "bg-skoop-slate text-white" : "bg-secondary text-muted-foreground"}`}
+                >OFF</button>
               </div>
             </div>
-          )}
-        </div>
-      ) : (
-        <div className="space-y-4">
-          <div className="flex items-end gap-4">
-            <div className="flex-1 max-w-xs">
-              <label className="text-xs text-muted-foreground">Target Total Plays</label>
-              <Input
-                type="number"
-                placeholder="e.g. 5000"
-                className="mt-1"
-                value={totalPlays}
-                onChange={(e) => { setTotalPlays(Number(e.target.value)); setConflictAcknowledged(false); }}
-              />
+
+            {/* Auto-correct note */}
+            {!fillEnabled && !hasTarget && (
+              <div className="flex items-start gap-2 rounded-md bg-amber-50 border border-amber-200 px-3 py-2">
+                <AlertTriangle size={12} className="text-amber-600 mt-0.5 shrink-0" />
+                <p className="text-xs text-amber-700">A campaign with fill disabled and no target would never play. Fill has been left enabled.</p>
+              </div>
+            )}
+
+            {/* Has target toggle */}
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-sm font-medium text-foreground">Set delivery target</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Set a goal for how much this campaign should play. Without a target it runs as fill only.</p>
+              </div>
+              <div className="flex gap-1 shrink-0">
+                <button
+                  onClick={() => { setHasTarget(true); setConflictAcknowledged(false); }}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${hasTarget ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}
+                >ON</button>
+                <button
+                  onClick={() => { setHasTarget(false); setConflictAcknowledged(false); }}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${!hasTarget ? "bg-skoop-slate text-white" : "bg-secondary text-muted-foreground"}`}
+                >OFF</button>
+              </div>
             </div>
-            {startDate && endDate && (
-              <p className="text-xs text-muted-foreground pb-2">
-                ~{estimatedDailyPlays.toLocaleString()} plays/day over the campaign period
-              </p>
+
+            {!hasTarget && (
+              <div className="flex items-start gap-2 rounded-md bg-secondary/70 border border-border px-3 py-3">
+                <Info size={12} className="text-muted-foreground mt-0.5 shrink-0" />
+                <p className="text-xs text-muted-foreground leading-relaxed">No target — this campaign plays as fill only, taking available slots after all targeted campaigns are served.</p>
+              </div>
             )}
           </div>
+        </div>
 
-          {capacitySummary && (
-            <div className={`rounded-lg border px-4 py-4 space-y-3 ${capacitySummary.fits ? "border-border bg-secondary/40" : "border-destructive/40 bg-destructive/5"}`}>
-              <p className="text-xs font-medium text-foreground">Availability Check</p>
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <p className="text-[11px] text-muted-foreground">Available capacity</p>
-                  <p className="text-sm font-medium tabular-nums">{capacitySummary.totalAvailable.toLocaleString()} plays/day</p>
-                </div>
-                <div>
-                  <p className="text-[11px] text-muted-foreground">Daily pacing needed</p>
-                  <p className={`text-sm font-medium tabular-nums ${!capacitySummary.fits ? "text-destructive" : ""}`}>
-                    {capacitySummary.dailyPacing?.toLocaleString() || "—"} plays/day
-                  </p>
-                </div>
-                <div>
-                  <p className="text-[11px] text-muted-foreground">Est. daily impressions</p>
-                  {hasImpressions ? (
-                    <p className="text-sm font-medium tabular-nums">~{estimatedDailyImpressions.toLocaleString()}</p>
-                  ) : (
-                    <p className="text-[11px] text-muted-foreground italic">—</p>
-                  )}
-                </div>
+        {/* Section 2 — Delivery goal (only when hasTarget) */}
+        {hasTarget && (
+          <div className="skoop-card p-5 space-y-4">
+            <p className="skoop-section-header">Delivery Goal</p>
+            <div className="flex gap-2">
+              {(["sov", "total", "plays-per-day"] as const).map((mode) => (
+                <button
+                  key={mode}
+                  onClick={() => { setDeliveryGoalType(mode); setConflictAcknowledged(false); }}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${deliveryGoalType === mode ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}
+                >
+                  {mode === "sov" ? "% of Screen Time" : mode === "total" ? "Total Plays" : "Plays / Day"}
+                </button>
+              ))}
+            </div>
+
+            {deliveryGoalType === "sov" && (
+              <div className="space-y-3">
+                <div className="flex justify-between text-sm"><span>Share of screen time</span><span className="font-medium tabular-nums">{sovValue}%</span></div>
+                <Slider value={[sovValue]} onValueChange={([v]) => { setSovValue(v); setConflictAcknowledged(false); }} min={1} max={50} step={1} />
+                <div className="flex justify-between text-[11px] text-muted-foreground"><span>1%</span><span>50% max</span></div>
               </div>
-              {!capacitySummary.fits && (
-                <div className="flex items-start gap-2 text-xs text-destructive">
-                  <AlertTriangle size={12} className="mt-0.5 shrink-0" />
-                  <span>Requested plays exceed available capacity on the selected screens. Reduce the target or add more screens in the previous step.</span>
+            )}
+
+            {deliveryGoalType === "total" && (
+              <div>
+                <label className="text-xs text-muted-foreground">Target total plays (across campaign period)</label>
+                <Input type="number" placeholder="e.g. 5000" className="mt-1 w-48" value={totalPlays} onChange={(e) => { setTotalPlays(Number(e.target.value)); setConflictAcknowledged(false); }} />
+              </div>
+            )}
+
+            {deliveryGoalType === "plays-per-day" && (
+              <div>
+                <label className="text-xs text-muted-foreground">Target plays per screen per day</label>
+                <Input type="number" placeholder="e.g. 200" className="mt-1 w-48" value={playsPerDay} onChange={(e) => { setPlaysPerDay(Number(e.target.value)); setConflictAcknowledged(false); }} />
+              </div>
+            )}
+
+            {capacitySummary && (
+              <div className={`rounded-lg border px-4 py-4 space-y-3 ${capacitySummary.fits ? "border-border bg-secondary/40" : "border-destructive/40 bg-destructive/5"}`}>
+                <p className="text-xs font-medium text-foreground">Availability Check</p>
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <p className="text-[11px] text-muted-foreground">Available capacity</p>
+                    <p className="text-sm font-medium tabular-nums">{capacitySummary.totalAvailable.toLocaleString()} plays/day</p>
+                  </div>
+                  <div>
+                    <p className="text-[11px] text-muted-foreground">Requested</p>
+                    <p className={`text-sm font-medium tabular-nums ${!capacitySummary.fits ? "text-destructive" : ""}`}>
+                      {capacitySummary.requested.toLocaleString()} plays/day
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[11px] text-muted-foreground">Est. daily impressions</p>
+                    {hasImpressions ? (
+                      <p className="text-sm font-medium tabular-nums">~{estimatedDailyImpressions.toLocaleString()}</p>
+                    ) : (
+                      <p className="text-[11px] text-muted-foreground italic">—</p>
+                    )}
+                  </div>
                 </div>
-              )}
+                {!capacitySummary.fits && (
+                  <div className="flex items-start gap-2 text-xs text-destructive">
+                    <AlertTriangle size={12} className="mt-0.5 shrink-0" />
+                    <span>Requested plays exceed available capacity on the selected screens. Reduce the target or add more screens.</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Section 3 — Programmatic fallback */}
+        <div className="skoop-card p-5 space-y-3">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-sm font-medium text-foreground">Programmatic fallback</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Allow this campaign's creatives to fill slots when a programmatic partner (e.g. Screenverse) returns no-fill.</p>
+            </div>
+            <div className="flex gap-1 shrink-0">
+              <button
+                onClick={() => setProgFallback(true)}
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${progFallback ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}
+              >ON</button>
+              <button
+                onClick={() => setProgFallback(false)}
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${!progFallback ? "bg-skoop-slate text-white" : "bg-secondary text-muted-foreground"}`}
+              >OFF</button>
+            </div>
+          </div>
+          {!progFallback && (
+            <div className="flex items-start gap-2 text-xs text-muted-foreground">
+              <Info size={12} className="mt-0.5 shrink-0" />
+              <span>This campaign will only play in its own reserved allocation and will not absorb programmatic no-fill slots.</span>
             </div>
           )}
         </div>
-      )}
-    </div>
-  );
+      </div>
+    );
+  };
 
   const renderStep5 = () => (
     <div className="skoop-card p-5 space-y-4">
@@ -735,6 +882,20 @@ export default function CampaignCreate() {
     const hasConflict = capacitySummary ? !capacitySummary.fits : false;
     const hasPendingCreatives = false;
 
+    const deliveryTargetLabel = !hasTarget
+      ? "None (fill only)"
+      : deliveryGoalType === "sov"
+      ? `${sovValue}% of screen time`
+      : deliveryGoalType === "plays-per-day"
+      ? `${playsPerDay.toLocaleString()} plays/screen/day`
+      : `${totalPlays.toLocaleString()} total plays`;
+
+    const fillBehaviorLabel = !hasTarget
+      ? "Fill only"
+      : fillEnabled
+      ? "Target then fill"
+      : "Target, no fill";
+
     const ready = !hasConflict && campaignName && (selectedRules.length > 0 || selectedTags.length > 0);
 
     return (
@@ -743,12 +904,11 @@ export default function CampaignCreate() {
           <p className="skoop-section-header">Campaign Summary</p>
           <div className="grid grid-cols-2 gap-4">
             <div><p className="text-xs text-muted-foreground">Campaign Name</p><p className="text-sm font-medium">{campaignName || "Untitled"}</p></div>
-            <div><p className="text-xs text-muted-foreground">Type</p><StatusChip status={deliveryMode === "none" ? "house-fill" : "sold"} label={deliveryMode === "none" ? "House Fill" : "Sold"} /></div>
-            {advertiser && (
-              <div><p className="text-xs text-muted-foreground">Advertiser</p><p className="text-sm font-medium">{advertiser}</p></div>
-            )}
+            <div><p className="text-xs text-muted-foreground">Paid Campaign</p><p className="text-sm font-medium">{isPaid ? "Yes" : "No"}</p></div>
+            {isPaid && advertiser && <div><p className="text-xs text-muted-foreground">Advertiser</p><p className="text-sm font-medium">{advertiser}</p></div>}
+            {isPaid && dealValue && <div><p className="text-xs text-muted-foreground">Deal Value</p><p className="text-sm font-medium tabular-nums">${Number(dealValue).toLocaleString()}</p></div>}
             <div className="col-span-2">
-              <p className="text-xs text-muted-foreground">Network Rules</p>
+              <p className="text-xs text-muted-foreground">Placements</p>
               <div className="space-y-1 mt-1">
                 {rulesText.map((rt, i) => (
                   <p key={i} className="text-sm font-medium">{rt}</p>
@@ -768,8 +928,19 @@ export default function CampaignCreate() {
             )}
             <div><p className="text-xs text-muted-foreground">Screens</p><p className="text-sm font-medium tabular-nums">{capacitySummary?.totalScreens.toLocaleString() || 0}</p></div>
             <div><p className="text-xs text-muted-foreground">Schedule</p><p className="text-sm font-medium">{startDate || "—"} → {endDate || "—"}</p></div>
-            <div><p className="text-xs text-muted-foreground">Active Days</p><p className="text-sm font-medium">{activeDays.join(", ")}</p></div>
-            <div><p className="text-xs text-muted-foreground">Delivery Target</p><p className="text-sm font-medium tabular-nums">{deliveryMode === "none" ? "None (House Fill)" : deliveryMode === "sov" ? `${sov}% of screen time` : `${totalPlays.toLocaleString()} total plays`}</p></div>
+            <div className="col-span-2">
+              <p className="text-xs text-muted-foreground">Active Hours</p>
+              <div className="mt-1 space-y-0.5">
+                {timeWindows.map((w) => (
+                  <p key={w.id} className="text-sm font-medium">
+                    {w.days.length === 7 ? "Every day" : w.days.join(", ")} · {w.startTime} – {w.endTime}
+                  </p>
+                ))}
+              </div>
+            </div>
+            <div><p className="text-xs text-muted-foreground">Delivery Target</p><p className="text-sm font-medium tabular-nums">{deliveryTargetLabel}</p></div>
+            <div><p className="text-xs text-muted-foreground">Fill Behavior</p><p className="text-sm font-medium">{fillBehaviorLabel}</p></div>
+            <div><p className="text-xs text-muted-foreground">Prog. Fallback</p><p className="text-sm font-medium">{progFallback ? "Enabled" : "Disabled"}</p></div>
             <div><p className="text-xs text-muted-foreground">Creatives</p><p className="text-sm font-medium">{creatives.length} asset{creatives.length !== 1 ? "s" : ""} uploaded</p></div>
             <div><p className="text-xs text-muted-foreground">Proof of Play</p><p className="text-sm font-medium text-primary">Enabled</p></div>
           </div>
@@ -947,7 +1118,7 @@ export default function CampaignCreate() {
             <div className="flex justify-between mt-8">
               <Button variant="outline" size="sm" onClick={prev} disabled={step === 0}><ArrowLeft size={14} className="mr-1" /> Previous</Button>
               {!isLastStep ? (
-                <Button size="sm" onClick={next} disabled={step === 0 && !campaignName.trim()}>
+                <Button size="sm" onClick={next} disabled={step === 0 && !campaignName}>
                   {capacitySummary && !capacitySummary.fits && step >= 3 && <AlertTriangle size={14} className="mr-1" />}
                   Next <ArrowRight size={14} className="ml-1" />
                 </Button>
