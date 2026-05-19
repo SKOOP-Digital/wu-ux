@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb";
-import { allPlacements, calcPlaysPerDay, calcCapacityFromRule } from "@/data/placements";
+import { allPlacements, calcCapacityFromRule } from "@/data/placements";
 import { allScreens } from "@/data/screens";
 import { getAllScreenTags, getScreensMatchingTags } from "@/data/screenTags";
 import { hasAnyImpressionData, getImpressionMultiplier } from "@/data/impressionStore";
@@ -22,12 +22,6 @@ const STEPS = [
   "Creatives",
   "Review & Launch",
 ];
-
-interface SelectedRule {
-  id: string;
-  tags: string[];
-  tagInput: string;
-}
 
 interface Creative {
   id: string;
@@ -59,7 +53,6 @@ export default function CampaignCreate() {
   const [dealValue, setDealValue] = useState("");
 
   // Step 2 — Where It Runs
-  const [selectedRules, setSelectedRules] = useState<SelectedRule[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [tagSearch, setTagSearch] = useState("");
   const [expandedTagGroups, setExpandedTagGroups] = useState<string[]>([]);
@@ -135,40 +128,54 @@ export default function CampaignCreate() {
     return getScreensMatchingTags(selectedTags).length;
   }, [selectedTags]);
 
+  const selectedPlacementTags = useMemo(
+    () => selectedTags.filter((t) => allPlacements.some((p) => p.name.toLowerCase() === t.toLowerCase())),
+    [selectedTags]
+  );
+
   const proximityMatchedScreens = useMemo(() => {
     if (proximityPOIs.length === 0) return [];
     return getScreensNearPOIs(proximityPOIs, allScreens, milesToMeters(proximityRadius));
   }, [proximityPOIs, proximityRadius]);
 
-  // Capacity calculations across all selected rules + tags
+  // Capacity calculations — placement tags use real capacity data, geo/manual tags use estimates
   const capacitySummary = useMemo(() => {
-    if (selectedRules.length === 0 && selectedTags.length === 0 && proximityPOIs.length === 0) return null;
+    if (selectedTags.length === 0 && proximityPOIs.length === 0) return null;
     let totalScreens = 0;
     let totalAvailable = 0;
     let totalCapacity = 0;
-    selectedRules.forEach((sr) => {
-      const rule = allPlacements.find((p) => p.id === sr.id);
-      if (!rule) return;
-      const cap = calcCapacityFromRule(rule);
-      totalScreens += rule.screenCount;
-      totalAvailable += cap.available;
-      totalCapacity += cap.total;
+
+    // Placement tags → real capacity
+    selectedTags.forEach((tag) => {
+      const placement = allPlacements.find((p) => p.name.toLowerCase() === tag.toLowerCase());
+      if (placement) {
+        const cap = calcCapacityFromRule(placement);
+        totalScreens += placement.screenCount;
+        totalCapacity += cap.total;
+        totalAvailable += cap.available;
+      }
     });
-    // Add tag-matched screens
-    if (selectedTags.length > 0) {
-      const tagScreens = tagMatchedScreens;
-      const tagCapPerScreen = 480;
-      totalScreens += tagScreens;
-      totalCapacity += tagScreens * tagCapPerScreen;
-      totalAvailable += Math.round(tagScreens * tagCapPerScreen * 0.7);
+
+    // Non-placement tags → flat estimate per screen
+    const nonPlacementTags = selectedTags.filter(
+      (t) => !allPlacements.some((p) => p.name.toLowerCase() === t.toLowerCase())
+    );
+    if (nonPlacementTags.length > 0) {
+      const matched = getScreensMatchingTags(nonPlacementTags).length;
+      const capPerScreen = 480;
+      totalScreens += matched;
+      totalCapacity += matched * capPerScreen;
+      totalAvailable += Math.round(matched * capPerScreen * 0.7);
     }
-    // Add proximity-matched screens
+
+    // Proximity → flat estimate
     if (proximityMatchedScreens.length > 0) {
-      const proxCapPerScreen = 480;
+      const capPerScreen = 480;
       totalScreens += proximityMatchedScreens.length;
-      totalCapacity += proximityMatchedScreens.length * proxCapPerScreen;
-      totalAvailable += Math.round(proximityMatchedScreens.length * proxCapPerScreen * 0.7);
+      totalCapacity += proximityMatchedScreens.length * capPerScreen;
+      totalAvailable += Math.round(proximityMatchedScreens.length * capPerScreen * 0.7);
     }
+
     const availablePct = totalCapacity > 0 ? Math.round((totalAvailable / totalCapacity) * 100) : 0;
     const bookedPct = 100 - availablePct;
 
@@ -189,7 +196,7 @@ export default function CampaignCreate() {
       : 0;
 
     return { totalScreens, totalAvailable, totalCapacity, availablePct, bookedPct, requested, fits, dailyPacing };
-  }, [selectedRules, selectedTags, tagMatchedScreens, proximityMatchedScreens, hasTarget, deliveryGoalType, sovValue, totalPlays, playsPerDay, startDate, endDate, proximityPOIs]);
+  }, [selectedTags, proximityMatchedScreens, hasTarget, deliveryGoalType, sovValue, totalPlays, playsPerDay, startDate, endDate, proximityPOIs]);
 
   const estimatedDailyPlays = useMemo(() => {
     if (!capacitySummary || !hasTarget) return 0;
@@ -198,45 +205,12 @@ export default function CampaignCreate() {
     return capacitySummary.dailyPacing || totalPlays;
   }, [capacitySummary, hasTarget, deliveryGoalType, sovValue, totalPlays, playsPerDay]);
 
-  const addRule = (ruleId: string) => {
-    if (selectedRules.find((r) => r.id === ruleId)) return;
-    setSelectedRules((prev) => [...prev, { id: ruleId, tags: [], tagInput: "" }]);
-  };
-
-  const removeRule = (ruleId: string) => {
-    setSelectedRules((prev) => prev.filter((r) => r.id !== ruleId));
-  };
-
-  const addTagToRule = (ruleId: string, tag: string) => {
-    if (!tag.trim()) return;
-    setSelectedRules((prev) =>
-      prev.map((r) => r.id === ruleId ? { ...r, tags: [...r.tags.filter((t) => t !== tag.trim()), tag.trim()], tagInput: "" } : r)
-    );
-  };
-
-  const removeTagFromRule = (ruleId: string, tag: string) => {
-    setSelectedRules((prev) =>
-      prev.map((r) => r.id === ruleId ? { ...r, tags: r.tags.filter((t) => t !== tag) } : r)
-    );
-  };
-
-  const updateTagInput = (ruleId: string, value: string) => {
-    setSelectedRules((prev) =>
-      prev.map((r) => r.id === ruleId ? { ...r, tagInput: value } : r)
-    );
-  };
   const hasImpressions = hasAnyImpressionData();
 
   const estimatedDailyImpressions = useMemo(() => {
     if (!hasImpressions || !capacitySummary) return 0;
     const screenIds = new Set<string>();
-    selectedRules.forEach((sr) => {
-      const rule = allPlacements.find((p) => p.id === sr.id);
-      if (rule) rule.screenIds.forEach((sid) => screenIds.add(sid));
-    });
-    if (selectedTags.length > 0) {
-      getScreensMatchingTags(selectedTags).forEach((s) => screenIds.add(s.id));
-    }
+    getScreensMatchingTags(selectedTags).forEach((s) => screenIds.add(s.id));
     proximityMatchedScreens.forEach((s) => screenIds.add(s.id));
     const playsPerScreen = capacitySummary.totalScreens > 0 ? estimatedDailyPlays / capacitySummary.totalScreens : 0;
     let totalImpressions = 0;
@@ -245,7 +219,7 @@ export default function CampaignCreate() {
       if (mult !== null) totalImpressions += playsPerScreen * mult;
     });
     return Math.round(totalImpressions);
-  }, [hasImpressions, capacitySummary, estimatedDailyPlays, selectedRules, selectedTags, proximityMatchedScreens]);
+  }, [hasImpressions, capacitySummary, estimatedDailyPlays, selectedTags, proximityMatchedScreens]);
 
   // POI search handler for campaign builder — auto-apply all results
   const handleCampaignPoiSearch = async (queryOverride?: string) => {
@@ -338,136 +312,95 @@ export default function CampaignCreate() {
     !selectedTags.includes(t.value) && t.value.toLowerCase().includes(tagSearch.toLowerCase())
   );
 
-  const renderStep2 = () => (
-    <div className="space-y-5">
-      {/* Network Rules */}
-      <div className="skoop-card p-5 space-y-4">
-        <p className="skoop-section-header">Placements</p>
-        <p className="text-xs text-muted-foreground">Select one or more placements to define where this campaign plays. Optionally narrow with tags per placement.</p>
+  const renderStep2 = () => {
+    const groups: Record<string, typeof filteredTags> = {};
+    const groupOrder = ["Placement Group", "Country", "State", "City", "ZIP", "Venue"];
+    filteredTags.forEach((tag) => {
+      const cat = tag.category || "Venue";
+      if (!groups[cat]) groups[cat] = [];
+      groups[cat].push(tag);
+    });
+    Object.values(groups).forEach((g) => g.sort((a, b) => b.screenCount - a.screenCount));
+    const isSearching = tagSearch.trim().length > 0;
+    const visibleGroups = groupOrder.filter((g) => groups[g]?.length);
 
-        <div className="space-y-2">
-          {allPlacements.map((rule) => {
-            const isSelected = selectedRules.some((sr) => sr.id === rule.id);
-            const sr = selectedRules.find((r) => r.id === rule.id);
-            const cap = calcCapacityFromRule(rule);
-            const availPct = Math.round((cap.available / cap.total) * 100);
-            return (
-              <div key={rule.id} className="space-y-0">
-                <button
-                  onClick={() => isSelected ? removeRule(rule.id) : addRule(rule.id)}
-                  className={`w-full text-left rounded-lg border-2 p-4 transition-all ${
-                    isSelected
-                      ? "border-primary bg-primary/5"
-                      : "border-border hover:border-primary/30 hover:bg-secondary/30"
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">{rule.name}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{rule.screenCount} screens · {availPct}% available</p>
-                    </div>
-                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
-                      isSelected ? "bg-primary border-primary" : "border-muted-foreground/30"
-                    }`}>
-                      {isSelected && <Check size={12} className="text-primary-foreground" />}
-                    </div>
-                  </div>
-                </button>
-                {isSelected && sr && (
-                  <div className="ml-4 mt-2 mb-3 pl-4 border-l-2 border-primary/20 space-y-2">
-                    <label className="text-[11px] text-muted-foreground">Filter to tags</label>
-                    <div className="flex flex-wrap gap-1.5">
-                      {sr.tags.map((tag) => (
-                        <span key={tag} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                          {tag}
-                          <button onClick={() => removeTagFromRule(sr.id, tag)}><X size={10} /></button>
-                        </span>
-                      ))}
-                    </div>
-                    <Input
-                      placeholder="e.g. Bodega, Urban Panel, West Coast"
-                      className="text-xs max-w-xs"
-                      value={sr.tagInput}
-                      onChange={(e) => updateTagInput(sr.id, e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === ",") {
-                          e.preventDefault();
-                          addTagToRule(sr.id, sr.tagInput);
-                        }
-                      }}
-                    />
-                  </div>
-                )}
+    return (
+      <div className="space-y-5">
+        {/* Tag targeting */}
+        <div className="skoop-card p-5 space-y-4">
+          <div className="flex items-center gap-2">
+            <Tag size={16} className="text-muted-foreground" />
+            <p className="skoop-section-header">Target by Tags</p>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Select placement groups or individual screen tags. Placement groups appear at the top — selecting one targets all screens in that group.
+          </p>
+
+          {selectedTags.length > 0 && (
+            <div className="space-y-2">
+              <div className="flex flex-wrap gap-1.5">
+                {selectedTags.map((tag) => {
+                  const isPlacement = selectedPlacementTags.includes(tag);
+                  return (
+                    <span
+                      key={tag}
+                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${
+                        isPlacement
+                          ? "bg-primary/15 text-primary border border-primary/20"
+                          : "bg-secondary text-foreground border border-border"
+                      }`}
+                    >
+                      {tag}
+                      <button onClick={() => setSelectedTags((prev) => prev.filter((t) => t !== tag))} className="ml-0.5 hover:opacity-70">
+                        <X size={10} />
+                      </button>
+                    </span>
+                  );
+                })}
               </div>
-            );
-          })}
-        </div>
-      </div>
+              <div className="flex items-center gap-2 bg-secondary/60 border border-border rounded-md px-3 py-2">
+                <Info size={12} className="text-primary shrink-0" />
+                <p className="text-xs text-foreground font-medium tabular-nums">
+                  {capacitySummary?.totalScreens.toLocaleString() ?? tagMatchedScreens} screen{(capacitySummary?.totalScreens ?? tagMatchedScreens) !== 1 ? "s" : ""} selected
+                </p>
+              </div>
+            </div>
+          )}
 
-      {/* Target by Tags */}
-      <div className="skoop-card p-5 space-y-4">
-        <div className="flex items-center gap-2">
-          <Tag size={16} className="text-muted-foreground" />
-          <p className="skoop-section-header">Target by Tags</p>
-        </div>
-        <p className="text-xs text-muted-foreground">Add screens by tag across your entire network, outside of the rules selected above.</p>
+          <div className="relative">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search placement groups, states, cities..."
+              className="pl-9 text-xs"
+              value={tagSearch}
+              onChange={(e) => setTagSearch(e.target.value)}
+            />
+          </div>
 
-        <div className="flex flex-wrap gap-1.5">
-          {selectedTags.map((tag) => (
-            <span key={tag} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
-              {tag}
-              <button onClick={() => setSelectedTags((prev) => prev.filter((t) => t !== tag))}><X size={10} /></button>
-            </span>
-          ))}
-        </div>
-
-        <div className="relative">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search tags..."
-            className="pl-9 text-xs"
-            value={tagSearch}
-            onChange={(e) => setTagSearch(e.target.value)}
-          />
-        </div>
-
-        <div className="space-y-1">
-          {(() => {
-            const groups: Record<string, typeof filteredTags> = {};
-            const order = ["Country", "State", "City", "ZIP", "Venue"];
-            filteredTags.forEach((tag) => {
-              const cat = tag.category || "Venue";
-              if (!groups[cat]) groups[cat] = [];
-              groups[cat].push(tag);
-            });
-            // Sort each group by screenCount desc
-            Object.values(groups).forEach(g => g.sort((a, b) => b.screenCount - a.screenCount));
-
-            const isSearching = tagSearch.trim().length > 0;
-            const visibleGroups = order.filter(g => groups[g]?.length);
-
-            if (visibleGroups.length === 0 && tagSearch) {
-              return <p className="text-xs text-muted-foreground">No matching tags found</p>;
-            }
-
-            return visibleGroups.map((groupName) => {
+          <div className="space-y-1">
+            {visibleGroups.length === 0 && tagSearch && (
+              <p className="text-xs text-muted-foreground py-2">No tags match "{tagSearch}"</p>
+            )}
+            {visibleGroups.map((groupName) => {
               const tags = groups[groupName];
               const isExpanded = isSearching || expandedTagGroups.includes(groupName);
               const showAll = showAllTagGroups[groupName];
               const CAP = 15;
               const visibleTags = showAll ? tags : tags.slice(0, CAP);
+              const isPlacementGroup = groupName === "Placement Group";
 
               return (
-                <div key={groupName} className="border border-border rounded-md">
+                <div key={groupName} className={`border rounded-md ${isPlacementGroup ? "border-primary/20 bg-primary/[0.02]" : "border-border"}`}>
                   <button
-                    onClick={() => setExpandedTagGroups(prev =>
-                      prev.includes(groupName) ? prev.filter(g => g !== groupName) : [...prev, groupName]
+                    onClick={() => setExpandedTagGroups((prev) =>
+                      prev.includes(groupName) ? prev.filter((g) => g !== groupName) : [...prev, groupName]
                     )}
                     className="flex items-center justify-between w-full px-3 py-2 text-xs font-medium text-foreground hover:bg-muted/50 transition-colors"
                   >
                     <span className="flex items-center gap-1.5">
                       {isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
                       {groupName}
+                      {isPlacementGroup && <span className="text-[10px] font-semibold uppercase tracking-wide text-primary/70 ml-0.5">groups</span>}
                       <span className="text-muted-foreground font-normal">({tags.length})</span>
                     </span>
                   </button>
@@ -477,16 +410,17 @@ export default function CampaignCreate() {
                         <button
                           key={tag.value}
                           onClick={() => { setSelectedTags((prev) => [...prev, tag.value]); setTagSearch(""); }}
-                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-dashed border-border text-xs text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-dashed text-xs text-muted-foreground hover:text-foreground transition-colors ${
+                            isPlacementGroup ? "border-primary/30 hover:border-primary/60" : "border-border hover:border-primary/40"
+                          }`}
                         >
-                          {tag.type === "auto" ? <Globe size={10} className="shrink-0" /> : null}
                           + {tag.value}
                           <span className="text-[10px] opacity-60">({tag.screenCount})</span>
                         </button>
                       ))}
                       {!showAll && tags.length > CAP && (
                         <button
-                          onClick={(e) => { e.stopPropagation(); setShowAllTagGroups(prev => ({ ...prev, [groupName]: true })); }}
+                          onClick={(e) => { e.stopPropagation(); setShowAllTagGroups((prev) => ({ ...prev, [groupName]: true })); }}
                           className="text-xs text-primary hover:underline px-1"
                         >
                           Show all {tags.length}
@@ -496,76 +430,65 @@ export default function CampaignCreate() {
                   )}
                 </div>
               );
-            });
-          })()}
-        </div>
-
-        {selectedTags.length > 0 && (
-          <div className="flex items-center gap-2 bg-secondary rounded-md px-3 py-2">
-            <Info size={12} className="text-primary shrink-0" />
-            <p className="text-xs text-foreground font-medium tabular-nums">{tagMatchedScreens} screen{tagMatchedScreens !== 1 ? "s" : ""} match these tags</p>
+            })}
           </div>
-        )}
-      </div>
-
-      {/* Target by Proximity */}
-      <div className="skoop-card p-5 space-y-4">
-        <div className="flex items-center gap-2">
-          <MapPin size={16} className="text-muted-foreground" />
-          <p className="skoop-section-header">Target by Proximity</p>
         </div>
-        <p className="text-xs text-muted-foreground">Find screens near specific points of interest.</p>
 
-        {/* Results banner */}
-        {poiSearched && !poiLoading && (
-          <div className="flex items-center justify-between gap-2 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
-            <div className="flex items-center gap-2">
-              <MapPin size={14} className="text-primary shrink-0" />
-              <p className="text-sm font-semibold text-foreground">
-                {proximityMatchedScreens.length} screen{proximityMatchedScreens.length !== 1 ? "s" : ""} within {proximityRadius} mi of {activePoiQuery}
-              </p>
+        {/* Target by Proximity */}
+        <div className="skoop-card p-5 space-y-4">
+          <div className="flex items-center gap-2">
+            <MapPin size={16} className="text-muted-foreground" />
+            <p className="skoop-section-header">Target by Proximity</p>
+          </div>
+          <p className="text-xs text-muted-foreground">Find screens near specific points of interest.</p>
+
+          {poiSearched && !poiLoading && (
+            <div className="flex items-center justify-between gap-2 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
+              <div className="flex items-center gap-2">
+                <MapPin size={14} className="text-primary shrink-0" />
+                <p className="text-sm font-semibold text-foreground">
+                  {proximityMatchedScreens.length} screen{proximityMatchedScreens.length !== 1 ? "s" : ""} within {proximityRadius} mi of {activePoiQuery}
+                </p>
+              </div>
+              <Button variant="ghost" size="sm" onClick={clearProximityFilter} className="text-xs h-7">
+                <X size={12} className="mr-1" /> Clear
+              </Button>
             </div>
-            <Button variant="ghost" size="sm" onClick={clearProximityFilter} className="text-xs h-7">
-              <X size={12} className="mr-1" /> Clear
+          )}
+
+          <div className="flex items-end gap-3">
+            <div className="flex-1">
+              <label className="text-[11px] text-muted-foreground mb-1 block">Search POI</label>
+              <POIAutocomplete
+                value={poiSearch}
+                onChange={setPoiSearch}
+                onSelect={(name) => { setPoiSearch(name); handleCampaignPoiSearch(name); }}
+                placeholder="e.g. Walmart, Family Dollar, CVS..."
+                className="text-xs"
+              />
+            </div>
+            <div>
+              <label className="text-[11px] text-muted-foreground mb-1 block">Radius</label>
+              <select
+                className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm"
+                value={proximityRadius}
+                onChange={(e) => setProximityRadius(Number(e.target.value))}
+              >
+                <option value={0.25}>0.25 mi</option>
+                <option value={0.5}>0.5 mi</option>
+                <option value={1}>1 mi</option>
+                <option value={2}>2 mi</option>
+                <option value={5}>5 mi</option>
+              </select>
+            </div>
+            <Button size="sm" onClick={() => handleCampaignPoiSearch()} disabled={poiLoading}>
+              {poiLoading ? "Searching..." : "Search"}
             </Button>
           </div>
-        )}
-
-        <div className="flex items-end gap-3">
-          <div className="flex-1">
-            <label className="text-[11px] text-muted-foreground mb-1 block">Search POI</label>
-            <POIAutocomplete
-              value={poiSearch}
-              onChange={setPoiSearch}
-              onSelect={(name) => {
-                setPoiSearch(name);
-                handleCampaignPoiSearch(name);
-              }}
-              placeholder="e.g. Walmart, Family Dollar, CVS..."
-              className="text-xs"
-            />
-          </div>
-          <div>
-            <label className="text-[11px] text-muted-foreground mb-1 block">Radius</label>
-            <select
-              className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm"
-              value={proximityRadius}
-              onChange={(e) => setProximityRadius(Number(e.target.value))}
-            >
-              <option value={0.25}>0.25 mi</option>
-              <option value={0.5}>0.5 mi</option>
-              <option value={1}>1 mi</option>
-              <option value={2}>2 mi</option>
-              <option value={5}>5 mi</option>
-            </select>
-          </div>
-          <Button size="sm" onClick={() => handleCampaignPoiSearch()} disabled={poiLoading}>
-            {poiLoading ? "Searching..." : "Search"}
-          </Button>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderStep3 = () => (
     <div className="space-y-4">
@@ -872,10 +795,6 @@ export default function CampaignCreate() {
   );
 
   const renderStep6 = () => {
-    const rulesText = selectedRules.map((sr) => {
-      const rule = allPlacements.find((p) => p.id === sr.id);
-      return rule ? `${rule.name}${sr.tags.length > 0 ? ` (${sr.tags.join(", ")})` : ""}` : "";
-    }).filter(Boolean);
 
     const totalDays = startDate && endDate ? Math.max(1, Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / 86400000)) : 30;
     const totalEstimated = estimatedDailyPlays * totalDays;
@@ -896,7 +815,7 @@ export default function CampaignCreate() {
       ? "Target then fill"
       : "Target, no fill";
 
-    const ready = !hasConflict && campaignName && (selectedRules.length > 0 || selectedTags.length > 0);
+    const ready = !hasConflict && campaignName && selectedTags.length > 0;
 
     return (
       <div className="space-y-4">
@@ -908,24 +827,22 @@ export default function CampaignCreate() {
             {isPaid && advertiser && <div><p className="text-xs text-muted-foreground">Advertiser</p><p className="text-sm font-medium">{advertiser}</p></div>}
             {isPaid && dealValue && <div><p className="text-xs text-muted-foreground">Deal Value</p><p className="text-sm font-medium tabular-nums">${Number(dealValue).toLocaleString()}</p></div>}
             <div className="col-span-2">
-              <p className="text-xs text-muted-foreground">Placements</p>
-              <div className="space-y-1 mt-1">
-                {rulesText.map((rt, i) => (
-                  <p key={i} className="text-sm font-medium">{rt}</p>
-                ))}
-                {rulesText.length === 0 && <p className="text-sm text-muted-foreground">None selected</p>}
-              </div>
-            </div>
-            {selectedTags.length > 0 && (
-              <div className="col-span-2">
-                <p className="text-xs text-muted-foreground">Target Tags</p>
+              <p className="text-xs text-muted-foreground">Targeting</p>
+              {selectedTags.length > 0 ? (
                 <div className="flex flex-wrap gap-1 mt-1">
-                  {selectedTags.map((tag) => (
-                    <span key={tag} className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">{tag}</span>
-                  ))}
+                  {selectedTags.map((tag) => {
+                    const isPlacement = selectedPlacementTags.includes(tag);
+                    return (
+                      <span key={tag} className={`px-2 py-0.5 rounded-full text-xs font-medium ${isPlacement ? "bg-primary/15 text-primary border border-primary/20" : "bg-secondary text-foreground border border-border"}`}>
+                        {tag}
+                      </span>
+                    );
+                  })}
                 </div>
-              </div>
-            )}
+              ) : (
+                <p className="text-sm text-muted-foreground mt-1">No tags selected</p>
+              )}
+            </div>
             <div><p className="text-xs text-muted-foreground">Screens</p><p className="text-sm font-medium tabular-nums">{capacitySummary?.totalScreens.toLocaleString() || 0}</p></div>
             <div><p className="text-xs text-muted-foreground">Schedule</p><p className="text-sm font-medium">{startDate || "—"} → {endDate || "—"}</p></div>
             <div className="col-span-2">
@@ -988,7 +905,7 @@ export default function CampaignCreate() {
 
   // Right panel — capacity summary (visible on steps 1–5)
   const renderCapacityPanel = () => {
-    if (!capacitySummary || (selectedRules.length === 0 && selectedTags.length === 0 && proximityPOIs.length === 0)) return null;
+    if (!capacitySummary || (selectedTags.length === 0 && proximityPOIs.length === 0)) return null;
     return (
       <div className="w-72 shrink-0 space-y-4">
         <div className="skoop-card p-5 space-y-3 sticky top-8">
