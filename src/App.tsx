@@ -12,7 +12,6 @@ import ProofOfPlay from "./pages/ProofOfPlay";
 import SettingsPage from "./pages/SettingsPage";
 import Screens from "./pages/Screens";
 import ScreenDetail from "./pages/ScreenDetail";
-import Analytics from "./pages/Analytics";
 import CampaignDetail from "./pages/CampaignDetail";
 import NotFound from "./pages/NotFound";
 
@@ -31,7 +30,6 @@ const App = () => (
                 <Route path="/" element={<Navigate to="/screens" replace />} />
                 <Route path="/screens" element={<Screens />} />
                 <Route path="/screens/:id" element={<ScreenDetail />} />
-                <Route path="/analytics" element={<Analytics />} />
                 <Route path="/placements" element={<Placements />} />
                 <Route path="/placements/new" element={<PlacementDetail />} />
                 <Route path="/placements/:id" element={<PlacementDetail />} />

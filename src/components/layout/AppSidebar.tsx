@@ -1,11 +1,10 @@
 import { NavLink, useLocation } from "react-router-dom";
 import {
-  MapPin, Megaphone, FileCheck, Monitor, BarChart3
+  MapPin, Megaphone, FileCheck, Monitor
 } from "lucide-react";
 
 const mainNav = [
   { icon: Monitor, label: "Screens", to: "/screens" },
-  { icon: BarChart3, label: "Analytics", to: "/analytics" },
 ];
 
 const monetNav = [
