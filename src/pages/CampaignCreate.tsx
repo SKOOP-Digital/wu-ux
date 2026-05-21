@@ -1,6 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Megaphone, ArrowLeft, ArrowRight, Check, Info, AlertTriangle, Plus, X, Upload, Tag, Search, Trash2, MapPin, Globe, ChevronDown, ChevronRight, Clock } from "lucide-react";
+import { Megaphone, ArrowLeft, ArrowRight, Check, Info, AlertTriangle, Plus, X, Tag, Search, MapPin, Globe, ChevronDown, ChevronRight, Clock, MoreHorizontal, Folder, Image as ImageIcon } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StatusChip from "@/components/shared/StatusChip";
 import { Button } from "@/components/ui/button";
@@ -26,12 +26,35 @@ const STEPS = [
 interface Creative {
   id: string;
   name: string;
-  type: string;
-  size: string;
-  file: File;
+  type: "Media" | "Website";
 }
 
 const ALL_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+const MOCK_MEDIA_FOLDERS = [
+  { id: "f1", name: "Converted 24F-12..." },
+  { id: "f2", name: "Converted 24F-19..." },
+  { id: "f3", name: "SC -> 1280F24" },
+  { id: "f4", name: "Screen Cloud" },
+];
+
+const MOCK_MEDIA_ITEMS = [
+  { id: "m1", name: "Untitled design (3)", color: "bg-red-400" },
+  { id: "m2", name: "GettyImages-48752...", color: "bg-green-300" },
+  { id: "m3", name: "going-to-the-sun-ro...", color: "bg-gray-500" },
+  { id: "m4", name: "test", color: "bg-slate-900" },
+  { id: "m5", name: "test (2)", color: "bg-slate-800" },
+  { id: "m6", name: "Screenshot 2025-10...", color: "bg-blue-900" },
+];
+
+const MOCK_WEBSITE_ITEMS = [
+  { id: "w1", name: "RealLeaf App" },
+  { id: "w2", name: "sandstar website" },
+  { id: "w3", name: "https://github.com/" },
+  { id: "w4", name: "test" },
+  { id: "w5", name: "test menu" },
+  { id: "w6", name: "tv2" },
+];
 
 interface TimeWindow {
   id: string;
@@ -84,25 +107,18 @@ export default function CampaignCreate() {
   // Step 5 — Creatives
   const [creatives, setCreatives] = useState<Creative[]>([]);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-    const newCreatives: Creative[] = Array.from(files).map((file) => {
-      const ext = file.name.split(".").pop()?.toLowerCase() || "";
-      let type = "File";
-      if (["mp4", "mov", "webm", "avi"].includes(ext)) type = "Video";
-      else if (["jpg", "jpeg", "png", "gif", "webp", "svg"].includes(ext)) type = "Image";
-      else if (ext === "zip" || ext === "html") type = "HTML5";
-      return {
-        id: crypto.randomUUID(),
-        name: file.name,
-        type,
-        size: file.size < 1024 * 1024 ? `${(file.size / 1024).toFixed(0)} KB` : `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-        file,
-      };
-    });
-    setCreatives((prev) => [...prev, ...newCreatives]);
-    e.target.value = "";
+  // Step 5 — Content sidebar
+  const [contentView, setContentView] = useState<"list" | "media" | "website">("list");
+  const [contentSearch, setContentSearch] = useState("");
+  const [mediaCtxMenu, setMediaCtxMenu] = useState<string | null>(null);
+  const [showMediaUploadMenu, setShowMediaUploadMenu] = useState(false);
+  const [showWebsiteForm, setShowWebsiteForm] = useState(false);
+  const [newWebsiteTitle, setNewWebsiteTitle] = useState("");
+  const [newWebsiteUrl, setNewWebsiteUrl] = useState("");
+  const mediaUploadMenuRef = useRef<HTMLDivElement>(null);
+
+  const addCreative = (name: string, type: "Media" | "Website") => {
+    setCreatives((prev) => [...prev, { id: crypto.randomUUID(), name, type }]);
   };
 
   const removeCreative = (id: string) => setCreatives((prev) => prev.filter((c) => c.id !== id));
@@ -761,38 +777,305 @@ export default function CampaignCreate() {
   const renderStep5 = () => (
     <div className="skoop-card p-5 space-y-4">
       <p className="skoop-section-header">Creatives</p>
-      <p className="text-xs text-muted-foreground">Upload media assets for this campaign (Video or Image). Bulk file upload is supported — drag and drop multiple files at once.</p>
+      <p className="text-xs text-muted-foreground">Add assets for this campaign using the right sidebar</p>
 
-      {creatives.length > 0 && (
-        <div className="grid grid-cols-3 gap-4">
+      {creatives.length > 0 ? (
+        <div className="space-y-2">
           {creatives.map((c) => (
-            <div key={c.id} className="rounded-lg border border-border overflow-hidden group relative">
-              <div className="h-28 bg-secondary flex items-center justify-center text-muted-foreground text-xs">
-                <Upload size={16} className="mr-1.5" /> {c.type}
-              </div>
-              <div className="p-3 space-y-1">
-                <p className="text-xs font-medium truncate">{c.name}</p>
-                <p className="text-[11px] text-muted-foreground">{c.type} · {c.size}</p>
+            <div key={c.id} className="flex items-center justify-between rounded-lg border border-border px-3 py-2">
+              <div className="flex items-center gap-2">
+                {c.type === "Website" ? (
+                  <Globe size={14} className="text-primary shrink-0" />
+                ) : (
+                  <ImageIcon size={14} className="text-primary shrink-0" />
+                )}
+                <span className="text-sm font-medium truncate max-w-[240px]">{c.name}</span>
+                <span className="text-xs text-muted-foreground shrink-0">{c.type}</span>
               </div>
               <button
                 onClick={() => removeCreative(c.id)}
-                className="absolute top-2 right-2 w-6 h-6 rounded-full bg-background/80 border border-border flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10 hover:text-destructive"
+                className="text-muted-foreground hover:text-destructive transition-colors ml-2"
               >
-                <Trash2 size={12} />
+                <X size={14} />
               </button>
             </div>
           ))}
         </div>
+      ) : (
+        <div className="rounded-lg border border-dashed border-border py-10 text-center text-muted-foreground text-xs">
+          No assets added yet — use the sidebar to add Media or Website content.
+        </div>
       )}
-
-      <label className="inline-flex items-center gap-1 cursor-pointer">
-        <Button variant="outline" size="sm" asChild>
-          <span><Plus size={14} className="mr-1" /> Add Creative</span>
-        </Button>
-        <input type="file" multiple accept="video/*,image/*,.zip,.html" className="hidden" onChange={handleFileUpload} />
-      </label>
     </div>
   );
+
+  const renderContentSidebar = () => {
+    const filteredMedia = MOCK_MEDIA_ITEMS.filter((m) =>
+      m.name.toLowerCase().includes(contentSearch.toLowerCase())
+    );
+    const filteredWebsites = MOCK_WEBSITE_ITEMS.filter((w) =>
+      w.name.toLowerCase().includes(contentSearch.toLowerCase())
+    );
+
+    if (contentView === "media") {
+      return (
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+            <button
+              onClick={() => { setContentView("list"); setContentSearch(""); setMediaCtxMenu(null); setShowMediaUploadMenu(false); }}
+              className="flex items-center gap-1.5 text-sm font-semibold hover:text-primary transition-colors"
+            >
+              <ArrowLeft size={14} /> Media
+            </button>
+            <div className="relative" ref={mediaUploadMenuRef}>
+              <button
+                onClick={() => setShowMediaUploadMenu((v) => !v)}
+                className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors"
+              >
+                <Plus size={14} />
+              </button>
+              {showMediaUploadMenu && (
+                <div className="absolute right-0 top-9 z-20 bg-card border border-border rounded-md shadow-md w-36 py-1">
+                  <button
+                    className="w-full text-left px-3 py-2 text-xs hover:bg-secondary transition-colors"
+                    onClick={() => setShowMediaUploadMenu(false)}
+                  >
+                    Upload File
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Search + filter */}
+          <div className="flex gap-2 px-3 py-2 border-b border-border">
+            <div className="relative flex-1">
+              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type="text"
+                placeholder="Search Content"
+                value={contentSearch}
+                onChange={(e) => setContentSearch(e.target.value)}
+                className="w-full h-8 rounded-md border border-input pl-7 pr-2 text-xs bg-background"
+              />
+            </div>
+            <select className="h-8 rounded-md border border-input px-2 text-xs bg-background">
+              <option>All</option>
+              <option>Images</option>
+              <option>Videos</option>
+            </select>
+          </div>
+
+          {/* Content grid */}
+          <div
+            className="flex-1 overflow-y-auto p-3"
+            onClick={() => { setMediaCtxMenu(null); setShowMediaUploadMenu(false); }}
+          >
+            {/* Folders */}
+            {contentSearch === "" && (
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                {MOCK_MEDIA_FOLDERS.map((f) => (
+                  <button
+                    key={f.id}
+                    className="flex items-center gap-1.5 border border-border rounded-md px-2 py-2 text-xs text-left hover:bg-secondary transition-colors"
+                  >
+                    <Folder size={14} className="text-muted-foreground shrink-0" />
+                    <span className="truncate">{f.name}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Media items grid */}
+            <div className="grid grid-cols-2 gap-2">
+              {filteredMedia.map((item) => (
+                <div key={item.id} className="relative group rounded-md border border-border overflow-hidden">
+                  <div className={`h-20 ${item.color} flex items-center justify-center`} />
+                  <div className="absolute top-1.5 right-1.5">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setMediaCtxMenu(mediaCtxMenu === item.id ? null : item.id); }}
+                      className="w-6 h-6 rounded-full bg-background/80 border border-border flex items-center justify-center hover:bg-background transition-colors"
+                    >
+                      <MoreHorizontal size={12} />
+                    </button>
+                    {mediaCtxMenu === item.id && (
+                      <div className="absolute right-0 top-7 z-20 bg-card border border-border rounded-md shadow-md w-40 py-1">
+                        <button
+                          className="w-full text-left px-3 py-2 text-xs hover:bg-secondary transition-colors flex items-center gap-2"
+                          onClick={(e) => { e.stopPropagation(); addCreative(item.name, "Media"); setMediaCtxMenu(null); }}
+                        >
+                          <Plus size={12} /> Add to campaign
+                        </button>
+                        <button
+                          className="w-full text-left px-3 py-2 text-xs hover:bg-secondary transition-colors flex items-center gap-2"
+                          onClick={(e) => { e.stopPropagation(); setMediaCtxMenu(null); }}
+                        >
+                          <ImageIcon size={12} /> Preview
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  <div className="px-2 py-1.5">
+                    <p className="text-[11px] truncate">{item.name}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (contentView === "website") {
+      return (
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+            <button
+              onClick={() => { setContentView("list"); setContentSearch(""); setShowWebsiteForm(false); }}
+              className="flex items-center gap-1.5 text-sm font-semibold hover:text-primary transition-colors"
+            >
+              <ArrowLeft size={14} /> Website
+            </button>
+            <button
+              onClick={() => setShowWebsiteForm((v) => !v)}
+              className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${showWebsiteForm ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : "bg-primary text-primary-foreground hover:bg-primary/90"}`}
+            >
+              {showWebsiteForm ? <X size={14} /> : <Plus size={14} />}
+            </button>
+          </div>
+
+          {showWebsiteForm ? (
+            <div className="p-4 space-y-3">
+              <div>
+                <label className="text-xs text-muted-foreground">Title</label>
+                <input
+                  type="text"
+                  placeholder="Enter Title"
+                  value={newWebsiteTitle}
+                  onChange={(e) => setNewWebsiteTitle(e.target.value)}
+                  className="w-full mt-1 h-9 rounded-md border border-input px-3 text-sm bg-background"
+                />
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground">Website URL</label>
+                <input
+                  type="text"
+                  placeholder="Enter Website URL"
+                  value={newWebsiteUrl}
+                  onChange={(e) => setNewWebsiteUrl(e.target.value)}
+                  className="w-full mt-1 h-9 rounded-md border border-input px-3 text-sm bg-background"
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-1">
+                <Button variant="outline" size="sm" onClick={() => { setShowWebsiteForm(false); setNewWebsiteTitle(""); setNewWebsiteUrl(""); }}>Cancel</Button>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    if (newWebsiteTitle) { addCreative(newWebsiteTitle, "Website"); }
+                    setShowWebsiteForm(false); setNewWebsiteTitle(""); setNewWebsiteUrl("");
+                  }}
+                  disabled={!newWebsiteTitle}
+                >
+                  Save
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="px-3 py-2 border-b border-border">
+                <div className="relative">
+                  <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type="text"
+                    placeholder="Search Content"
+                    value={contentSearch}
+                    onChange={(e) => setContentSearch(e.target.value)}
+                    className="w-full h-8 rounded-md border border-input pl-7 pr-2 text-xs bg-background"
+                  />
+                </div>
+              </div>
+              <div
+                className="flex-1 overflow-y-auto p-3"
+                onClick={() => setMediaCtxMenu(null)}
+              >
+                <div className="grid grid-cols-2 gap-2">
+                  {filteredWebsites.map((item) => (
+                    <div key={item.id} className="relative group rounded-md border border-border overflow-hidden">
+                      <div className="h-20 bg-gradient-to-br from-sky-100 to-blue-200" />
+                      <div className="absolute top-1.5 right-1.5">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setMediaCtxMenu(mediaCtxMenu === item.id ? null : item.id); }}
+                          className="w-6 h-6 rounded-full bg-background/80 border border-border flex items-center justify-center hover:bg-background transition-colors"
+                        >
+                          <MoreHorizontal size={12} />
+                        </button>
+                        {mediaCtxMenu === item.id && (
+                          <div className="absolute right-0 top-7 z-20 bg-card border border-border rounded-md shadow-md w-40 py-1">
+                            <button
+                              className="w-full text-left px-3 py-2 text-xs hover:bg-secondary transition-colors flex items-center gap-2"
+                              onClick={(e) => { e.stopPropagation(); addCreative(item.name, "Website"); setMediaCtxMenu(null); }}
+                            >
+                              <Plus size={12} /> Add to campaign
+                            </button>
+                            <button
+                              className="w-full text-left px-3 py-2 text-xs hover:bg-secondary transition-colors flex items-center gap-2"
+                              onClick={(e) => { e.stopPropagation(); setMediaCtxMenu(null); }}
+                            >
+                              <Globe size={12} /> Preview
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                      <div className="px-2 py-1.5">
+                        <p className="text-[11px] truncate">{item.name}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      );
+    }
+
+    // Default list view
+    return (
+      <div className="flex flex-col h-full">
+        <div className="px-4 py-3 border-b border-border">
+          <h2 className="text-sm font-semibold">Content</h2>
+        </div>
+        <div className="px-3 py-2 border-b border-border">
+          <input
+            type="text"
+            placeholder="Type to search apps"
+            value={contentSearch}
+            onChange={(e) => setContentSearch(e.target.value)}
+            className="w-full h-8 rounded-md border border-input px-3 text-xs bg-background"
+          />
+        </div>
+        <div className="flex-1 overflow-y-auto">
+          {[
+            { label: "Media", icon: <ImageIcon size={16} className="text-primary" /> },
+            { label: "Website", icon: <Globe size={16} className="text-primary" /> },
+          ]
+            .filter((item) => item.label.toLowerCase().includes(contentSearch.toLowerCase()))
+            .map((item) => (
+              <button
+                key={item.label}
+                onClick={() => { setContentView(item.label.toLowerCase() as "media" | "website"); setContentSearch(""); }}
+                className="w-full flex items-center justify-between px-4 py-3 text-sm hover:bg-secondary transition-colors border-b border-border"
+              >
+                <span className="flex items-center gap-3">{item.icon}{item.label}</span>
+                <ChevronRight size={14} className="text-muted-foreground" />
+              </button>
+            ))}
+        </div>
+      </div>
+    );
+  };
 
   const renderStep6 = () => {
 
@@ -985,8 +1268,9 @@ export default function CampaignCreate() {
   };
 
   return (
-    <div>
-      <div className="px-8 pt-4 pb-0">
+    <div className="flex flex-col h-screen">
+      {/* Breadcrumb */}
+      <div className="px-8 pt-4 pb-0 shrink-0">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -1000,15 +1284,17 @@ export default function CampaignCreate() {
         </Breadcrumb>
       </div>
 
-      <PageHeader
-        title="Create Campaign"
-        subtitle="Campaigns define what content runs, when it runs, and how it is delivered"
-        icon={<Megaphone size={20} />}
-        actions={<Button variant="outline" size="sm" onClick={() => navigate("/campaigns")}><ArrowLeft size={14} className="mr-1" /> Cancel</Button>}
-      />
+      <div className="shrink-0">
+        <PageHeader
+          title="Create Campaign"
+          subtitle="Campaigns define what content runs, when it runs, and how it is delivered"
+          icon={<Megaphone size={20} />}
+          actions={<Button variant="outline" size="sm" onClick={() => navigate("/campaigns")}><ArrowLeft size={14} className="mr-1" /> Cancel</Button>}
+        />
+      </div>
 
       {/* Step indicator */}
-      <div className="border-b border-border px-8 py-4">
+      <div className="border-b border-border px-8 py-4 shrink-0">
         <div className="flex items-center gap-2">
           {STEPS.map((s, i) => (
             <div key={s} className="flex items-center gap-2">
@@ -1027,32 +1313,44 @@ export default function CampaignCreate() {
         </div>
       </div>
 
-      <div className="p-8">
-        <div className="flex gap-6">
-          <div className="flex-1 max-w-3xl">
-            {renderCurrentStep()}
+      {/* Content area — fills remaining height */}
+      <div className="flex-1 flex overflow-hidden min-h-0">
+        {/* Scrollable main content */}
+        <div className="flex-1 overflow-y-auto p-8">
+          <div className={step !== 4 ? "flex gap-6" : ""}>
+            <div className={step !== 4 ? "flex-1 max-w-3xl" : "max-w-3xl"}>
+              {renderCurrentStep()}
 
-            <div className="flex justify-between mt-8">
-              <Button variant="outline" size="sm" onClick={prev} disabled={step === 0}><ArrowLeft size={14} className="mr-1" /> Previous</Button>
-              {!isLastStep ? (
-                <Button size="sm" onClick={next} disabled={step === 0 && !campaignName}>
-                  {capacitySummary && !capacitySummary.fits && step >= 3 && <AlertTriangle size={14} className="mr-1" />}
-                  Next <ArrowRight size={14} className="ml-1" />
-                </Button>
-              ) : (
-                <Button
-                  size="sm"
-                  onClick={() => navigate("/campaigns")}
-                  disabled={capacitySummary ? !capacitySummary.fits : false}
-                >
-                  Launch Campaign
-                </Button>
-              )}
+              <div className="flex justify-between mt-8">
+                <Button variant="outline" size="sm" onClick={prev} disabled={step === 0}><ArrowLeft size={14} className="mr-1" /> Previous</Button>
+                {!isLastStep ? (
+                  <Button size="sm" onClick={next} disabled={step === 0 && !campaignName}>
+                    {capacitySummary && !capacitySummary.fits && step >= 3 && <AlertTriangle size={14} className="mr-1" />}
+                    Next <ArrowRight size={14} className="ml-1" />
+                  </Button>
+                ) : (
+                  <Button
+                    size="sm"
+                    onClick={() => navigate("/campaigns")}
+                    disabled={capacitySummary ? !capacitySummary.fits : false}
+                  >
+                    Launch Campaign
+                  </Button>
+                )}
+              </div>
             </div>
-          </div>
 
-          {step < 5 && renderCapacityPanel()}
+            {/* Capacity panel — only shown on non-creatives steps */}
+            {step !== 4 && step < 5 && renderCapacityPanel()}
+          </div>
         </div>
+
+        {/* Full-height content sidebar — only on Creatives step */}
+        {step === 4 && (
+          <div className="w-[340px] shrink-0 border-l border-border bg-card flex flex-col overflow-hidden">
+            {renderContentSidebar()}
+          </div>
+        )}
       </div>
     </div>
   );
