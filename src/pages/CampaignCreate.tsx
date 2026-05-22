@@ -102,7 +102,6 @@ export default function CampaignCreate() {
   const [sovValue, setSovValue] = useState(15);
   const [totalPlays, setTotalPlays] = useState(5000);
   const [playsPerDay, setPlaysPerDay] = useState(200);
-  const [progFallback, setProgFallback] = useState(true);
 
   // Step 5 — Creatives
   const [creatives, setCreatives] = useState<Creative[]>([]);
@@ -356,16 +355,11 @@ export default function CampaignCreate() {
             <div className="space-y-2">
               <div className="flex flex-wrap gap-1.5">
                 {selectedTags.map((tag) => {
-                  const isPlacement = selectedPlacementTags.includes(tag);
                   return (
-                    <span
-                      key={tag}
-                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${
-                        isPlacement
-                          ? "bg-primary/15 text-primary border border-primary/20"
-                          : "bg-secondary text-foreground border border-border"
-                      }`}
-                    >
+                      <span
+                        key={tag}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-secondary text-foreground border border-border"
+                      >
                       {tag}
                       <button onClick={() => setSelectedTags((prev) => prev.filter((t) => t !== tag))} className="ml-0.5 hover:opacity-70">
                         <X size={10} />
@@ -403,10 +397,8 @@ export default function CampaignCreate() {
               const showAll = showAllTagGroups[groupName];
               const CAP = 15;
               const visibleTags = showAll ? tags : tags.slice(0, CAP);
-              const isPlacementGroup = groupName === "Placement Group";
-
               return (
-                <div key={groupName} className={`border rounded-md ${isPlacementGroup ? "border-primary/20 bg-primary/[0.02]" : "border-border"}`}>
+                <div key={groupName} className="border border-border rounded-md">
                   <button
                     onClick={() => setExpandedTagGroups((prev) =>
                       prev.includes(groupName) ? prev.filter((g) => g !== groupName) : [...prev, groupName]
@@ -416,7 +408,6 @@ export default function CampaignCreate() {
                     <span className="flex items-center gap-1.5">
                       {isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
                       {groupName}
-                      {isPlacementGroup && <span className="text-[10px] font-semibold uppercase tracking-wide text-primary/70 ml-0.5">groups</span>}
                       <span className="text-muted-foreground font-normal">({tags.length})</span>
                     </span>
                   </button>
@@ -426,9 +417,7 @@ export default function CampaignCreate() {
                         <button
                           key={tag.value}
                           onClick={() => { setSelectedTags((prev) => [...prev, tag.value]); setTagSearch(""); }}
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-dashed text-xs text-muted-foreground hover:text-foreground transition-colors ${
-                            isPlacementGroup ? "border-primary/30 hover:border-primary/60" : "border-border hover:border-primary/40"
-                          }`}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-dashed border-border text-xs text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
                         >
                           + {tag.value}
                           <span className="text-[10px] opacity-60">({tag.screenCount})</span>
@@ -745,31 +734,6 @@ export default function CampaignCreate() {
           </div>
         )}
 
-        {/* Section 3 — Programmatic fallback */}
-        <div className="skoop-card p-5 space-y-3">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-sm font-medium text-foreground">Programmatic fallback</p>
-              <p className="text-xs text-muted-foreground mt-0.5">Allow this campaign's creatives to fill slots when a programmatic partner (e.g. Screenverse) returns no-fill.</p>
-            </div>
-            <div className="flex gap-1 shrink-0">
-              <button
-                onClick={() => setProgFallback(true)}
-                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${progFallback ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}
-              >ON</button>
-              <button
-                onClick={() => setProgFallback(false)}
-                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${!progFallback ? "bg-skoop-slate text-white" : "bg-secondary text-muted-foreground"}`}
-              >OFF</button>
-            </div>
-          </div>
-          {!progFallback && (
-            <div className="flex items-start gap-2 text-xs text-muted-foreground">
-              <Info size={12} className="mt-0.5 shrink-0" />
-              <span>This campaign will only play in its own reserved allocation and will not absorb programmatic no-fill slots.</span>
-            </div>
-          )}
-        </div>
       </div>
     );
   };
@@ -1113,14 +1077,11 @@ export default function CampaignCreate() {
               <p className="text-xs text-muted-foreground">Targeting</p>
               {selectedTags.length > 0 ? (
                 <div className="flex flex-wrap gap-1 mt-1">
-                  {selectedTags.map((tag) => {
-                    const isPlacement = selectedPlacementTags.includes(tag);
-                    return (
-                      <span key={tag} className={`px-2 py-0.5 rounded-full text-xs font-medium ${isPlacement ? "bg-primary/15 text-primary border border-primary/20" : "bg-secondary text-foreground border border-border"}`}>
-                        {tag}
-                      </span>
-                    );
-                  })}
+                  {selectedTags.map((tag) => (
+                    <span key={tag} className="px-2 py-0.5 rounded-full text-xs font-medium bg-secondary text-foreground border border-border">
+                      {tag}
+                    </span>
+                  ))}
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground mt-1">No tags selected</p>
@@ -1140,7 +1101,6 @@ export default function CampaignCreate() {
             </div>
             <div><p className="text-xs text-muted-foreground">Delivery Target</p><p className="text-sm font-medium tabular-nums">{deliveryTargetLabel}</p></div>
             <div><p className="text-xs text-muted-foreground">Fill Behavior</p><p className="text-sm font-medium">{fillBehaviorLabel}</p></div>
-            <div><p className="text-xs text-muted-foreground">Prog. Fallback</p><p className="text-sm font-medium">{progFallback ? "Enabled" : "Disabled"}</p></div>
             <div><p className="text-xs text-muted-foreground">Creatives</p><p className="text-sm font-medium">{creatives.length} asset{creatives.length !== 1 ? "s" : ""} uploaded</p></div>
             <div><p className="text-xs text-muted-foreground">Proof of Play</p><p className="text-sm font-medium text-primary">Enabled</p></div>
           </div>

@@ -8,13 +8,36 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 
-const campaigns = [
-  { id: "1", name: "Pepsi Q2 Push", advertiser: "PepsiCo", dates: "Apr 1 – Jun 30", goal: "SOV 40%", fillBehavior: "Target, no fill", progFallback: false, delivered: 3200, target: 5000, status: "Live" },
-  { id: "2", name: "Nike Spring", advertiser: "Nike", dates: "Mar 1 – May 31", goal: "5,000 total plays", fillBehavior: "Target then fill", progFallback: true, delivered: 3100, target: 5000, status: "Live" },
-  { id: "3", name: "WU Brand Awareness", advertiser: "", dates: "Jan 1 – Dec 31", goal: "Fill only", fillBehavior: "Fill only", progFallback: true, delivered: 48000, target: 0, status: "Live" },
-  { id: "4", name: "Coca-Cola Summer", advertiser: "Coca-Cola", dates: "May 1 – Aug 31", goal: "SOV 20%", fillBehavior: "Target, no fill", progFallback: false, delivered: 0, target: 4000, status: "Scheduled" },
-  { id: "5", name: "WU Remittance Promo", advertiser: "Western Union", dates: "Mar 1 – Mar 31", goal: "3,000 total plays", fillBehavior: "Target then fill", progFallback: true, delivered: 1200, target: 3000, status: "Under-delivering" },
+interface Campaign {
+  id: string;
+  name: string;
+  advertiser: string;
+  isPaid: boolean;
+  dates: string;
+  hasTarget: boolean;
+  deliveryGoalType: "sov" | "total" | "plays-per-day" | null;
+  goalValue: string;
+  fillEnabled: boolean;
+  delivered: number;
+  target: number;
+  status: string;
+}
+
+const campaigns: Campaign[] = [
+  { id: "1", name: "Pepsi Q2 Push",        advertiser: "PepsiCo",       isPaid: true,  dates: "Apr 1 – Jun 30", hasTarget: true,  deliveryGoalType: "sov",           goalValue: "40%",     fillEnabled: false, delivered: 3200,  target: 5000,  status: "Live" },
+  { id: "2", name: "Nike Spring",           advertiser: "Nike",          isPaid: true,  dates: "Mar 1 – May 31", hasTarget: true,  deliveryGoalType: "total",         goalValue: "5,000",   fillEnabled: true,  delivered: 3100,  target: 5000,  status: "Live" },
+  { id: "3", name: "WU Brand Awareness",    advertiser: "",              isPaid: false, dates: "Jan 1 – Dec 31", hasTarget: false, deliveryGoalType: null,            goalValue: "",        fillEnabled: true,  delivered: 48000, target: 0,     status: "Live" },
+  { id: "4", name: "Coca-Cola Summer",      advertiser: "Coca-Cola",     isPaid: true,  dates: "May 1 – Aug 31", hasTarget: true,  deliveryGoalType: "sov",           goalValue: "20%",     fillEnabled: false, delivered: 0,     target: 4000,  status: "Scheduled" },
+  { id: "5", name: "WU Remittance Promo",   advertiser: "Western Union", isPaid: true,  dates: "Mar 1 – Mar 31", hasTarget: true,  deliveryGoalType: "total",         goalValue: "3,000",   fillEnabled: true,  delivered: 1200,  target: 3000,  status: "Under-delivering" },
+  { id: "6", name: "WU In-store Screens",   advertiser: "",              isPaid: false, dates: "Jan 1 – Dec 31", hasTarget: true,  deliveryGoalType: "plays-per-day", goalValue: "200/day", fillEnabled: true,  delivered: 8200,  target: 12000, status: "Live" },
 ];
+
+function deliveryLabel(c: Campaign): string {
+  if (!c.hasTarget) return "Fill only";
+  if (c.deliveryGoalType === "sov") return `SOV ${c.goalValue}`;
+  if (c.deliveryGoalType === "plays-per-day") return `${c.goalValue}`;
+  return `${c.goalValue} plays`;
+}
 
 const statusFilters = ["All", "Live", "Scheduled", "Draft", "Under-delivering", "Completed", "At Risk"];
 
@@ -69,44 +92,50 @@ export default function Campaigns() {
             <thead>
               <tr className="skoop-table-header">
                 <th className="skoop-table-cell text-left" style={{ width: "20%" }}>Campaign</th>
-                <th className="skoop-table-cell text-left" style={{ width: "12%" }}>Advertiser</th>
-                <th className="skoop-table-cell text-left" style={{ width: "12%" }}>Dates</th>
-                <th className="skoop-table-cell text-left" style={{ width: "11%" }}>Target</th>
-                <th className="skoop-table-cell text-left" style={{ width: "14%" }}>Fill Behavior</th>
-                <th className="skoop-table-cell text-left" style={{ width: "14%" }}>Progress</th>
-                <th className="skoop-table-cell text-left" style={{ width: "17%" }}>Status</th>
+                <th className="skoop-table-cell text-left" style={{ width: "11%" }}>Advertiser</th>
+                <th className="skoop-table-cell text-left" style={{ width: "11%" }}>Dates</th>
+                <th className="skoop-table-cell text-left" style={{ width: "13%" }}>Target</th>
+                <th className="skoop-table-cell text-left" style={{ width: "7%" }}>Fill</th>
+                <th className="skoop-table-cell text-left" style={{ width: "7%" }}>Paid</th>
+                <th className="skoop-table-cell text-left" style={{ width: "12%" }}>Progress</th>
+                <th className="skoop-table-cell text-left" style={{ width: "19%" }}>Status</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((c) => {
                 const pct = c.target > 0 ? Math.round((c.delivered / c.target) * 100) : 100;
                 const fullStatus = statusLabel(c.delivered, c.target, c.status);
+                const label = deliveryLabel(c);
                 return (
                   <tr key={c.id} className="skoop-table-row cursor-pointer" onClick={() => navigate(`/campaigns/${c.id}`)}>
                     <td className="skoop-table-cell font-medium text-foreground">
-                      <span className="line-clamp-2">{c.name}</span>
+                      <span className="line-clamp-1">{c.name}</span>
                     </td>
                     <td className="skoop-table-cell text-muted-foreground text-xs">
-                      {c.advertiser || <span className="italic text-muted-foreground/60">In-house</span>}
+                      {c.advertiser || <span className="italic text-muted-foreground/50">In-house</span>}
                     </td>
                     <td className="skoop-table-cell text-muted-foreground text-xs whitespace-nowrap">{c.dates}</td>
-                    <td className="skoop-table-cell text-xs text-muted-foreground">{c.goal}</td>
+                    <td className="skoop-table-cell text-xs font-medium text-foreground">{label}</td>
                     <td className="skoop-table-cell">
-                      <span className={`text-xs font-medium ${
-                        c.fillBehavior === "Fill only" ? "text-muted-foreground" :
-                        c.fillBehavior === "Target then fill" ? "text-primary" :
-                        "text-foreground"
-                      }`}>{c.fillBehavior}</span>
+                      <span className={`text-xs font-medium ${c.fillEnabled ? "text-foreground" : "text-muted-foreground/50"}`}>
+                        {c.fillEnabled ? "On" : "Off"}
+                      </span>
+                    </td>
+                    <td className="skoop-table-cell">
+                      <span className={`text-xs font-medium ${c.isPaid ? "text-foreground" : "text-muted-foreground/50"}`}>
+                        {c.isPaid ? "Yes" : "—"}
+                      </span>
                     </td>
                     <td className="skoop-table-cell group/progress relative">
-                      {c.target > 0 ? (
-                        <div className="relative">
+                      {c.hasTarget && (
+                        <div className="relative mb-1">
                           <Progress value={pct} className="h-1.5" />
                           <span className="absolute -top-7 left-1/2 -translate-x-1/2 bg-foreground text-background text-[10px] font-medium px-1.5 py-0.5 rounded opacity-0 group-hover/progress:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">{pct}%</span>
                         </div>
-                      ) : (
-                        <span className="text-xs text-muted-foreground italic">No target</span>
                       )}
+                      <p className="text-[11px] text-muted-foreground tabular-nums">
+                        {c.delivered.toLocaleString()}{c.hasTarget ? ` / ${c.target.toLocaleString()}` : " plays"}
+                      </p>
                     </td>
                     <td className="skoop-table-cell"><StatusChip status={c.status.toLowerCase().replace(" ", "-")} label={fullStatus} /></td>
                   </tr>

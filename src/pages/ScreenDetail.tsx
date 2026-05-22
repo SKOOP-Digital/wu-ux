@@ -3,7 +3,6 @@ import { Monitor, ArrowLeft, MapPin, ExternalLink, Globe, Tag, Plus, X, BarChart
 import { useParams, useNavigate, useSearchParams, Link } from "react-router-dom";
 import PageHeader from "@/components/layout/PageHeader";
 import StatusChip from "@/components/shared/StatusChip";
-import MixBar from "@/components/shared/MixBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -80,7 +79,7 @@ export default function ScreenDetail() {
   const placementId = searchParams.get("placementId");
 
   const backPath = fromPlacement && placementId ? `/placements/${placementId}` : "/screens";
-  const backLabel = fromPlacement ? "Back to Network Rule" : "Back to Screens";
+  const backLabel = fromPlacement ? "Back to Placement" : "Back to Screens";
   const screen = allScreens.find((s) => s.id === id);
 
   // All hooks must be before early return
@@ -145,7 +144,7 @@ export default function ScreenDetail() {
             {fromPlacement && placementObj ? (
               <>
                 <BreadcrumbItem>
-                  <BreadcrumbLink asChild><Link to="/placements">Network Rules</Link></BreadcrumbLink>
+                  <BreadcrumbLink asChild><Link to="/placements">Placements</Link></BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
@@ -290,14 +289,20 @@ export default function ScreenDetail() {
             <div className="skoop-card p-5 space-y-4">
               <p className="skoop-section-header">Tags</p>
 
-              {autoTags && (
+              {(autoTags || linkedPlacements.length > 0) && (
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-1.5">
                     <Globe size={12} className="text-muted-foreground" />
                     <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Auto</span>
                   </div>
                   <div className="flex flex-wrap gap-1.5">
-                    {[
+                    {linkedPlacements.map((p) => (
+                      <span key={p.id} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary text-muted-foreground text-xs font-medium border border-border">
+                        <Globe size={10} className="shrink-0" />
+                        {p.name}
+                      </span>
+                    ))}
+                    {autoTags && [
                       { label: autoTags.country, cat: "Country" },
                       { label: autoTags.state, cat: "State" },
                       { label: autoTags.city, cat: "City" },
@@ -382,43 +387,6 @@ export default function ScreenDetail() {
               </div>
             </div>
 
-            <div className="skoop-card p-5 space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="skoop-section-header">Network Rules</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Rules that include this screen in their inventory</p>
-                </div>
-              </div>
-
-              {linkedPlacements.length === 0 ? (
-                <div className="border border-dashed border-border rounded-lg py-8 text-center">
-                  <MapPin size={20} className="mx-auto text-muted-foreground mb-2" />
-                  <p className="text-sm text-muted-foreground">No network rules assigned to this screen</p>
-                  <p className="text-xs text-muted-foreground mt-1">Create a network rule to monetise this screen</p>
-                  <Button size="sm" className="mt-3" onClick={() => navigate("/placements")}>View Network Rules</Button>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {linkedPlacements.map((p) => (
-                    <div key={p.id} className="flex items-center justify-between py-3 px-4 border border-border rounded-md hover:bg-secondary/30 transition-colors cursor-pointer" onClick={() => navigate(`/placements/${p.id}`)}>
-                      <div className="flex items-center gap-3">
-                        <MapPin size={14} className="text-muted-foreground" />
-                        <div>
-                          <p className="text-sm font-medium">{p.name}</p>
-                          <p className="text-xs text-muted-foreground">{p.screenIds.length} screens · {p.venue}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <div className="w-28"><MixBar owned={p.owned} direct={p.direct} programmatic={p.prog} /></div>
-                        <StatusChip status={p.status.toLowerCase().replace(" ", "-")} label={p.status} />
-                        <span className="text-xs text-primary">View Rule</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
             <div className="skoop-card p-5 space-y-4">
               <div className="flex items-center gap-2">
                 <BarChart3 size={14} className="text-muted-foreground" />
@@ -431,10 +399,6 @@ export default function ScreenDetail() {
           <div className="space-y-4">
             <div className="skoop-card p-5 space-y-3">
               <p className="skoop-section-header">Summary</p>
-              <div>
-                <p className="text-xs text-muted-foreground">Network Rules</p>
-                <p className="text-lg font-semibold tabular-nums">{linkedPlacements.length}</p>
-              </div>
               <div>
                 <p className="text-xs text-muted-foreground">Daily Eligible Playback Capacity</p>
                 <p className="text-lg font-semibold tabular-nums">{dailyCapacity.toLocaleString()} opportunities</p>
