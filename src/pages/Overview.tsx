@@ -40,7 +40,7 @@ const topVenues = [
 
 const flowSteps = [
   { icon: Monitor, label: "Screens", desc: "Physical devices", to: "/screens", color: "bg-muted text-foreground" },
-  { icon: MapPin, label: "Network Rules", desc: "Rules & inventory", to: "/placements", color: "bg-primary/10 text-primary" },
+  { icon: MapPin, label: "Inventory Rules", desc: "Rules & inventory", to: "/placements", color: "bg-primary/10 text-primary" },
   { icon: Megaphone, label: "Campaigns", desc: "Content & delivery", to: "/campaigns", color: "bg-skoop-blue/10 text-skoop-blue" },
   { icon: Play, label: "Playback", desc: "Automated delivery", to: "/playback-mix", color: "bg-skoop-purple/10 text-skoop-purple" },
 ];

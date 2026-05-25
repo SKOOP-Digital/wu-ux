@@ -62,7 +62,7 @@ export default function Analytics() {
         {/* KPIs */}
         <div className="grid grid-cols-4 gap-4">
           <KPICard label="Campaigns Live" value="3" change="2 paid · 1 in-house" changeType="positive" icon={<Megaphone size={16} />} />
-          <KPICard label="Active Placements" value="24" change="+3 this month" changeType="positive" icon={<MapPin size={16} />} />
+          <KPICard label="Active Rules" value="24" change="+3 this month" changeType="positive" icon={<MapPin size={16} />} />
           <KPICard label="Programmatic Fill Rate" value="88.4%" change="-2.1% vs target" changeType="negative" icon={<Radio size={16} />} />
           <KPICard label="Under-delivery Alerts" value="2" change="2 campaigns at risk" changeType="negative" icon={<AlertTriangle size={16} />} />
         </div>

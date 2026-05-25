@@ -396,7 +396,7 @@ export default function Screens() {
                       Daily Eligible Capacity
                     </th>
                     <th className="skoop-table-cell text-right">
-                      Ad Placements
+                      Inventory Rules
                     </th>
                     <th className="skoop-table-cell text-left">Status</th>
                   </tr>

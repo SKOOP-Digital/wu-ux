@@ -40,7 +40,7 @@ export default function Placements() {
   return (
     <div>
       <PageHeader
-        title="Placements"
+        title="Inventory Rules"
         subtitle="Control how ads run across your screen network"
         icon={<MapPin size={20} />}
         actions={

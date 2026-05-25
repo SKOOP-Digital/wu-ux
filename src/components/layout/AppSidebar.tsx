@@ -8,7 +8,7 @@ const mainNav = [
 ];
 
 const monetNav = [
-  { icon: MapPin, label: "Placements", to: "/placements" },
+  { icon: MapPin, label: "Inventory Rules", to: "/placements" },
   { icon: Megaphone, label: "Campaigns", to: "/campaigns" },
   { icon: FileCheck, label: "Proof of Play", to: "/proof-of-play" },
 ];

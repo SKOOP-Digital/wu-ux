@@ -144,7 +144,7 @@ export default function ScreenDetail() {
             {fromPlacement && placementObj ? (
               <>
                 <BreadcrumbItem>
-                  <BreadcrumbLink asChild><Link to="/placements">Placements</Link></BreadcrumbLink>
+                  <BreadcrumbLink asChild><Link to="/placements">Inventory Rules</Link></BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>

@@ -118,7 +118,7 @@ export default function PlacementDetail() {
       toast({ title: "No screens selected", description: "Add at least one screen or tag before saving.", variant: "destructive" });
       return;
     }
-    toast({ title: isNew ? "Placement created" : "Placement updated", description: `"${name}" saved with ${effectiveScreenCount} screens.` });
+    toast({ title: isNew ? "Rule created" : "Rule updated", description: `"${name}" saved with ${effectiveScreenCount} screens.` });
     navigate("/placements");
   };
 
@@ -127,21 +127,21 @@ export default function PlacementDetail() {
       <div className="px-8 pt-4 pb-0">
         <Breadcrumb>
           <BreadcrumbList>
-            <BreadcrumbItem><BreadcrumbLink asChild><Link to="/placements">Placements</Link></BreadcrumbLink></BreadcrumbItem>
+            <BreadcrumbItem><BreadcrumbLink asChild><Link to="/placements">Inventory Rules</Link></BreadcrumbLink></BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem><BreadcrumbPage>{isNew ? "New Placement" : name || "Placement"}</BreadcrumbPage></BreadcrumbItem>
+            <BreadcrumbItem><BreadcrumbPage>{isNew ? "New Rule" : name || "Rule"}</BreadcrumbPage></BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </div>
 
       <PageHeader
-        title={isNew ? "New Placement" : "Edit Placement"}
+        title={isNew ? "New Inventory Rule" : "Edit Inventory Rule"}
         subtitle="Group screens and set their programmatic allocation"
         icon={<MapPin size={20} />}
         actions={
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={() => navigate("/placements")}><ArrowLeft size={14} className="mr-1" /> Cancel</Button>
-            <Button size="sm" onClick={handleSave}>Save Placement</Button>
+            <Button size="sm" onClick={handleSave}>Save Rule</Button>
           </div>
         }
       />
