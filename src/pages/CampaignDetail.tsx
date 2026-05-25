@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef } from "react";
 import {
-  Megaphone, ArrowLeft, MapPin, ExternalLink, Pencil, X, Check,
+  Megaphone, ArrowLeft, ArrowRight, MapPin, ExternalLink, Pencil, X, Check,
   Tag, Globe, Search, ChevronDown, ChevronRight, Clock, Upload, Trash2,
   Info, AlertTriangle, Plus, Image as ImageIcon, Folder, MoreHorizontal,
 } from "lucide-react";
@@ -22,6 +22,15 @@ import { searchPOIs, getScreensNearPOIs, getRegionalSearchCenters, milesToMeters
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const ALL_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+const EDIT_STEPS = [
+  "Campaign Details",
+  "Where It Runs",
+  "Schedule",
+  "How Much It Plays",
+  "Creatives",
+  "Review & Save",
+];
 
 const MOCK_MEDIA_FOLDERS = [
   { id: "f1", name: "Brand Assets" }, { id: "f2", name: "Campaigns" },
@@ -147,6 +156,8 @@ export default function CampaignDetail() {
 
   const original = id ? campaignData[id] : null;
   const [isEditing, setIsEditing] = useState(false);
+  const [editStep, setEditStep] = useState(0);
+  const [conflictAcknowledged, setConflictAcknowledged] = useState(false);
   const [draft, setDraft] = useState<CampaignRecord | null>(original ? cloneCampaign(original) : null);
 
   // ── Tag picker state ──
@@ -254,9 +265,14 @@ export default function CampaignDetail() {
   }
 
   // ── Edit helpers ──
-  const startEdit = () => { setDraft(cloneCampaign(original)); setProximityPOIs([]); setPoiSearch(""); setPoiSearched(false); setTagSearch(""); setIsEditing(true); };
-  const cancelEdit = () => { setDraft(cloneCampaign(original)); setIsEditing(false); };
-  const saveEdit = () => setIsEditing(false);
+  const startEdit = () => {
+    setDraft(cloneCampaign(original));
+    setProximityPOIs([]); setPoiSearch(""); setPoiSearched(false); setTagSearch("");
+    setEditStep(0); setConflictAcknowledged(false);
+    setIsEditing(true);
+  };
+  const cancelEdit = () => { setDraft(cloneCampaign(original)); setEditStep(0); setIsEditing(false); };
+  const saveEdit = () => { setEditStep(0); setIsEditing(false); };
 
   const set = <K extends keyof CampaignRecord>(key: K, value: CampaignRecord[K]) =>
     setDraft(d => d ? { ...d, [key]: value } : d);
@@ -612,15 +628,8 @@ export default function CampaignDetail() {
 
   const renderEditCreatives = () => (
     <div className="skoop-card p-5 space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="skoop-section-header">Creatives</p>
-          <p className="text-xs text-muted-foreground mt-0.5">Add assets for this campaign</p>
-        </div>
-        <Button size="sm" variant="outline" onClick={() => { setShowContentModal(true); setContentView("list"); setContentSearch(""); }}>
-          <Plus size={13} className="mr-1" /> Add Content
-        </Button>
-      </div>
+      <p className="skoop-section-header">Creatives</p>
+      <p className="text-xs text-muted-foreground">Add assets for this campaign using the right sidebar</p>
       {draft.creatives.length > 0 ? (
         <div className="space-y-2">
           {draft.creatives.map(c => (
@@ -636,11 +645,295 @@ export default function CampaignDetail() {
         </div>
       ) : (
         <div className="rounded-lg border border-dashed border-border py-10 text-center text-muted-foreground text-xs">
-          No assets added yet — click Add Content to browse your media library.
+          No assets added yet — use the sidebar to add Media or Website content.
         </div>
       )}
     </div>
   );
+
+  const renderCapacityPanel = () => {
+    if (!capacitySummary || (draft.tags.length === 0 && proximityPOIs.length === 0)) return null;
+    return (
+      <div className="w-72 shrink-0 space-y-4">
+        <div className="skoop-card p-5 space-y-3 sticky top-8">
+          <p className="skoop-section-header">Capacity Summary</p>
+          <p className="text-[11px] text-muted-foreground">Live capacity across selected rules</p>
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm"><span className="text-muted-foreground">Total Screens</span><span className="font-medium tabular-nums">{capacitySummary.totalScreens.toLocaleString()}</span></div>
+            <div className="flex justify-between text-sm"><span className="text-muted-foreground">Combined Capacity</span><span className="font-medium tabular-nums">{capacitySummary.totalCapacity.toLocaleString()}/day</span></div>
+            <div className="flex justify-between text-sm"><span className="text-primary font-medium">Available</span><span className="font-medium tabular-nums text-primary">{capacitySummary.totalAvailable.toLocaleString()}/day</span></div>
+            <div className="flex justify-between text-sm"><span className="text-muted-foreground">Est. Impressions/day</span><span className="font-medium tabular-nums">{hasImpressions ? `~${estimatedDailyImpressions.toLocaleString()}` : "—"}</span></div>
+          </div>
+          <div className="h-2 rounded-full bg-secondary overflow-hidden">
+            <div className="h-full bg-primary rounded-full" style={{ width: `${capacitySummary.bookedPct}%` }} />
+          </div>
+          <div className="flex justify-between text-[10px] text-muted-foreground">
+            <span>{capacitySummary.bookedPct}% booked</span>
+            <span>{capacitySummary.availablePct}% available</span>
+          </div>
+          {editStep >= 3 && (
+            <div className="border-t border-border pt-3 space-y-2">
+              <div className="flex justify-between text-sm"><span className="text-muted-foreground">Requested</span><span className="font-medium tabular-nums">~{capacitySummary.requested.toLocaleString()}/day</span></div>
+              <div className="flex items-center gap-2">
+                {capacitySummary.fits ? (
+                  <StatusChip status="healthy" label="Compatible" />
+                ) : (
+                  <StatusChip status="overbooked" label="Conflict" />
+                )}
+              </div>
+              {!capacitySummary.fits && !conflictAcknowledged && (
+                <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 space-y-2.5">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle size={12} className="text-destructive mt-0.5 shrink-0" />
+                    <div className="space-y-1">
+                      <p className="text-[11px] font-medium text-destructive">
+                        You're requesting ~{capacitySummary.requested.toLocaleString()} plays/day but only {capacitySummary.totalAvailable.toLocaleString()}/day is available.
+                      </p>
+                      <p className="text-[11px] text-muted-foreground">
+                        Other campaigns have already booked the remaining capacity.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="space-y-1.5 pl-5">
+                    <button onClick={() => setEditStep(3)} className="block text-[11px] text-primary font-medium hover:underline">A. Reduce your target</button>
+                    <button onClick={() => setEditStep(1)} className="block text-[11px] text-primary font-medium hover:underline">B. Add more screens</button>
+                    <Button variant="ghost" size="sm" className="h-6 px-2 text-[11px] text-muted-foreground hover:text-foreground" onClick={() => setConflictAcknowledged(true)}>C. Proceed anyway</Button>
+                  </div>
+                </div>
+              )}
+              {!capacitySummary.fits && conflictAcknowledged && (
+                <div className="flex items-start gap-2 rounded-md bg-muted px-3 py-2">
+                  <AlertTriangle size={12} className="text-muted-foreground mt-0.5 shrink-0" />
+                  <p className="text-[11px] text-muted-foreground">Conflict acknowledged — proceeding with overbooking.</p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const renderContentSidebar = () => {
+    const filteredMedia = MOCK_MEDIA_ITEMS.filter(m => m.name.toLowerCase().includes(contentSearch.toLowerCase()));
+    const filteredWebsites = MOCK_WEBSITE_ITEMS.filter(w => w.name.toLowerCase().includes(contentSearch.toLowerCase()));
+
+    if (contentView === "media") {
+      return (
+        <div className="flex flex-col h-full">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+            <button
+              onClick={() => { setContentView("list"); setContentSearch(""); setMediaCtxMenu(null); setShowMediaUploadMenu(false); }}
+              className="flex items-center gap-1.5 text-sm font-semibold hover:text-primary transition-colors"
+            >
+              <ArrowLeft size={14} /> Media
+            </button>
+            <div className="relative" ref={mediaUploadMenuRef}>
+              <button onClick={() => setShowMediaUploadMenu(v => !v)} className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors"><Plus size={14} /></button>
+              {showMediaUploadMenu && (
+                <div className="absolute right-0 top-9 z-20 bg-card border border-border rounded-md shadow-md w-36 py-1">
+                  <label className="w-full text-left px-3 py-2 text-xs hover:bg-secondary transition-colors cursor-pointer block">
+                    Upload File
+                    <input type="file" accept="video/*,image/*" multiple className="hidden" onChange={e => { handleFileUpload(e); setShowMediaUploadMenu(false); }} />
+                  </label>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="flex gap-2 px-3 py-2 border-b border-border">
+            <div className="relative flex-1">
+              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input type="text" placeholder="Search Content" value={contentSearch} onChange={e => setContentSearch(e.target.value)} className="w-full h-8 rounded-md border border-input pl-7 pr-2 text-xs bg-background" />
+            </div>
+            <select className="h-8 rounded-md border border-input px-2 text-xs bg-background"><option>All</option><option>Images</option><option>Videos</option></select>
+          </div>
+          <div className="flex-1 overflow-y-auto p-3" onClick={() => { setMediaCtxMenu(null); setShowMediaUploadMenu(false); }}>
+            {contentSearch === "" && (
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                {MOCK_MEDIA_FOLDERS.map(f => (
+                  <button key={f.id} className="flex items-center gap-1.5 border border-border rounded-md px-2 py-2 text-xs text-left hover:bg-secondary transition-colors">
+                    <Folder size={14} className="text-muted-foreground shrink-0" /><span className="truncate">{f.name}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+            <div className="grid grid-cols-2 gap-2">
+              {filteredMedia.map(item => (
+                <div key={item.id} className="relative group rounded-md border border-border overflow-hidden">
+                  <div className={`h-20 ${item.color} flex items-center justify-center`} />
+                  <div className="absolute top-1.5 right-1.5">
+                    <button onClick={e => { e.stopPropagation(); setMediaCtxMenu(mediaCtxMenu === item.id ? null : item.id); }} className="w-6 h-6 rounded-full bg-background/80 border border-border flex items-center justify-center hover:bg-background transition-colors"><MoreHorizontal size={12} /></button>
+                    {mediaCtxMenu === item.id && (
+                      <div className="absolute right-0 top-7 z-20 bg-card border border-border rounded-md shadow-md w-40 py-1">
+                        <button className="w-full text-left px-3 py-2 text-xs hover:bg-secondary transition-colors flex items-center gap-2" onClick={e => { e.stopPropagation(); addCreative(item.name, "Media"); setMediaCtxMenu(null); }}><Plus size={12} /> Add to campaign</button>
+                        <button className="w-full text-left px-3 py-2 text-xs hover:bg-secondary transition-colors flex items-center gap-2" onClick={e => { e.stopPropagation(); setMediaCtxMenu(null); }}><ImageIcon size={12} /> Preview</button>
+                      </div>
+                    )}
+                  </div>
+                  <div className="px-2 py-1.5"><p className="text-[11px] truncate">{item.name}</p></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (contentView === "website") {
+      return (
+        <div className="flex flex-col h-full">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+            <button
+              onClick={() => { setContentView("list"); setContentSearch(""); setShowWebsiteForm(false); }}
+              className="flex items-center gap-1.5 text-sm font-semibold hover:text-primary transition-colors"
+            >
+              <ArrowLeft size={14} /> Website
+            </button>
+            <button onClick={() => setShowWebsiteForm(v => !v)} className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${showWebsiteForm ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : "bg-primary text-primary-foreground hover:bg-primary/90"}`}>
+              {showWebsiteForm ? <X size={14} /> : <Plus size={14} />}
+            </button>
+          </div>
+          {showWebsiteForm ? (
+            <div className="p-4 space-y-3">
+              <div><label className="text-xs text-muted-foreground">Title</label><input type="text" placeholder="Enter Title" value={newWebsiteTitle} onChange={e => setNewWebsiteTitle(e.target.value)} className="w-full mt-1 h-9 rounded-md border border-input px-3 text-sm bg-background" /></div>
+              <div><label className="text-xs text-muted-foreground">Website URL</label><input type="text" placeholder="Enter Website URL" value={newWebsiteUrl} onChange={e => setNewWebsiteUrl(e.target.value)} className="w-full mt-1 h-9 rounded-md border border-input px-3 text-sm bg-background" /></div>
+              <div className="flex justify-end gap-2 pt-1">
+                <Button variant="outline" size="sm" onClick={() => { setShowWebsiteForm(false); setNewWebsiteTitle(""); setNewWebsiteUrl(""); }}>Cancel</Button>
+                <Button size="sm" disabled={!newWebsiteTitle} onClick={() => { if (newWebsiteTitle) { addCreative(newWebsiteTitle, "Website"); } setShowWebsiteForm(false); setNewWebsiteTitle(""); setNewWebsiteUrl(""); }}>Save</Button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="px-3 py-2 border-b border-border">
+                <div className="relative">
+                  <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <input type="text" placeholder="Search Content" value={contentSearch} onChange={e => setContentSearch(e.target.value)} className="w-full h-8 rounded-md border border-input pl-7 pr-2 text-xs bg-background" />
+                </div>
+              </div>
+              <div className="flex-1 overflow-y-auto p-3" onClick={() => setMediaCtxMenu(null)}>
+                <div className="grid grid-cols-2 gap-2">
+                  {filteredWebsites.map(item => (
+                    <div key={item.id} className="relative group rounded-md border border-border overflow-hidden">
+                      <div className="h-20 bg-gradient-to-br from-sky-100 to-blue-200" />
+                      <div className="absolute top-1.5 right-1.5">
+                        <button onClick={e => { e.stopPropagation(); setMediaCtxMenu(mediaCtxMenu === item.id ? null : item.id); }} className="w-6 h-6 rounded-full bg-background/80 border border-border flex items-center justify-center hover:bg-background transition-colors"><MoreHorizontal size={12} /></button>
+                        {mediaCtxMenu === item.id && (
+                          <div className="absolute right-0 top-7 z-20 bg-card border border-border rounded-md shadow-md w-40 py-1">
+                            <button className="w-full text-left px-3 py-2 text-xs hover:bg-secondary transition-colors flex items-center gap-2" onClick={e => { e.stopPropagation(); addCreative(item.name, "Website"); setMediaCtxMenu(null); }}><Plus size={12} /> Add to campaign</button>
+                          </div>
+                        )}
+                      </div>
+                      <div className="px-2 py-1.5"><p className="text-[11px] truncate">{item.name}</p></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex flex-col h-full">
+        <div className="px-4 py-3 border-b border-border"><h2 className="text-sm font-semibold">Content</h2></div>
+        <div className="px-3 py-2 border-b border-border">
+          <input type="text" placeholder="Type to search apps" value={contentSearch} onChange={e => setContentSearch(e.target.value)} className="w-full h-8 rounded-md border border-input px-3 text-xs bg-background" />
+        </div>
+        <div className="flex-1 overflow-y-auto">
+          {[{ label: "Media", icon: <ImageIcon size={16} className="text-primary" /> }, { label: "Website", icon: <Globe size={16} className="text-primary" /> }]
+            .filter(item => item.label.toLowerCase().includes(contentSearch.toLowerCase()))
+            .map(item => (
+              <button key={item.label} onClick={() => { setContentView(item.label.toLowerCase() as "media" | "website"); setContentSearch(""); }} className="w-full flex items-center justify-between px-4 py-3 text-sm hover:bg-secondary transition-colors border-b border-border">
+                <span className="flex items-center gap-3">{item.icon}{item.label}</span>
+                <ChevronRight size={14} className="text-muted-foreground" />
+              </button>
+            ))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderEditReview = () => {
+    const totalDays = draft.startDate && draft.endDate
+      ? Math.max(1, Math.ceil((new Date(draft.endDate).getTime() - new Date(draft.startDate).getTime()) / 86400000))
+      : 30;
+    const totalEstimated = estimatedDailyPlays * totalDays;
+    const hasConflict = capacitySummary ? !capacitySummary.fits : false;
+
+    const deliveryTargetLabel = !draft.hasTarget
+      ? "None (fill only)"
+      : draft.deliveryGoalType === "sov"
+      ? `${draft.sovValue}% of screen time`
+      : draft.deliveryGoalType === "plays-per-day"
+      ? `${draft.playsPerDay.toLocaleString()} plays/screen/day`
+      : `${draft.totalPlays.toLocaleString()} total plays`;
+
+    return (
+      <div className="space-y-4">
+        <div className="skoop-card p-5 space-y-4">
+          <p className="skoop-section-header">Campaign Summary</p>
+          <div className="grid grid-cols-2 gap-4">
+            <div><p className="text-xs text-muted-foreground">Campaign Name</p><p className="text-sm font-medium">{draft.name || "Untitled"}</p></div>
+            <div><p className="text-xs text-muted-foreground">Paid Campaign</p><p className="text-sm font-medium">{draft.isPaid ? "Yes" : "No"}</p></div>
+            {draft.isPaid && draft.advertiser && <div><p className="text-xs text-muted-foreground">Advertiser</p><p className="text-sm font-medium">{draft.advertiser}</p></div>}
+            {draft.isPaid && draft.dealValue && <div><p className="text-xs text-muted-foreground">Deal Value</p><p className="text-sm font-medium tabular-nums">${Number(draft.dealValue).toLocaleString()}</p></div>}
+            <div className="col-span-2">
+              <p className="text-xs text-muted-foreground">Targeting</p>
+              {draft.tags.length > 0 ? (
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {draft.tags.map(tag => (
+                    <span key={tag} className="px-2 py-0.5 rounded-full text-xs font-medium bg-secondary text-foreground border border-border">{tag}</span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground mt-1">No tags selected</p>
+              )}
+            </div>
+            <div><p className="text-xs text-muted-foreground">Screens</p><p className="text-sm font-medium tabular-nums">{capacitySummary?.totalScreens.toLocaleString() || 0}</p></div>
+            <div><p className="text-xs text-muted-foreground">Schedule</p><p className="text-sm font-medium">{draft.startDate || "—"} → {draft.endDate || "—"}</p></div>
+            <div className="col-span-2">
+              <p className="text-xs text-muted-foreground">Active Hours</p>
+              <div className="mt-1 space-y-0.5">
+                {draft.timeWindows.map(w => (
+                  <p key={w.id} className="text-sm font-medium">
+                    {w.days.length === 7 ? "Every day" : w.days.join(", ")} · {w.startTime} – {w.endTime}
+                  </p>
+                ))}
+              </div>
+            </div>
+            <div><p className="text-xs text-muted-foreground">Delivery Target</p><p className="text-sm font-medium tabular-nums">{deliveryTargetLabel}</p></div>
+            <div><p className="text-xs text-muted-foreground">Fill Behavior</p><p className="text-sm font-medium">{fillBehaviorLabel}</p></div>
+            <div><p className="text-xs text-muted-foreground">Creatives</p><p className="text-sm font-medium">{draft.creatives.length} asset{draft.creatives.length !== 1 ? "s" : ""}</p></div>
+          </div>
+        </div>
+
+        <div className="skoop-card p-5 space-y-3">
+          <p className="skoop-section-header">Estimated Delivery</p>
+          <div className="grid grid-cols-2 gap-4">
+            <div><p className="text-xs text-muted-foreground">Total estimated plays</p><p className="text-sm font-medium tabular-nums">~{totalEstimated.toLocaleString()}</p></div>
+            <div><p className="text-xs text-muted-foreground">Daily pacing estimate</p><p className="text-sm font-medium tabular-nums">~{estimatedDailyPlays.toLocaleString()} plays/day</p></div>
+            <div><p className="text-xs text-muted-foreground">Est. daily impressions</p><p className="text-sm font-medium tabular-nums">{hasImpressions ? `~${estimatedDailyImpressions.toLocaleString()}` : "—"}</p></div>
+            <div><p className="text-xs text-muted-foreground">Inventory Fit</p><StatusChip status={hasConflict ? "overbooked" : "healthy"} label={hasConflict ? "Conflict" : "Compatible"} /></div>
+          </div>
+        </div>
+
+        {!hasConflict && draft.name ? (
+          <div className="flex items-start gap-3 bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-3">
+            <Check size={14} className="text-emerald-600 mt-0.5 shrink-0" />
+            <p className="text-xs text-emerald-700">All looks good. Click Save Changes to apply your edits.</p>
+          </div>
+        ) : (
+          <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+            <AlertTriangle size={14} className="text-red-600 mt-0.5 shrink-0" />
+            <p className="text-xs text-red-700">
+              {hasConflict ? "Capacity conflict detected — requested plays exceed available inventory." : "Please provide a campaign name before saving."}
+            </p>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const renderContentModal = () => {
     if (!showContentModal) return null;
@@ -781,6 +1074,110 @@ export default function CampaignDetail() {
   // MAIN RENDER
   // ─────────────────────────────────────────────────────────────────────────────
 
+  const renderCurrentEditStep = () => {
+    if (editStep === 0) return renderEditDetails();
+    if (editStep === 1) return renderEditTargeting();
+    if (editStep === 2) return renderEditSchedule();
+    if (editStep === 3) return renderEditDelivery();
+    if (editStep === 4) return renderEditCreatives();
+    if (editStep === 5) return renderEditReview();
+    return renderEditDetails();
+  };
+
+  const isLastEditStep = editStep === EDIT_STEPS.length - 1;
+
+  // ── Edit wizard layout ───────────────────────────────────────────────────────
+  if (isEditing) {
+    return (
+      <div className="flex flex-col h-screen">
+        <input ref={mediaUploadRef} type="file" accept="video/*,image/*,.html,.zip" multiple className="hidden" onChange={handleFileUpload} />
+
+        {/* Breadcrumb */}
+        <div className="px-8 pt-4 pb-0 shrink-0">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem><BreadcrumbLink asChild><Link to="/campaigns">Campaigns</Link></BreadcrumbLink></BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink className="cursor-pointer" onClick={cancelEdit}>{draft.name}</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem><BreadcrumbPage>Edit</BreadcrumbPage></BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
+
+        {/* Page Header */}
+        <div className="shrink-0">
+          <PageHeader
+            title={`Edit: ${draft.name}`}
+            subtitle="Update campaign settings and targeting"
+            icon={<Megaphone size={20} />}
+            actions={<Button variant="outline" size="sm" onClick={cancelEdit}><X size={14} className="mr-1" /> Cancel</Button>}
+          />
+        </div>
+
+        {/* Step indicator */}
+        <div className="border-b border-border px-8 py-4 shrink-0">
+          <div className="flex items-center gap-2">
+            {EDIT_STEPS.map((s, i) => (
+              <div key={s} className="flex items-center gap-2">
+                <button
+                  onClick={() => setEditStep(i)}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                    i === editStep ? "bg-primary text-primary-foreground" : i < editStep ? "bg-primary/10 text-primary" : "bg-secondary text-muted-foreground"
+                  }`}
+                >
+                  {i < editStep ? <Check size={12} /> : <span>{i + 1}</span>}
+                  {s}
+                </button>
+                {i < EDIT_STEPS.length - 1 && <div className="w-6 h-px bg-border" />}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Content area */}
+        <div className="flex-1 flex overflow-hidden min-h-0">
+          {/* Scrollable main content */}
+          <div className="flex-1 overflow-y-auto p-8">
+            <div className={editStep !== 4 ? "flex gap-6" : ""}>
+              <div className={editStep !== 4 ? "flex-1 max-w-3xl" : "max-w-3xl"}>
+                {renderCurrentEditStep()}
+
+                <div className="flex justify-between mt-8">
+                  <Button variant="outline" size="sm" onClick={() => setEditStep(s => Math.max(s - 1, 0))} disabled={editStep === 0}>
+                    <ArrowLeft size={14} className="mr-1" /> Previous
+                  </Button>
+                  {!isLastEditStep ? (
+                    <Button size="sm" onClick={() => setEditStep(s => Math.min(s + 1, EDIT_STEPS.length - 1))}>
+                      Next <ArrowRight size={14} className="ml-1" />
+                    </Button>
+                  ) : (
+                    <Button size="sm" onClick={saveEdit}>
+                      <Check size={14} className="mr-1" /> Save Changes
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              {/* Capacity panel — shown on steps 0–3 only */}
+              {editStep !== 4 && editStep < 5 && renderCapacityPanel()}
+            </div>
+          </div>
+
+          {/* Full-height content sidebar — only on Creatives step */}
+          {editStep === 4 && (
+            <div className="w-[340px] shrink-0 border-l border-border bg-card flex flex-col overflow-hidden">
+              {renderContentSidebar()}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── View layout ──────────────────────────────────────────────────────────────
   return (
     <div>
       {renderContentModal()}
@@ -802,137 +1199,112 @@ export default function CampaignDetail() {
         icon={<Megaphone size={20} />}
         actions={
           <div className="flex items-center gap-2">
-            {isEditing ? (
-              <>
-                <Button variant="outline" size="sm" onClick={cancelEdit}><X size={14} className="mr-1" /> Cancel</Button>
-                <Button size="sm" onClick={saveEdit}><Check size={14} className="mr-1" /> Save Changes</Button>
-              </>
-            ) : (
-              <>
-                <Button variant="outline" size="sm" onClick={() => navigate("/campaigns")}><ArrowLeft size={14} className="mr-1" /> Back</Button>
-                <Button size="sm" onClick={startEdit}><Pencil size={14} className="mr-1" /> Edit</Button>
-              </>
-            )}
+            <Button variant="outline" size="sm" onClick={() => navigate("/campaigns")}><ArrowLeft size={14} className="mr-1" /> Back</Button>
+            <Button size="sm" onClick={startEdit}><Pencil size={14} className="mr-1" /> Edit</Button>
           </div>
         }
       />
 
       <div className="p-8">
-        {isEditing ? (
-          // ── Edit layout ──────────────────────────────────────────────────────
-          <div className="space-y-6">
-            {renderEditDetails()}
-            {renderEditTargeting()}
-            {renderEditSchedule()}
-            {renderEditDelivery()}
-            {renderEditCreatives()}
-            <div className="flex justify-end gap-3 pt-2">
-              <Button variant="outline" onClick={cancelEdit}><X size={14} className="mr-1" /> Cancel</Button>
-              <Button onClick={saveEdit}><Check size={14} className="mr-1" /> Save Changes</Button>
+        <div className="grid grid-cols-3 gap-6">
+          <div className="col-span-2 space-y-6">
+            {/* Details */}
+            <div className="skoop-card p-5 space-y-4">
+              <p className="skoop-section-header">Campaign Details</p>
+              <div className="grid grid-cols-3 gap-4">
+                <div><p className="text-xs text-muted-foreground">Status</p><StatusChip status={draft.status.toLowerCase().replace(" ", "-")} label={draft.status} /></div>
+                <div><p className="text-xs text-muted-foreground">Paid</p><p className="text-sm font-medium">{draft.isPaid ? "Yes" : "No"}</p></div>
+                {draft.advertiser && <div><p className="text-xs text-muted-foreground">Advertiser</p><p className="text-sm font-medium">{draft.advertiser}</p></div>}
+                {draft.dealValue && <div><p className="text-xs text-muted-foreground">Deal Value</p><p className="text-sm font-medium tabular-nums">${Number(draft.dealValue).toLocaleString()}</p></div>}
+              </div>
             </div>
-          </div>
-        ) : (
-          // ── View layout ──────────────────────────────────────────────────────
-          <div className="grid grid-cols-3 gap-6">
-            <div className="col-span-2 space-y-6">
-              {/* Details */}
-              <div className="skoop-card p-5 space-y-4">
-                <p className="skoop-section-header">Campaign Details</p>
-                <div className="grid grid-cols-3 gap-4">
-                  <div><p className="text-xs text-muted-foreground">Status</p><StatusChip status={draft.status.toLowerCase().replace(" ", "-")} label={draft.status} /></div>
-                  <div><p className="text-xs text-muted-foreground">Paid</p><p className="text-sm font-medium">{draft.isPaid ? "Yes" : "No"}</p></div>
-                  {draft.advertiser && <div><p className="text-xs text-muted-foreground">Advertiser</p><p className="text-sm font-medium">{draft.advertiser}</p></div>}
-                  {draft.dealValue && <div><p className="text-xs text-muted-foreground">Deal Value</p><p className="text-sm font-medium tabular-nums">${Number(draft.dealValue).toLocaleString()}</p></div>}
-                </div>
-              </div>
-              {/* Targeting */}
-              <div className="skoop-card p-5 space-y-3">
-                <div className="flex items-center gap-2"><Tag size={14} className="text-muted-foreground" /><p className="skoop-section-header">Targeting</p></div>
-                {draft.tags.length > 0 ? (
-                  <div className="flex flex-wrap gap-1.5">
-                    {draft.tags.map(tag => (
-                      <span key={tag} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-secondary text-foreground border border-border">{tag}</span>
-                    ))}
-                  </div>
-                ) : <p className="text-sm text-muted-foreground">No tags selected</p>}
-                {proximityMatchedScreens.length > 0 && (
-                  <p className="text-xs text-muted-foreground">{proximityMatchedScreens.length} screens via proximity</p>
-                )}
-              </div>
-              {/* Schedule */}
-              <div className="skoop-card p-5 space-y-3">
-                <p className="skoop-section-header">Schedule</p>
-                <div className="grid grid-cols-2 gap-4">
-                  <div><p className="text-xs text-muted-foreground">Start</p><p className="text-sm font-medium">{draft.startDate || "—"}</p></div>
-                  <div><p className="text-xs text-muted-foreground">End</p><p className="text-sm font-medium">{draft.endDate || "—"}</p></div>
-                </div>
-                <div className="space-y-1">
-                  {draft.timeWindows.map(w => <p key={w.id} className="text-sm font-medium">{windowLabel(w)}</p>)}
-                </div>
-              </div>
-              {/* Delivery */}
-              <div className="skoop-card p-5 space-y-3">
-                <p className="skoop-section-header">Delivery Settings</p>
-                <div className="grid grid-cols-3 gap-4">
-                  <div><p className="text-xs text-muted-foreground">Target</p><p className="text-sm font-medium">{goalDisplay(draft)}</p></div>
-                  <div><p className="text-xs text-muted-foreground">Fill</p><p className="text-sm font-medium">{fillBehaviorLabel}</p></div>
-                </div>
-              </div>
-              {/* Delivery progress */}
-              <div className="skoop-card p-5 space-y-4">
-                <p className="skoop-section-header">Delivery Progress</p>
-                {draft.hasTarget ? (
-                  <>
-                    <div className="flex items-center gap-4"><Progress value={pct} className="h-2 flex-1" /><span className="text-sm font-medium tabular-nums">{pct}%</span></div>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div><p className="text-xs text-muted-foreground">Delivered</p><p className="text-sm font-semibold tabular-nums">{draft.delivered.toLocaleString()}</p></div>
-                      <div><p className="text-xs text-muted-foreground">Target</p><p className="text-sm font-semibold tabular-nums">{draft.target.toLocaleString()}</p></div>
-                      <div><p className="text-xs text-muted-foreground">Pacing</p><StatusChip status={pct >= 60 ? "healthy" : "at-risk"} label={pct >= 60 ? "On Track" : "Behind Pace"} /></div>
-                    </div>
-                  </>
-                ) : (
-                  <div className="space-y-2">
-                    <p className="text-sm text-muted-foreground">Fill only — no delivery target set.</p>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div><p className="text-xs text-muted-foreground">Total plays delivered</p><p className="text-sm font-semibold tabular-nums">{draft.delivered.toLocaleString()}</p></div>
-                      <div><p className="text-xs text-muted-foreground">Status</p><StatusChip status="healthy" label="Running" /></div>
-                    </div>
-                  </div>
-                )}
-              </div>
-              {/* Creatives */}
-              <div className="skoop-card p-5 space-y-3">
-                <p className="skoop-section-header">Creatives</p>
-                <div className="space-y-2">
-                  {draft.creatives.map(c => (
-                    <div key={c.id} className="flex items-center justify-between py-2 px-3 border border-border rounded-md">
-                      <div><p className="text-sm font-medium">{c.name}</p><p className="text-xs text-muted-foreground">{c.type} · {c.size}</p></div>
-                      <StatusChip status="approved" label="Approved" />
-                    </div>
+            {/* Targeting */}
+            <div className="skoop-card p-5 space-y-3">
+              <div className="flex items-center gap-2"><Tag size={14} className="text-muted-foreground" /><p className="skoop-section-header">Targeting</p></div>
+              {draft.tags.length > 0 ? (
+                <div className="flex flex-wrap gap-1.5">
+                  {draft.tags.map(tag => (
+                    <span key={tag} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-secondary text-foreground border border-border">{tag}</span>
                   ))}
                 </div>
+              ) : <p className="text-sm text-muted-foreground">No tags selected</p>}
+              {proximityMatchedScreens.length > 0 && (
+                <p className="text-xs text-muted-foreground">{proximityMatchedScreens.length} screens via proximity</p>
+              )}
+            </div>
+            {/* Schedule */}
+            <div className="skoop-card p-5 space-y-3">
+              <p className="skoop-section-header">Schedule</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div><p className="text-xs text-muted-foreground">Start</p><p className="text-sm font-medium">{draft.startDate || "—"}</p></div>
+                <div><p className="text-xs text-muted-foreground">End</p><p className="text-sm font-medium">{draft.endDate || "—"}</p></div>
+              </div>
+              <div className="space-y-1">
+                {draft.timeWindows.map(w => <p key={w.id} className="text-sm font-medium">{windowLabel(w)}</p>)}
               </div>
             </div>
-            {/* Sidebar */}
-            <div className="space-y-4">
-              <div className="skoop-card p-5 space-y-3">
-                <p className="skoop-section-header">Summary</p>
+            {/* Delivery */}
+            <div className="skoop-card p-5 space-y-3">
+              <p className="skoop-section-header">Delivery Settings</p>
+              <div className="grid grid-cols-3 gap-4">
                 <div><p className="text-xs text-muted-foreground">Target</p><p className="text-sm font-medium">{goalDisplay(draft)}</p></div>
-                <div><p className="text-xs text-muted-foreground">Fill</p><p className="text-sm font-medium">{draft.fillEnabled ? "On" : "Off"}</p></div>
-                <div><p className="text-xs text-muted-foreground">Dates</p><p className="text-sm font-medium">{draft.startDate || "—"} → {draft.endDate || "—"}</p></div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Active Hours</p>
-                  {draft.timeWindows.map(w => <p key={w.id} className="text-xs text-foreground mt-0.5">{windowLabel(w)}</p>)}
-                </div>
-                <div><p className="text-xs text-muted-foreground">Targeting</p><p className="text-sm font-medium">{draft.tags.length} tag{draft.tags.length !== 1 ? "s" : ""}</p></div>
+                <div><p className="text-xs text-muted-foreground">Fill</p><p className="text-sm font-medium">{fillBehaviorLabel}</p></div>
               </div>
-              <div className="skoop-card p-5 space-y-3">
-                <p className="skoop-section-header">Quick Links</p>
-                <button onClick={() => navigate("/proof-of-play")} className="flex items-center gap-2 text-xs text-primary hover:underline w-full"><ExternalLink size={12} /> Proof of Play</button>
+            </div>
+            {/* Delivery progress */}
+            <div className="skoop-card p-5 space-y-4">
+              <p className="skoop-section-header">Delivery Progress</p>
+              {draft.hasTarget ? (
+                <>
+                  <div className="flex items-center gap-4"><Progress value={pct} className="h-2 flex-1" /><span className="text-sm font-medium tabular-nums">{pct}%</span></div>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div><p className="text-xs text-muted-foreground">Delivered</p><p className="text-sm font-semibold tabular-nums">{draft.delivered.toLocaleString()}</p></div>
+                    <div><p className="text-xs text-muted-foreground">Target</p><p className="text-sm font-semibold tabular-nums">{draft.target.toLocaleString()}</p></div>
+                    <div><p className="text-xs text-muted-foreground">Pacing</p><StatusChip status={pct >= 60 ? "healthy" : "at-risk"} label={pct >= 60 ? "On Track" : "Behind Pace"} /></div>
+                  </div>
+                </>
+              ) : (
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">Fill only — no delivery target set.</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div><p className="text-xs text-muted-foreground">Total plays delivered</p><p className="text-sm font-semibold tabular-nums">{draft.delivered.toLocaleString()}</p></div>
+                    <div><p className="text-xs text-muted-foreground">Status</p><StatusChip status="healthy" label="Running" /></div>
+                  </div>
+                </div>
+              )}
+            </div>
+            {/* Creatives */}
+            <div className="skoop-card p-5 space-y-3">
+              <p className="skoop-section-header">Creatives</p>
+              <div className="space-y-2">
+                {draft.creatives.map(c => (
+                  <div key={c.id} className="flex items-center justify-between py-2 px-3 border border-border rounded-md">
+                    <div><p className="text-sm font-medium">{c.name}</p><p className="text-xs text-muted-foreground">{c.type} · {c.size}</p></div>
+                    <StatusChip status="approved" label="Approved" />
+                  </div>
+                ))}
               </div>
             </div>
           </div>
-        )}
+          {/* Sidebar */}
+          <div className="space-y-4">
+            <div className="skoop-card p-5 space-y-3">
+              <p className="skoop-section-header">Summary</p>
+              <div><p className="text-xs text-muted-foreground">Target</p><p className="text-sm font-medium">{goalDisplay(draft)}</p></div>
+              <div><p className="text-xs text-muted-foreground">Fill</p><p className="text-sm font-medium">{draft.fillEnabled ? "On" : "Off"}</p></div>
+              <div><p className="text-xs text-muted-foreground">Dates</p><p className="text-sm font-medium">{draft.startDate || "—"} → {draft.endDate || "—"}</p></div>
+              <div>
+                <p className="text-xs text-muted-foreground">Active Hours</p>
+                {draft.timeWindows.map(w => <p key={w.id} className="text-xs text-foreground mt-0.5">{windowLabel(w)}</p>)}
+              </div>
+              <div><p className="text-xs text-muted-foreground">Targeting</p><p className="text-sm font-medium">{draft.tags.length} tag{draft.tags.length !== 1 ? "s" : ""}</p></div>
+            </div>
+            <div className="skoop-card p-5 space-y-3">
+              <p className="skoop-section-header">Quick Links</p>
+              <button onClick={() => navigate("/proof-of-play")} className="flex items-center gap-2 text-xs text-primary hover:underline w-full"><ExternalLink size={12} /> Proof of Play</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
