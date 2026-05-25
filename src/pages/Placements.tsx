@@ -10,19 +10,13 @@ import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { allPlacements, calcCapacityFromRule } from "@/data/placements";
 
-const filters = ["All", "Healthy", "Overbooked", "At Risk", "Continuous", "Ad Breaks"];
+const filters = ["All", "Healthy", "Overbooked", "At Risk"];
 
 const statusTooltips: Record<string, string> = {
   Healthy: "Capacity within safe range",
   "At Risk": "Pacing or capacity issue emerging",
   Overbooked: "Booked demand exceeds eligible capacity",
 };
-
-function modelLabel(model: string) {
-  if (model === "Loop") return "Continuous";
-  if (model === "Ad-break") return "Ad Breaks";
-  return model;
-}
 
 export default function Placements() {
   const navigate = useNavigate();
@@ -40,8 +34,6 @@ export default function Placements() {
   const filtered = enriched.filter((p) => {
     if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
     if (activeFilter === "All") return true;
-    if (activeFilter === "Continuous") return p.model === "Loop";
-    if (activeFilter === "Ad Breaks") return p.model === "Ad-break";
     return p.status === activeFilter;
   });
 
@@ -86,12 +78,11 @@ export default function Placements() {
             <table className="w-full table-fixed">
               <thead>
                 <tr className="skoop-table-header">
-                  <th className="skoop-table-cell text-left" style={{ width: "22%" }}>Placement</th>
-                  <th className="skoop-table-cell text-left" style={{ width: "14%" }}>Screens</th>
-                  <th className="skoop-table-cell text-left whitespace-nowrap" style={{ width: "13%" }}>How Ads Play</th>
-                  <th className="skoop-table-cell text-left" style={{ width: "18%" }}>Content Split</th>
-                  <th className="skoop-table-cell text-left" style={{ width: "11%" }}>Active Hours</th>
-                  <th className="skoop-table-cell text-left" style={{ width: "10%" }}>Capacity</th>
+                  <th className="skoop-table-cell text-left" style={{ width: "25%" }}>Placement</th>
+                  <th className="skoop-table-cell text-left" style={{ width: "17%" }}>Screens</th>
+                  <th className="skoop-table-cell text-left" style={{ width: "21%" }}>Content Split</th>
+                  <th className="skoop-table-cell text-left" style={{ width: "13%" }}>Active Hours</th>
+                  <th className="skoop-table-cell text-left" style={{ width: "12%" }}>Capacity</th>
                   <th className="skoop-table-cell text-left" style={{ width: "12%" }}>Status</th>
                 </tr>
               </thead>
@@ -103,9 +94,6 @@ export default function Placements() {
                     </td>
                     <td className="skoop-table-cell text-muted-foreground text-xs">
                       {p.screenCount.toLocaleString()} screens · {p.venue}
-                    </td>
-                    <td className="skoop-table-cell">
-                      <StatusChip status={p.model.toLowerCase()} label={modelLabel(p.model)} />
                     </td>
                     <td className="skoop-table-cell">
                       <MixBar owned={p.owned} direct={p.direct} programmatic={p.prog} showHoverTooltip />
@@ -129,9 +117,8 @@ export default function Placements() {
           <div className="grid grid-cols-3 gap-4">
             {filtered.map((p) => (
               <div key={p.id} className="skoop-card p-5 cursor-pointer hover:shadow-sm transition-shadow" onClick={() => navigate(`/placements/${p.id}`)}>
-                <div className="flex items-center justify-between mb-2">
+                <div className="mb-2">
                   <StatusChip status={p.status.toLowerCase().replace(" ", "-")} label={p.status} />
-                  <StatusChip status={p.model.toLowerCase()} label={modelLabel(p.model)} />
                 </div>
                 <h3 className="font-medium text-sm text-foreground mb-1">{p.name}</h3>
                 <div className="flex items-center gap-1.5 text-muted-foreground mb-3">
