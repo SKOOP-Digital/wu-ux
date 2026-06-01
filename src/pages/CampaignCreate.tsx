@@ -10,6 +10,7 @@ import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbS
 import { allPlacements, calcCapacityFromRule } from "@/data/placements";
 import { allScreens } from "@/data/screens";
 import { getAllScreenTags, getScreensMatchingTags } from "@/data/screenTags";
+import { defaultCdmKeys, GEO_CDM_KEYS } from "@/data/cdmTags";
 import { hasAnyImpressionData, getImpressionMultiplier } from "@/data/impressionStore";
 import { searchPOIs, getScreensNearPOIs, getRegionalSearchCenters, milesToMeters, POI } from "@/services/foursquareService";
 import POIAutocomplete from "@/components/shared/POIAutocomplete";
@@ -19,7 +20,7 @@ const STEPS = [
   "Where It Runs",
   "Schedule",
   "How Much It Plays",
-  "Creatives",
+  "What Plays",
   "Review & Launch",
 ];
 
@@ -27,6 +28,7 @@ interface Creative {
   id: string;
   name: string;
   type: "Media" | "Website";
+  duration: number; // seconds; auto-detected for video, user-set for images/HTML
 }
 
 const ALL_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -61,19 +63,34 @@ interface TimeWindow {
   days: string[];
   startTime: string;
   endTime: string;
+  // Optional date sub-range within the campaign's overall date range.
+  // Empty strings = "all dates" (default).
+  windowStartDate: string;
+  windowEndDate: string;
 }
 
-function newWindow(days = ALL_DAYS.slice(0, 5)): TimeWindow {
-  return { id: crypto.randomUUID(), days, startTime: "08:00", endTime: "20:00" };
+function newWindow(days = ALL_DAYS): TimeWindow {
+  return {
+    id: crypto.randomUUID(),
+    days,
+    startTime: "00:00",
+    endTime: "23:59",
+    windowStartDate: "",
+    windowEndDate: "",
+  };
 }
 
 export default function CampaignCreate() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
+  const [campaignType, setCampaignType] = useState<"standard" | "programmatic">("standard");
   const [campaignName, setCampaignName] = useState("");
   const [isPaid, setIsPaid] = useState(false);
   const [advertiser, setAdvertiser] = useState("");
   const [dealValue, setDealValue] = useState("");
+  const [sspPartner, setSspPartner] = useState("");
+  const [sspApiKey, setSspApiKey] = useState("");
+  const [sspAvgDuration, setSspAvgDuration] = useState(30);
 
   // Step 2 — Where It Runs
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -117,8 +134,12 @@ export default function CampaignCreate() {
   const mediaUploadMenuRef = useRef<HTMLDivElement>(null);
 
   const addCreative = (name: string, type: "Media" | "Website") => {
-    setCreatives((prev) => [...prev, { id: crypto.randomUUID(), name, type }]);
+    const defaultDuration = type === "Website" ? 30 : 15;
+    setCreatives((prev) => [...prev, { id: crypto.randomUUID(), name, type, duration: defaultDuration }]);
   };
+
+  const updateCreativeDuration = (id: string, duration: number) =>
+    setCreatives((prev) => prev.map((c) => c.id === id ? { ...c, duration } : c));
 
   const removeCreative = (id: string) => setCreatives((prev) => prev.filter((c) => c.id !== id));
 
@@ -136,17 +157,28 @@ export default function CampaignCreate() {
   const next = () => setStep((s) => Math.min(s + 1, STEPS.length - 1));
   const prev = () => setStep((s) => Math.max(s - 1, 0));
 
-  const allTags = useMemo(() => getAllScreenTags(), []);
+  const allTags = useMemo(() => {
+    const base = getAllScreenTags();
+    const cdmExtras = defaultCdmKeys
+      .filter((k) => !k.isAuto || !GEO_CDM_KEYS.has(k.key))
+      .flatMap((k) => k.values.map((v) => ({
+        value: v.value,
+        type: (k.isAuto ? "auto" : "manual") as "auto" | "manual",
+        category: k.key,
+        screenCount: v.screenCount,
+      })));
+    const baseValues = new Set(base.map((t) => t.value));
+    const uniqueExtras = cdmExtras.filter((e) => !baseValues.has(e.value));
+    const cdmValueToKey: Record<string, string> = {};
+    cdmExtras.forEach((e) => { cdmValueToKey[e.value] = e.category; });
+    const updatedBase = base.map((t) => cdmValueToKey[t.value] ? { ...t, category: cdmValueToKey[t.value] } : t);
+    return [...updatedBase, ...uniqueExtras];
+  }, []);
 
   const tagMatchedScreens = useMemo(() => {
     if (selectedTags.length === 0) return 0;
     return getScreensMatchingTags(selectedTags).length;
   }, [selectedTags]);
-
-  const selectedPlacementTags = useMemo(
-    () => selectedTags.filter((t) => allPlacements.some((p) => p.name.toLowerCase() === t.toLowerCase())),
-    [selectedTags]
-  );
 
   const proximityMatchedScreens = useMemo(() => {
     if (proximityPOIs.length === 0) return [];
@@ -269,55 +301,69 @@ export default function CampaignCreate() {
     <div className="skoop-card p-5 space-y-4">
       <p className="skoop-section-header">Campaign Details</p>
       <div className="space-y-4">
+
+        {/* Campaign type selector */}
+        <div>
+          <label className="text-xs text-muted-foreground">Campaign Type</label>
+          <div className="mt-1.5 flex rounded-lg border border-border overflow-hidden">
+            <button
+              onClick={() => { setCampaignType("standard"); setSspPartner(""); }}
+              className={`flex-1 px-4 py-2.5 text-sm font-medium transition-colors ${campaignType === "standard" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"}`}
+            >
+              Standard
+            </button>
+            <button
+              onClick={() => { setCampaignType("programmatic"); setIsPaid(false); setAdvertiser(""); setDealValue(""); }}
+              className={`flex-1 px-4 py-2.5 text-sm font-medium transition-colors border-l border-border ${campaignType === "programmatic" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"}`}
+            >
+              Programmatic
+            </button>
+          </div>
+          {campaignType === "programmatic" && (
+            <p className="text-xs text-muted-foreground mt-1.5">Revenue is tracked by the SSP. Paid / advertiser fields are not applicable.</p>
+          )}
+        </div>
+
         <div>
           <label className="text-xs text-muted-foreground">Campaign Name <span className="text-destructive">*</span></label>
           <Input placeholder="e.g. Summer Brand Push" className="mt-1" value={campaignName} onChange={(e) => setCampaignName(e.target.value)} />
         </div>
 
-        <div className="flex items-center justify-between rounded-lg border border-border px-4 py-3">
-          <div>
-            <p className="text-sm font-medium text-foreground">Paid campaign</p>
-            <p className="text-xs text-muted-foreground mt-0.5">This campaign is booked by an external advertiser or partner.</p>
-          </div>
-          <div className="flex gap-1 shrink-0">
-            <button
-              onClick={() => setIsPaid(true)}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${isPaid ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}
-            >ON</button>
-            <button
-              onClick={() => { setIsPaid(false); setAdvertiser(""); setDealValue(""); }}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${!isPaid ? "bg-skoop-slate text-white" : "bg-secondary text-muted-foreground"}`}
-            >OFF</button>
-          </div>
-        </div>
-
-        {isPaid && (
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs text-muted-foreground">Advertiser / Partner <span className="text-muted-foreground/60">(optional)</span></label>
-              <Input
-                placeholder="e.g. Nike Australia"
-                className="mt-1"
-                value={advertiser}
-                onChange={(e) => setAdvertiser(e.target.value)}
-                autoFocus
-              />
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground">Deal Value <span className="text-muted-foreground/60">(optional)</span></label>
-              <div className="relative mt-1">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
-                <Input
-                  type="number"
-                  min={0}
-                  placeholder="0.00"
-                  className="pl-7"
-                  value={dealValue}
-                  onChange={(e) => setDealValue(e.target.value)}
-                />
+        {campaignType === "standard" && (
+          <>
+            <div className="flex items-center justify-between rounded-lg border border-border px-4 py-3">
+              <div>
+                <p className="text-sm font-medium text-foreground">Paid campaign</p>
+                <p className="text-xs text-muted-foreground mt-0.5">This campaign is booked by an external advertiser or partner.</p>
+              </div>
+              <div className="flex gap-1 shrink-0">
+                <button
+                  onClick={() => setIsPaid(true)}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${isPaid ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}
+                >ON</button>
+                <button
+                  onClick={() => { setIsPaid(false); setAdvertiser(""); setDealValue(""); }}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${!isPaid ? "bg-skoop-slate text-white" : "bg-secondary text-muted-foreground"}`}
+                >OFF</button>
               </div>
             </div>
-          </div>
+
+            {isPaid && (
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-muted-foreground">Advertiser / Partner <span className="text-muted-foreground/60">(optional)</span></label>
+                  <Input placeholder="e.g. Nike Australia" className="mt-1" value={advertiser} onChange={(e) => setAdvertiser(e.target.value)} autoFocus />
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground">Deal Value <span className="text-muted-foreground/60">(optional)</span></label>
+                  <div className="relative mt-1">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
+                    <Input type="number" min={0} placeholder="0.00" className="pl-7" value={dealValue} onChange={(e) => setDealValue(e.target.value)} />
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
@@ -329,15 +375,18 @@ export default function CampaignCreate() {
 
   const renderStep2 = () => {
     const groups: Record<string, typeof filteredTags> = {};
-    const groupOrder = ["Placement Group", "Country", "State", "City", "ZIP", "Venue"];
+    const STANDARD_ORDER = ["Country", "State", "City", "ZIP", "Venue"];
     filteredTags.forEach((tag) => {
       const cat = tag.category || "Venue";
       if (!groups[cat]) groups[cat] = [];
       groups[cat].push(tag);
     });
+    const standard = STANDARD_ORDER.filter((g) => groups[g]?.length);
+    const extras = Object.keys(groups).filter((g) => !STANDARD_ORDER.includes(g) && groups[g]?.length);
+    const groupOrder = [...standard, ...extras];
     Object.values(groups).forEach((g) => g.sort((a, b) => b.screenCount - a.screenCount));
     const isSearching = tagSearch.trim().length > 0;
-    const visibleGroups = groupOrder.filter((g) => groups[g]?.length);
+    const visibleGroups = groupOrder; // already filtered to groups with content
 
     return (
       <div className="space-y-5">
@@ -348,7 +397,7 @@ export default function CampaignCreate() {
             <p className="skoop-section-header">Target by Tags</p>
           </div>
           <p className="text-xs text-muted-foreground">
-            Select placement groups or individual screen tags. Placement groups appear at the top — selecting one targets all screens in that group.
+            Select screens by tags — location, folder, venue type, or any CDM attribute. Selecting a tag targets all matching screens.
           </p>
 
           {selectedTags.length > 0 && (
@@ -380,7 +429,7 @@ export default function CampaignCreate() {
           <div className="relative">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search placement groups, states, cities..."
+              placeholder="Search folders, states, cities, venue types..."
               className="pl-9 text-xs"
               value={tagSearch}
               onChange={(e) => setTagSearch(e.target.value)}
@@ -517,7 +566,7 @@ export default function CampaignCreate() {
         <div className="flex items-center justify-between">
           <div>
             <p className="skoop-section-header">Active Hours</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Campaign only competes for inventory within these windows.</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Each window defines which days, times, and date range this campaign competes for inventory.</p>
           </div>
           <Button variant="outline" size="sm" className="text-xs" onClick={addWindow}>
             <Plus size={13} className="mr-1" /> Add window
@@ -525,76 +574,134 @@ export default function CampaignCreate() {
         </div>
 
         <div className="space-y-3">
-          {timeWindows.map((w, idx) => (
-            <div key={w.id} className="rounded-lg border border-border p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                  <Clock size={12} /> Window {idx + 1}
-                </span>
-                {timeWindows.length > 1 && (
-                  <button onClick={() => removeWindow(w.id)} className="text-muted-foreground hover:text-destructive transition-colors">
-                    <X size={14} />
-                  </button>
-                )}
-              </div>
-
-              {/* Day picker */}
-              <div className="flex gap-1.5">
-                {ALL_DAYS.map((d) => (
-                  <button
-                    key={d}
-                    onClick={() => toggleWindowDay(w.id, d)}
-                    className={`w-10 h-8 rounded border text-xs font-medium transition-colors ${
-                      w.days.includes(d)
-                        ? "bg-primary text-primary-foreground border-primary"
-                        : "border-border text-muted-foreground hover:bg-secondary"
-                    }`}
-                  >
-                    {d}
-                  </button>
-                ))}
-                <button
-                  onClick={() => updateWindow(w.id, { days: w.days.length === ALL_DAYS.length ? [] : ALL_DAYS })}
-                  className="ml-1 px-2 h-8 rounded border border-dashed border-border text-[10px] text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
-                >
-                  {w.days.length === ALL_DAYS.length ? "Clear" : "All"}
-                </button>
-              </div>
-
-              {/* Time range */}
-              <div className="flex items-center gap-3">
-                <div>
-                  <label className="text-[11px] text-muted-foreground">From</label>
-                  <Input
-                    type="time"
-                    className="mt-0.5 w-32 text-sm"
-                    value={w.startTime}
-                    onChange={(e) => updateWindow(w.id, { startTime: e.target.value })}
-                  />
+          {timeWindows.map((w, idx) => {
+            const allDatesSelected = !w.windowStartDate && !w.windowEndDate;
+            return (
+              <div key={w.id} className="rounded-lg border border-border p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                    <Clock size={12} /> Window {idx + 1}
+                  </span>
+                  {timeWindows.length > 1 && (
+                    <button onClick={() => removeWindow(w.id)} className="text-muted-foreground hover:text-destructive transition-colors">
+                      <X size={14} />
+                    </button>
+                  )}
                 </div>
-                <span className="text-muted-foreground mt-5">→</span>
-                <div>
-                  <label className="text-[11px] text-muted-foreground">To</label>
-                  <Input
-                    type="time"
-                    className="mt-0.5 w-32 text-sm"
-                    value={w.endTime}
-                    onChange={(e) => updateWindow(w.id, { endTime: e.target.value })}
-                  />
-                </div>
-                {w.startTime && w.endTime && (
-                  <div className="mt-5 text-xs text-muted-foreground tabular-nums">
-                    {(() => {
-                      const [sh, sm] = w.startTime.split(":").map(Number);
-                      const [eh, em] = w.endTime.split(":").map(Number);
-                      const hrs = ((eh * 60 + em) - (sh * 60 + sm)) / 60;
-                      return hrs > 0 ? `${hrs}h / day` : null;
-                    })()}
+
+                {/* Date sub-range */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[11px] text-muted-foreground">Date Range</label>
+                    <button
+                      onClick={() => updateWindow(w.id, { windowStartDate: "", windowEndDate: "" })}
+                      className={`text-[10px] px-2 py-0.5 rounded border transition-colors ${
+                        allDatesSelected
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                      }`}
+                    >
+                      All dates
+                    </button>
                   </div>
-                )}
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="date"
+                      className="flex-1 text-xs h-8"
+                      min={startDate || undefined}
+                      max={w.windowEndDate || endDate || undefined}
+                      value={w.windowStartDate}
+                      placeholder={startDate || "Campaign start"}
+                      onChange={(e) => updateWindow(w.id, { windowStartDate: e.target.value })}
+                    />
+                    <span className="text-muted-foreground text-xs shrink-0">→</span>
+                    <Input
+                      type="date"
+                      className="flex-1 text-xs h-8"
+                      min={w.windowStartDate || startDate || undefined}
+                      max={endDate || undefined}
+                      value={w.windowEndDate}
+                      placeholder={endDate || "Campaign end"}
+                      onChange={(e) => updateWindow(w.id, { windowEndDate: e.target.value })}
+                    />
+                  </div>
+                  {!allDatesSelected && (
+                    <p className="text-[10px] text-muted-foreground">
+                      {w.windowStartDate || (startDate ? `from ${startDate}` : "campaign start")} → {w.windowEndDate || (endDate ? `until ${endDate}` : "campaign end")}
+                    </p>
+                  )}
+                </div>
+
+                {/* Day picker */}
+                <div className="space-y-1.5">
+                  <label className="text-[11px] text-muted-foreground">Days of Week</label>
+                  <div className="flex gap-1.5">
+                    {ALL_DAYS.map((d) => (
+                      <button
+                        key={d}
+                        onClick={() => toggleWindowDay(w.id, d)}
+                        className={`w-10 h-8 rounded border text-xs font-medium transition-colors ${
+                          w.days.includes(d)
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : "border-border text-muted-foreground hover:bg-secondary"
+                        }`}
+                      >
+                        {d}
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => updateWindow(w.id, { days: w.days.length === ALL_DAYS.length ? [] : ALL_DAYS })}
+                      className="ml-1 px-2 h-8 rounded border border-dashed border-border text-[10px] text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
+                    >
+                      {w.days.length === ALL_DAYS.length ? "Clear" : "All"}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Time range */}
+                <div className="space-y-1.5">
+                  <label className="text-[11px] text-muted-foreground">Time of Day</label>
+                  <div className="flex items-center gap-3">
+                    <div>
+                      <label className="text-[10px] text-muted-foreground">From</label>
+                      <Input
+                        type="time"
+                        className="mt-0.5 w-32 text-sm"
+                        value={w.startTime}
+                        onChange={(e) => updateWindow(w.id, { startTime: e.target.value })}
+                      />
+                    </div>
+                    <span className="text-muted-foreground mt-5">→</span>
+                    <div>
+                      <label className="text-[10px] text-muted-foreground">To</label>
+                      <Input
+                        type="time"
+                        className="mt-0.5 w-32 text-sm"
+                        value={w.endTime}
+                        onChange={(e) => updateWindow(w.id, { endTime: e.target.value })}
+                      />
+                    </div>
+                    {w.startTime && w.endTime && (
+                      <div className="mt-5 text-xs text-muted-foreground tabular-nums">
+                        {(() => {
+                          const [sh, sm] = w.startTime.split(":").map(Number);
+                          const [eh, em] = w.endTime.split(":").map(Number);
+                          const mins = (eh * 60 + em) - (sh * 60 + sm);
+                          if (mins <= 0) return null;
+                          const hrs = Math.floor(mins / 60);
+                          const rem = mins % 60;
+                          return hrs > 0 && rem === 0 ? `${hrs}h / day` : hrs > 0 ? `${hrs}h ${rem}m / day` : `${rem}m / day`;
+                        })()}
+                      </div>
+                    )}
+                  </div>
+                  {w.startTime === "00:00" && w.endTime === "23:59" && (
+                    <p className="text-[10px] text-muted-foreground">All hours</p>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
@@ -738,40 +845,113 @@ export default function CampaignCreate() {
     );
   };
 
-  const renderStep5 = () => (
-    <div className="skoop-card p-5 space-y-4">
-      <p className="skoop-section-header">Creatives</p>
-      <p className="text-xs text-muted-foreground">Add assets for this campaign using the right sidebar</p>
+  const renderStep5 = () => {
+    if (campaignType === "programmatic") {
+      return (
+        <div className="skoop-card p-5 space-y-5">
+          <p className="skoop-section-header">Content</p>
+          <p className="text-xs text-muted-foreground">
+            This is a programmatic campaign. The SSP will supply creatives at play time — no manual assets are needed.
+          </p>
 
-      {creatives.length > 0 ? (
-        <div className="space-y-2">
-          {creatives.map((c) => (
-            <div key={c.id} className="flex items-center justify-between rounded-lg border border-border px-3 py-2">
-              <div className="flex items-center gap-2">
-                {c.type === "Website" ? (
-                  <Globe size={14} className="text-primary shrink-0" />
-                ) : (
-                  <ImageIcon size={14} className="text-primary shrink-0" />
-                )}
-                <span className="text-sm font-medium truncate max-w-[240px]">{c.name}</span>
-                <span className="text-xs text-muted-foreground shrink-0">{c.type}</span>
-              </div>
-              <button
-                onClick={() => removeCreative(c.id)}
-                className="text-muted-foreground hover:text-destructive transition-colors ml-2"
-              >
-                <X size={14} />
-              </button>
+          <div className="space-y-3">
+            <div>
+              <label className="text-xs text-muted-foreground">SSP Partner <span className="text-muted-foreground/60">(optional)</span></label>
+              <Input
+                placeholder="e.g. Google Ad Manager, Xandr, Vistar"
+                className="mt-1"
+                value={sspPartner}
+                onChange={(e) => setSspPartner(e.target.value)}
+              />
             </div>
-          ))}
+            <div>
+              <label className="text-xs text-muted-foreground">API Key / Integration Info <span className="text-muted-foreground/60">(optional)</span></label>
+              <Input
+                placeholder="e.g. API key, account ID, endpoint URL"
+                className="mt-1"
+                value={sspApiKey}
+                onChange={(e) => setSspApiKey(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Default Creative Duration (seconds)</label>
+              <p className="text-[11px] text-muted-foreground mb-1">Used to estimate screen time allocation. The SSP determines actual ad length at play time.</p>
+              <div className="flex items-center gap-2 mt-1">
+                <Input
+                  type="number"
+                  min={5}
+                  max={120}
+                  className="w-24"
+                  value={sspAvgDuration}
+                  onChange={(e) => setSspAvgDuration(Number(e.target.value))}
+                />
+                <span className="text-xs text-muted-foreground">sec</span>
+              </div>
+            </div>
+
+            <div className="rounded-lg border border-dashed border-border px-4 py-3 space-y-1">
+              <p className="text-xs font-medium text-foreground">Delivery behaviour</p>
+              <p className="text-xs text-muted-foreground">
+                Slots assigned to this campaign will be offered to the SSP via bid request. If the SSP returns no fill, the slot falls through to the next priority in the fill waterfall — determined by the Fill Enabled setting on the previous step.
+              </p>
+            </div>
+          </div>
         </div>
-      ) : (
-        <div className="rounded-lg border border-dashed border-border py-10 text-center text-muted-foreground text-xs">
-          No assets added yet — use the sidebar to add Media or Website content.
-        </div>
-      )}
-    </div>
-  );
+      );
+    }
+
+    const totalRunSec = creatives.reduce((sum, c) => sum + c.duration, 0);
+
+    return (
+      <div className="skoop-card p-5 space-y-4">
+        <p className="skoop-section-header">Content</p>
+        <p className="text-xs text-muted-foreground">Add assets for this campaign using the right sidebar</p>
+
+        {creatives.length > 0 ? (
+          <div className="space-y-2">
+            {creatives.map((c) => (
+              <div key={c.id} className="flex items-center justify-between rounded-lg border border-border px-3 py-2 gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  {c.type === "Website" ? (
+                    <Globe size={14} className="text-primary shrink-0" />
+                  ) : (
+                    <ImageIcon size={14} className="text-primary shrink-0" />
+                  )}
+                  <span className="text-sm font-medium truncate">{c.name}</span>
+                  <span className="text-xs text-muted-foreground shrink-0">{c.type}</span>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <Input
+                    type="number"
+                    min={1}
+                    max={3600}
+                    className="w-16 h-7 text-xs px-2 text-right"
+                    value={c.duration}
+                    onChange={(e) => updateCreativeDuration(c.id, Math.max(1, Number(e.target.value)))}
+                  />
+                  <span className="text-xs text-muted-foreground">s</span>
+                  <button
+                    onClick={() => removeCreative(c.id)}
+                    className="text-muted-foreground hover:text-destructive transition-colors ml-1"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              </div>
+            ))}
+            <div className="flex justify-between items-center pt-1 border-t border-border">
+              <span className="text-xs text-muted-foreground">Total run per play</span>
+              <span className="text-xs font-medium tabular-nums">{totalRunSec}s</span>
+            </div>
+          </div>
+        ) : (
+          <div className="rounded-lg border border-dashed border-border py-10 text-center text-muted-foreground text-xs">
+            No assets added yet — use the sidebar to add Media or Website content.
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const renderContentSidebar = () => {
     const filteredMedia = MOCK_MEDIA_ITEMS.filter((m) =>
@@ -1070,9 +1250,11 @@ export default function CampaignCreate() {
           <p className="skoop-section-header">Campaign Summary</p>
           <div className="grid grid-cols-2 gap-4">
             <div><p className="text-xs text-muted-foreground">Campaign Name</p><p className="text-sm font-medium">{campaignName || "Untitled"}</p></div>
-            <div><p className="text-xs text-muted-foreground">Paid Campaign</p><p className="text-sm font-medium">{isPaid ? "Yes" : "No"}</p></div>
-            {isPaid && advertiser && <div><p className="text-xs text-muted-foreground">Advertiser</p><p className="text-sm font-medium">{advertiser}</p></div>}
-            {isPaid && dealValue && <div><p className="text-xs text-muted-foreground">Deal Value</p><p className="text-sm font-medium tabular-nums">${Number(dealValue).toLocaleString()}</p></div>}
+            <div><p className="text-xs text-muted-foreground">Campaign Type</p><p className="text-sm font-medium capitalize">{campaignType}</p></div>
+            {campaignType === "programmatic" && sspPartner && <div><p className="text-xs text-muted-foreground">SSP Partner</p><p className="text-sm font-medium">{sspPartner}</p></div>}
+            {campaignType === "standard" && <div><p className="text-xs text-muted-foreground">Paid Campaign</p><p className="text-sm font-medium">{isPaid ? "Yes" : "No"}</p></div>}
+            {campaignType === "standard" && isPaid && advertiser && <div><p className="text-xs text-muted-foreground">Advertiser</p><p className="text-sm font-medium">{advertiser}</p></div>}
+            {campaignType === "standard" && isPaid && dealValue && <div><p className="text-xs text-muted-foreground">Deal Value</p><p className="text-sm font-medium tabular-nums">${Number(dealValue).toLocaleString()}</p></div>}
             <div className="col-span-2">
               <p className="text-xs text-muted-foreground">Targeting</p>
               {selectedTags.length > 0 ? (
@@ -1092,16 +1274,27 @@ export default function CampaignCreate() {
             <div className="col-span-2">
               <p className="text-xs text-muted-foreground">Active Hours</p>
               <div className="mt-1 space-y-0.5">
-                {timeWindows.map((w) => (
-                  <p key={w.id} className="text-sm font-medium">
-                    {w.days.length === 7 ? "Every day" : w.days.join(", ")} · {w.startTime} – {w.endTime}
-                  </p>
-                ))}
+                {timeWindows.map((w) => {
+                  const allDates = !w.windowStartDate && !w.windowEndDate;
+                  const allTime = w.startTime === "00:00" && w.endTime === "23:59";
+                  const dateLabel = allDates ? "All dates" : `${w.windowStartDate || "start"} → ${w.windowEndDate || "end"}`;
+                  const timeLabel = allTime ? "All hours" : `${w.startTime} – ${w.endTime}`;
+                  const dayLabel = w.days.length === 7 ? "Every day" : w.days.join(", ");
+                  return (
+                    <p key={w.id} className="text-sm font-medium">
+                      {dateLabel} · {dayLabel} · {timeLabel}
+                    </p>
+                  );
+                })}
               </div>
             </div>
             <div><p className="text-xs text-muted-foreground">Delivery Target</p><p className="text-sm font-medium tabular-nums">{deliveryTargetLabel}</p></div>
             <div><p className="text-xs text-muted-foreground">Fill Behavior</p><p className="text-sm font-medium">{fillBehaviorLabel}</p></div>
-            <div><p className="text-xs text-muted-foreground">Creatives</p><p className="text-sm font-medium">{creatives.length} asset{creatives.length !== 1 ? "s" : ""} uploaded</p></div>
+            <div><p className="text-xs text-muted-foreground">Content</p><p className="text-sm font-medium">{campaignType === "programmatic" ? (sspPartner || "Programmatic SSP") : `${creatives.length} asset${creatives.length !== 1 ? "s" : ""} uploaded`}</p></div>
+            {campaignType === "programmatic"
+              ? <div><p className="text-xs text-muted-foreground">Default Duration</p><p className="text-sm font-medium tabular-nums">{sspAvgDuration}s per ad</p></div>
+              : creatives.length > 0 && <div><p className="text-xs text-muted-foreground">Total Run Per Play</p><p className="text-sm font-medium tabular-nums">{creatives.reduce((s, c) => s + c.duration, 0)}s</p></div>
+            }
             <div><p className="text-xs text-muted-foreground">Proof of Play</p><p className="text-sm font-medium text-primary">Enabled</p></div>
           </div>
         </div>
@@ -1305,8 +1498,8 @@ export default function CampaignCreate() {
           </div>
         </div>
 
-        {/* Full-height content sidebar — only on Creatives step */}
-        {step === 4 && (
+        {/* Full-height content sidebar — only on What Plays step for standard campaigns */}
+        {step === 4 && campaignType === "standard" && (
           <div className="w-[340px] shrink-0 border-l border-border bg-card flex flex-col overflow-hidden">
             {renderContentSidebar()}
           </div>

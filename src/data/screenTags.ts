@@ -60,22 +60,9 @@ export function getScreenAllTags(screen: Screen): { auto: GeoTags | null; manual
   };
 }
 
-/** Returns all unique tags across all screens with type and screen count.
- *  Placement names are injected as "Placement Group" tags derived from allPlacements. */
+/** Returns all unique tags across all screens with type and screen count. */
 export function getAllScreenTags(): ScreenTag[] {
   const tagMap = new Map<string, ScreenTag>();
-
-  // Placement-derived tags (always first in sort order)
-  allPlacements.forEach((p) => {
-    if (p.name) {
-      tagMap.set(p.name, {
-        value: p.name,
-        type: "auto",
-        category: "Placement Group",
-        screenCount: p.screenCount,
-      });
-    }
-  });
 
   allScreens.forEach((screen) => {
     const geo = getAutoTags(screen);
@@ -110,7 +97,7 @@ export function getAllScreenTags(): ScreenTag[] {
     });
   });
 
-  const categoryOrder = ["Placement Group", "Country", "State", "City", "ZIP"];
+  const categoryOrder = ["Country", "State", "City", "ZIP"];
   return Array.from(tagMap.values()).sort((a, b) => {
     // Placement Group always sorts first
     const aIdx = categoryOrder.indexOf(a.category || "");

@@ -1,6 +1,6 @@
 import { NavLink, useLocation } from "react-router-dom";
 import {
-  MapPin, Megaphone, FileCheck, Monitor
+  Megaphone, FileCheck, Monitor, Settings
 } from "lucide-react";
 
 const mainNav = [
@@ -8,9 +8,9 @@ const mainNav = [
 ];
 
 const monetNav = [
-  { icon: MapPin, label: "Inventory Rules", to: "/placements" },
   { icon: Megaphone, label: "Campaigns", to: "/campaigns" },
   { icon: FileCheck, label: "Proof of Play", to: "/proof-of-play" },
+  { icon: Settings, label: "Settings", to: "/settings" },
 ];
 
 export default function AppSidebar() {

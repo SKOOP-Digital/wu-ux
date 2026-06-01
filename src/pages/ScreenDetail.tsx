@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Monitor, ArrowLeft, MapPin, ExternalLink, Globe, Tag, Plus, X, BarChart3, Clock, AlertTriangle, CheckCircle } from "lucide-react";
-import { useParams, useNavigate, useSearchParams, Link } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import PageHeader from "@/components/layout/PageHeader";
 import StatusChip from "@/components/shared/StatusChip";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb";
 import { allScreens } from "@/data/screens";
-import { allPlacements } from "@/data/placements";
 import { getAutoTags, STANDARD_VENUE_TAGS } from "@/data/screenTags";
 import { getImpressionMultiplier, getImpressionEntry, setImpressionMultiplier } from "@/data/impressionStore";
 
@@ -73,13 +72,7 @@ function ImpressionDataCard({ screenId }: { screenId: string }) {
 export default function ScreenDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
 
-  const fromPlacement = searchParams.get("from") === "placement";
-  const placementId = searchParams.get("placementId");
-
-  const backPath = fromPlacement && placementId ? `/placements/${placementId}` : "/screens";
-  const backLabel = fromPlacement ? "Back to Placement" : "Back to Screens";
   const screen = allScreens.find((s) => s.id === id);
 
   // All hooks must be before early return
@@ -103,7 +96,6 @@ export default function ScreenDetail() {
     );
   }
 
-  const linkedPlacements = allPlacements.filter((p) => p.screenIds.includes(screen.id));
   const dailyCapacity = screen.loopsPerHour * 16;
   const autoTags = getAutoTags(screen);
 
@@ -113,8 +105,6 @@ export default function ScreenDetail() {
     }
   };
   const removeManualTag = (tag: string) => setManualTags((prev) => prev.filter((t) => t !== tag));
-
-  const placementObj = placementId ? allPlacements.find(p => p.id === placementId) : null;
 
   // Active hours display
   const activeHoursDisplay = (() => {
@@ -141,22 +131,7 @@ export default function ScreenDetail() {
       <div className="px-8 pt-4 pb-0">
         <Breadcrumb>
           <BreadcrumbList>
-            {fromPlacement && placementObj ? (
-              <>
-                <BreadcrumbItem>
-                  <BreadcrumbLink asChild><Link to="/placements">Inventory Rules</Link></BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbLink asChild><Link to={`/placements/${placementObj.id}`}>{placementObj.name}</Link></BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>{screen.name}</BreadcrumbPage>
-                </BreadcrumbItem>
-              </>
-            ) : (
-              <>
+            <>
                 <BreadcrumbItem>
                   <BreadcrumbLink asChild><Link to="/screens">Screens</Link></BreadcrumbLink>
                 </BreadcrumbItem>
@@ -165,7 +140,6 @@ export default function ScreenDetail() {
                   <BreadcrumbPage>{screen.name}</BreadcrumbPage>
                 </BreadcrumbItem>
               </>
-            )}
           </BreadcrumbList>
         </Breadcrumb>
       </div>
@@ -289,20 +263,14 @@ export default function ScreenDetail() {
             <div className="skoop-card p-5 space-y-4">
               <p className="skoop-section-header">Tags</p>
 
-              {(autoTags || linkedPlacements.length > 0) && (
+              {autoTags && (
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-1.5">
                     <Globe size={12} className="text-muted-foreground" />
                     <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Auto</span>
                   </div>
                   <div className="flex flex-wrap gap-1.5">
-                    {linkedPlacements.map((p) => (
-                      <span key={p.id} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary text-muted-foreground text-xs font-medium border border-border">
-                        <Globe size={10} className="shrink-0" />
-                        {p.name}
-                      </span>
-                    ))}
-                    {autoTags && [
+                    {[
                       { label: autoTags.country, cat: "Country" },
                       { label: autoTags.state, cat: "State" },
                       { label: autoTags.city, cat: "City" },

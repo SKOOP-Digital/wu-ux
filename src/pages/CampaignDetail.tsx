@@ -16,6 +16,7 @@ import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbS
 import { allPlacements, calcCapacityFromRule } from "@/data/placements";
 import { allScreens } from "@/data/screens";
 import { getAllScreenTags, getScreensMatchingTags } from "@/data/screenTags";
+import { defaultCdmKeys, GEO_CDM_KEYS } from "@/data/cdmTags";
 import { hasAnyImpressionData, getImpressionMultiplier } from "@/data/impressionStore";
 import { searchPOIs, getScreensNearPOIs, getRegionalSearchCenters, milesToMeters, POI } from "@/services/foursquareService";
 
@@ -28,7 +29,7 @@ const EDIT_STEPS = [
   "Where It Runs",
   "Schedule",
   "How Much It Plays",
-  "Creatives",
+  "What Plays",
   "Review & Save",
 ];
 
@@ -52,10 +53,11 @@ const MOCK_WEBSITE_ITEMS = [
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface TimeWindow { id: string; days: string[]; startTime: string; endTime: string; }
-interface Creative { id: string; name: string; type: string; size: string; }
+interface Creative { id: string; name: string; type: string; size: string; duration: number; }
 
 interface CampaignRecord {
   name: string; advertiser: string; isPaid: boolean; dealValue: string;
+  campaignType: "standard" | "programmatic"; sspPartner: string; sspApiKey: string; sspAvgDuration: number;
   startDate: string; endDate: string; timeWindows: TimeWindow[];
   tags: string[];
   hasTarget: boolean; deliveryGoalType: "sov" | "total" | "plays-per-day";
@@ -70,39 +72,43 @@ interface CampaignRecord {
 const campaignData: Record<string, CampaignRecord> = {
   "1": {
     name: "Pepsi Q2 Push", advertiser: "PepsiCo", isPaid: true, dealValue: "25000",
+    campaignType: "standard", sspPartner: "", sspApiKey: "", sspAvgDuration: 30,
     startDate: "2026-04-01", endDate: "2026-06-30",
     timeWindows: [{ id: "w1", days: ALL_DAYS, startTime: "06:00", endTime: "22:00" }],
     tags: ["Financial Banks · Northeast", "Urban Panels · National"],
     hasTarget: true, deliveryGoalType: "sov", sovValue: 40, totalPlays: 5000, playsPerDay: 200,
     fillEnabled: false, delivered: 3200, target: 5000, status: "Live",
     creatives: [
-      { id: "c1", name: "Pepsi_Q2_16x9.mp4", type: "Video", size: "12.4 MB" },
-      { id: "c2", name: "Pepsi_Logo_Static.jpg", type: "Image", size: "540 KB" },
+      { id: "c1", name: "Pepsi_Q2_16x9.mp4", type: "Video", size: "12.4 MB", duration: 30 },
+      { id: "c2", name: "Pepsi_Logo_Static.jpg", type: "Image", size: "540 KB", duration: 15 },
     ],
   },
   "2": {
     name: "Nike Spring", advertiser: "Nike", isPaid: true, dealValue: "12000",
+    campaignType: "standard", sspPartner: "", sspApiKey: "", sspAvgDuration: 30,
     startDate: "2026-03-01", endDate: "2026-05-31",
     timeWindows: [{ id: "w1", days: ALL_DAYS, startTime: "06:00", endTime: "22:00" }],
     tags: ["Convenience Stores · Midwest & South"],
     hasTarget: true, deliveryGoalType: "total", sovValue: 20, totalPlays: 5000, playsPerDay: 200,
     fillEnabled: true, delivered: 3100, target: 5000, status: "Live",
-    creatives: [{ id: "c1", name: "Nike_Spring_16x9.mp4", type: "Video", size: "9.1 MB" }],
+    creatives: [{ id: "c1", name: "Nike_Spring_16x9.mp4", type: "Video", size: "9.1 MB", duration: 30 }],
   },
   "3": {
     name: "WU Brand Awareness", advertiser: "", isPaid: false, dealValue: "",
+    campaignType: "standard", sspPartner: "", sspApiKey: "", sspAvgDuration: 30,
     startDate: "2026-01-01", endDate: "2026-12-31",
     timeWindows: [{ id: "w1", days: ALL_DAYS, startTime: "06:00", endTime: "22:00" }],
     tags: ["Financial Banks · Northeast", "Financial Banks · Southwest & Rocky Mountain"],
     hasTarget: false, deliveryGoalType: "total", sovValue: 20, totalPlays: 0, playsPerDay: 200,
     fillEnabled: true, delivered: 48000, target: 0, status: "Live",
     creatives: [
-      { id: "c1", name: "WU_Brand_16x9.mp4", type: "Video", size: "11.2 MB" },
-      { id: "c2", name: "WU_Remittance_Static.jpg", type: "Image", size: "390 KB" },
+      { id: "c1", name: "WU_Brand_16x9.mp4", type: "Video", size: "11.2 MB", duration: 30 },
+      { id: "c2", name: "WU_Remittance_Static.jpg", type: "Image", size: "390 KB", duration: 15 },
     ],
   },
   "4": {
     name: "Coca-Cola Summer", advertiser: "Coca-Cola", isPaid: true, dealValue: "18000",
+    campaignType: "standard", sspPartner: "", sspApiKey: "", sspAvgDuration: 30,
     startDate: "2026-05-01", endDate: "2026-08-31",
     timeWindows: [
       { id: "w1", days: ["Mon", "Tue", "Wed", "Thu", "Fri"], startTime: "11:00", endTime: "21:00" },
@@ -111,16 +117,50 @@ const campaignData: Record<string, CampaignRecord> = {
     tags: ["Grocery Retail · West Coast"],
     hasTarget: true, deliveryGoalType: "sov", sovValue: 20, totalPlays: 4000, playsPerDay: 200,
     fillEnabled: false, delivered: 0, target: 4000, status: "Scheduled",
-    creatives: [{ id: "c1", name: "CocaCola_Summer.mp4", type: "Video", size: "14.7 MB" }],
+    creatives: [{ id: "c1", name: "CocaCola_Summer.mp4", type: "Video", size: "14.7 MB", duration: 30 }],
   },
   "5": {
     name: "WU Remittance Promo", advertiser: "Western Union", isPaid: true, dealValue: "8000",
+    campaignType: "standard", sspPartner: "", sspApiKey: "", sspAvgDuration: 30,
     startDate: "2026-03-01", endDate: "2026-03-31",
     timeWindows: [{ id: "w1", days: ["Mon", "Tue", "Wed", "Thu", "Fri"], startTime: "08:00", endTime: "18:00" }],
     tags: ["Pharmacies · National"],
     hasTarget: true, deliveryGoalType: "total", sovValue: 20, totalPlays: 3000, playsPerDay: 200,
     fillEnabled: true, delivered: 1200, target: 3000, status: "Under-delivering",
-    creatives: [{ id: "c1", name: "WU_Remit_Promo.mp4", type: "Video", size: "8.3 MB" }],
+    creatives: [{ id: "c1", name: "WU_Remit_Promo.mp4", type: "Video", size: "8.3 MB", duration: 30 }],
+  },
+  "6": {
+    name: "WU In-store Screens", advertiser: "", isPaid: false, dealValue: "",
+    campaignType: "standard", sspPartner: "", sspApiKey: "", sspAvgDuration: 30,
+    startDate: "2026-01-01", endDate: "2026-12-31",
+    timeWindows: [{ id: "w1", days: ALL_DAYS, startTime: "07:00", endTime: "21:00" }],
+    tags: ["WU Partners"],
+    hasTarget: true, deliveryGoalType: "plays-per-day", sovValue: 0, totalPlays: 0, playsPerDay: 200,
+    fillEnabled: true, delivered: 8200, target: 12000, status: "Live",
+    creatives: [
+      { id: "c1", name: "WU_Instore_Landscape.mp4", type: "Video", size: "7.8 MB", duration: 30 },
+      { id: "c2", name: "WU_Instore_Static.jpg", type: "Image", size: "210 KB", duration: 15 },
+    ],
+  },
+  "7": {
+    name: "Screenverse", advertiser: "", isPaid: false, dealValue: "",
+    campaignType: "programmatic", sspPartner: "Screenverse", sspApiKey: "svr-prod-key-4f9a2c", sspAvgDuration: 30,
+    startDate: "2026-01-01", endDate: "2026-12-31",
+    timeWindows: [{ id: "w1", days: ALL_DAYS, startTime: "06:00", endTime: "23:00" }],
+    tags: ["Kroger Network", "Independent Retail"],
+    hasTarget: true, deliveryGoalType: "sov", sovValue: 15, totalPlays: 0, playsPerDay: 0,
+    fillEnabled: true, delivered: 21400, target: 30000, status: "Live",
+    creatives: [],
+  },
+  "8": {
+    name: "Xandr DSP", advertiser: "", isPaid: false, dealValue: "",
+    campaignType: "programmatic", sspPartner: "Xandr", sspApiKey: "", sspAvgDuration: 15,
+    startDate: "2026-06-01", endDate: "2026-08-31",
+    timeWindows: [{ id: "w1", days: ALL_DAYS, startTime: "08:00", endTime: "22:00" }],
+    tags: ["WU Partners", "Continental Forex"],
+    hasTarget: true, deliveryGoalType: "sov", sovValue: 10, totalPlays: 0, playsPerDay: 0,
+    fillEnabled: true, delivered: 4800, target: 18000, status: "Live",
+    creatives: [],
   },
 };
 
@@ -162,7 +202,7 @@ export default function CampaignDetail() {
 
   // ── Tag picker state ──
   const [tagSearch, setTagSearch] = useState("");
-  const [expandedGroups, setExpandedGroups] = useState<string[]>(["Placement Group"]);
+  const [expandedGroups, setExpandedGroups] = useState<string[]>(["folder"]);
   const [showAllGroups, setShowAllGroups] = useState<Record<string, boolean>>({});
 
   // ── Proximity state ──
@@ -184,13 +224,24 @@ export default function CampaignDetail() {
   const [newWebsiteUrl, setNewWebsiteUrl] = useState("");
 
   // ── Derived ──
-  const allTags = useMemo(() => getAllScreenTags(), []);
+  const allTags = useMemo(() => {
+    const base = getAllScreenTags();
+    const cdmExtras = defaultCdmKeys
+      .filter((k) => !k.isAuto || !GEO_CDM_KEYS.has(k.key))
+      .flatMap((k) => k.values.map((v) => ({
+        value: v.value,
+        type: (k.isAuto ? "auto" : "manual") as "auto" | "manual",
+        category: k.key,
+        screenCount: v.screenCount,
+      })));
+    const baseValues = new Set(base.map((t) => t.value));
+    const uniqueExtras = cdmExtras.filter((e) => !baseValues.has(e.value));
+    const cdmValueToKey: Record<string, string> = {};
+    cdmExtras.forEach((e) => { cdmValueToKey[e.value] = e.category; });
+    const updatedBase = base.map((t) => cdmValueToKey[t.value] ? { ...t, category: cdmValueToKey[t.value] } : t);
+    return [...updatedBase, ...uniqueExtras];
+  }, []);
   const hasImpressions = hasAnyImpressionData();
-
-  const selectedPlacementTags = useMemo(
-    () => (draft?.tags ?? []).filter(t => allPlacements.some(p => p.name.toLowerCase() === t.toLowerCase())),
-    [draft?.tags]
-  );
 
   const proximityMatchedScreens = useMemo(
     () => proximityPOIs.length === 0 ? [] : getScreensNearPOIs(proximityPOIs, allScreens, milesToMeters(proximityRadius)),
@@ -292,9 +343,13 @@ export default function CampaignDetail() {
   const removeTag = (tag: string) => set("tags", draft.tags.filter(t => t !== tag));
 
   // Creatives
-  const addCreative = (name: string, type: string) =>
-    set("creatives", [...draft.creatives, { id: crypto.randomUUID(), name, type, size: "—" }]);
+  const addCreative = (name: string, type: string) => {
+    const defaultDuration = type === "Website" ? 30 : 15;
+    set("creatives", [...draft.creatives, { id: crypto.randomUUID(), name, type, size: "—", duration: defaultDuration }]);
+  };
   const removeCreative = (cid: string) => set("creatives", draft.creatives.filter(c => c.id !== cid));
+  const updateCreativeDuration = (cid: string, duration: number) =>
+    set("creatives", draft.creatives.map(c => c.id === cid ? { ...c, duration } : c));
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files; if (!files) return;
     const nc: Creative[] = Array.from(files).map(file => {
@@ -323,10 +378,13 @@ export default function CampaignDetail() {
   // ── Computed view values ──
   const pct = draft.target > 0 ? Math.round((draft.delivered / draft.target) * 100) : 100;
   const fillBehaviorLabel = !draft.hasTarget ? "Fill only" : draft.fillEnabled ? "Target then fill" : "Target, no fill";
-  const groupOrder = ["Placement Group", "Country", "State", "City", "ZIP", "Venue"];
+  const STANDARD_GROUP_ORDER = ["Country", "State", "City", "ZIP", "Venue"];
   const tagGroups: Record<string, typeof filteredTags> = {};
   filteredTags.forEach(t => { const cat = t.category || "Venue"; if (!tagGroups[cat]) tagGroups[cat] = []; tagGroups[cat].push(t); });
-  const visibleGroupNames = groupOrder.filter(g => tagGroups[g]?.length);
+  const visibleGroupNames = [
+    ...STANDARD_GROUP_ORDER.filter(g => tagGroups[g]?.length),
+    ...Object.keys(tagGroups).filter(g => !STANDARD_GROUP_ORDER.includes(g) && tagGroups[g]?.length),
+  ];
   const isSearching = tagSearch.trim().length > 0;
 
   // ─────────────────────────────────────────────────────────────────────────────
@@ -337,34 +395,57 @@ export default function CampaignDetail() {
     <div className="skoop-card p-5 space-y-4">
       <p className="skoop-section-header">Campaign Details</p>
       <div className="space-y-4">
+        {/* Campaign type selector */}
+        <div>
+          <label className="text-xs text-muted-foreground">Campaign Type</label>
+          <div className="mt-1.5 flex rounded-lg border border-border overflow-hidden">
+            <button
+              onClick={() => { set("campaignType", "standard"); set("sspPartner", ""); }}
+              className={`flex-1 px-4 py-2.5 text-sm font-medium transition-colors ${draft.campaignType !== "programmatic" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"}`}
+            >Standard</button>
+            <button
+              onClick={() => { set("campaignType", "programmatic"); set("isPaid", false); set("advertiser", ""); set("dealValue", ""); }}
+              className={`flex-1 px-4 py-2.5 text-sm font-medium transition-colors border-l border-border ${draft.campaignType === "programmatic" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"}`}
+            >Programmatic</button>
+          </div>
+          {draft.campaignType === "programmatic" && (
+            <p className="text-xs text-muted-foreground mt-1.5">Revenue is tracked by the SSP. Paid / advertiser fields are not applicable.</p>
+          )}
+        </div>
+
         <div>
           <label className="text-xs text-muted-foreground">Campaign Name</label>
           <Input placeholder="e.g. Summer Brand Push" className="mt-1" value={draft.name} onChange={e => set("name", e.target.value)} />
         </div>
-        <div className="flex items-center justify-between rounded-lg border border-border px-4 py-3">
-          <div>
-            <p className="text-sm font-medium text-foreground">Paid campaign</p>
-            <p className="text-xs text-muted-foreground mt-0.5">This campaign is booked by an external advertiser or partner.</p>
-          </div>
-          <div className="flex gap-1 shrink-0">
-            <button onClick={() => set("isPaid", true)} className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${draft.isPaid ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>ON</button>
-            <button onClick={() => { set("isPaid", false); set("advertiser", ""); set("dealValue", ""); }} className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${!draft.isPaid ? "bg-skoop-slate text-white" : "bg-secondary text-muted-foreground"}`}>OFF</button>
-          </div>
-        </div>
-        {draft.isPaid && (
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs text-muted-foreground">Advertiser / Partner <span className="text-muted-foreground/60">(optional)</span></label>
-              <Input placeholder="e.g. Nike Australia" className="mt-1" value={draft.advertiser} onChange={e => set("advertiser", e.target.value)} />
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground">Deal Value <span className="text-muted-foreground/60">(optional)</span></label>
-              <div className="relative mt-1">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
-                <Input type="number" min={0} placeholder="0.00" className="pl-7" value={draft.dealValue} onChange={e => set("dealValue", e.target.value)} />
+
+        {draft.campaignType !== "programmatic" && (
+          <>
+            <div className="flex items-center justify-between rounded-lg border border-border px-4 py-3">
+              <div>
+                <p className="text-sm font-medium text-foreground">Paid campaign</p>
+                <p className="text-xs text-muted-foreground mt-0.5">This campaign is booked by an external advertiser or partner.</p>
+              </div>
+              <div className="flex gap-1 shrink-0">
+                <button onClick={() => set("isPaid", true)} className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${draft.isPaid ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>ON</button>
+                <button onClick={() => { set("isPaid", false); set("advertiser", ""); set("dealValue", ""); }} className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${!draft.isPaid ? "bg-skoop-slate text-white" : "bg-secondary text-muted-foreground"}`}>OFF</button>
               </div>
             </div>
-          </div>
+            {draft.isPaid && (
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-muted-foreground">Advertiser / Partner <span className="text-muted-foreground/60">(optional)</span></label>
+                  <Input placeholder="e.g. Nike Australia" className="mt-1" value={draft.advertiser} onChange={e => set("advertiser", e.target.value)} />
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground">Deal Value <span className="text-muted-foreground/60">(optional)</span></label>
+                  <div className="relative mt-1">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
+                    <Input type="number" min={0} placeholder="0.00" className="pl-7" value={draft.dealValue} onChange={e => set("dealValue", e.target.value)} />
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
@@ -626,30 +707,86 @@ export default function CampaignDetail() {
     );
   };
 
-  const renderEditCreatives = () => (
-    <div className="skoop-card p-5 space-y-4">
-      <p className="skoop-section-header">Creatives</p>
-      <p className="text-xs text-muted-foreground">Add assets for this campaign using the right sidebar</p>
-      {draft.creatives.length > 0 ? (
-        <div className="space-y-2">
-          {draft.creatives.map(c => (
-            <div key={c.id} className="flex items-center justify-between rounded-lg border border-border px-3 py-2">
-              <div className="flex items-center gap-2">
-                {c.type === "Website" ? <Globe size={14} className="text-primary shrink-0" /> : <ImageIcon size={14} className="text-primary shrink-0" />}
-                <span className="text-sm font-medium truncate max-w-[240px]">{c.name}</span>
-                <span className="text-xs text-muted-foreground shrink-0">{c.type}</span>
-              </div>
-              <button onClick={() => removeCreative(c.id)} className="text-muted-foreground hover:text-destructive transition-colors ml-2"><X size={14} /></button>
+  const renderEditCreatives = () => {
+    if (draft.campaignType === "programmatic") {
+      return (
+        <div className="skoop-card p-5 space-y-5">
+          <p className="skoop-section-header">Content</p>
+          <p className="text-xs text-muted-foreground">
+            This is a programmatic campaign. The SSP will supply creatives at play time — no manual assets are needed.
+          </p>
+          <div className="space-y-3">
+            <div>
+              <label className="text-xs text-muted-foreground">SSP Partner <span className="text-muted-foreground/60">(optional)</span></label>
+              <Input placeholder="e.g. Google Ad Manager, Xandr, Vistar" className="mt-1" value={draft.sspPartner} onChange={e => set("sspPartner", e.target.value)} />
             </div>
-          ))}
+            <div>
+              <label className="text-xs text-muted-foreground">API Key / Integration Info <span className="text-muted-foreground/60">(optional)</span></label>
+              <Input placeholder="e.g. API key, account ID, endpoint URL" className="mt-1" value={draft.sspApiKey} onChange={e => set("sspApiKey", e.target.value)} />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Default Creative Duration (seconds)</label>
+              <p className="text-[11px] text-muted-foreground mb-1">Used to estimate screen time allocation. The SSP determines actual ad length at play time.</p>
+              <div className="flex items-center gap-2 mt-1">
+                <Input
+                  type="number" min={5} max={120} className="w-24"
+                  value={draft.sspAvgDuration}
+                  onChange={e => set("sspAvgDuration", Math.max(5, Number(e.target.value)))}
+                />
+                <span className="text-xs text-muted-foreground">sec</span>
+              </div>
+            </div>
+            <div className="rounded-lg border border-dashed border-border px-4 py-3 space-y-1">
+              <p className="text-xs font-medium text-foreground">Delivery behaviour</p>
+              <p className="text-xs text-muted-foreground">
+                Slots assigned to this campaign will be offered to the SSP via bid request. If the SSP returns no fill, the slot falls through to the next priority in the fill waterfall — determined by the Fill Enabled setting on the previous step.
+              </p>
+            </div>
+          </div>
         </div>
-      ) : (
-        <div className="rounded-lg border border-dashed border-border py-10 text-center text-muted-foreground text-xs">
-          No assets added yet — use the sidebar to add Media or Website content.
-        </div>
-      )}
-    </div>
-  );
+      );
+    }
+
+    const totalRunSec = draft.creatives.reduce((sum, c) => sum + (c.duration ?? 15), 0);
+
+    return (
+      <div className="skoop-card p-5 space-y-4">
+        <p className="skoop-section-header">Content</p>
+        <p className="text-xs text-muted-foreground">Add assets for this campaign using the right sidebar</p>
+        {draft.creatives.length > 0 ? (
+          <div className="space-y-2">
+            {draft.creatives.map(c => (
+              <div key={c.id} className="flex items-center justify-between rounded-lg border border-border px-3 py-2 gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  {c.type === "Website" ? <Globe size={14} className="text-primary shrink-0" /> : <ImageIcon size={14} className="text-primary shrink-0" />}
+                  <span className="text-sm font-medium truncate">{c.name}</span>
+                  <span className="text-xs text-muted-foreground shrink-0">{c.type}</span>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <Input
+                    type="number" min={1} max={3600}
+                    className="w-16 h-7 text-xs px-2 text-right"
+                    value={c.duration ?? 15}
+                    onChange={e => updateCreativeDuration(c.id, Math.max(1, Number(e.target.value)))}
+                  />
+                  <span className="text-xs text-muted-foreground">s</span>
+                  <button onClick={() => removeCreative(c.id)} className="text-muted-foreground hover:text-destructive transition-colors ml-1"><X size={14} /></button>
+                </div>
+              </div>
+            ))}
+            <div className="flex justify-between items-center pt-1 border-t border-border">
+              <span className="text-xs text-muted-foreground">Total run per play</span>
+              <span className="text-xs font-medium tabular-nums">{totalRunSec}s</span>
+            </div>
+          </div>
+        ) : (
+          <div className="rounded-lg border border-dashed border-border py-10 text-center text-muted-foreground text-xs">
+            No assets added yet — use the sidebar to add Media or Website content.
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const renderCapacityPanel = () => {
     if (!capacitySummary || (draft.tags.length === 0 && proximityPOIs.length === 0)) return null;
@@ -875,9 +1012,11 @@ export default function CampaignDetail() {
           <p className="skoop-section-header">Campaign Summary</p>
           <div className="grid grid-cols-2 gap-4">
             <div><p className="text-xs text-muted-foreground">Campaign Name</p><p className="text-sm font-medium">{draft.name || "Untitled"}</p></div>
-            <div><p className="text-xs text-muted-foreground">Paid Campaign</p><p className="text-sm font-medium">{draft.isPaid ? "Yes" : "No"}</p></div>
-            {draft.isPaid && draft.advertiser && <div><p className="text-xs text-muted-foreground">Advertiser</p><p className="text-sm font-medium">{draft.advertiser}</p></div>}
-            {draft.isPaid && draft.dealValue && <div><p className="text-xs text-muted-foreground">Deal Value</p><p className="text-sm font-medium tabular-nums">${Number(draft.dealValue).toLocaleString()}</p></div>}
+            <div><p className="text-xs text-muted-foreground">Campaign Type</p><p className="text-sm font-medium capitalize">{draft.campaignType ?? "standard"}</p></div>
+            {draft.campaignType === "programmatic" && draft.sspPartner && <div><p className="text-xs text-muted-foreground">SSP Partner</p><p className="text-sm font-medium">{draft.sspPartner}</p></div>}
+            {draft.campaignType !== "programmatic" && <div><p className="text-xs text-muted-foreground">Paid Campaign</p><p className="text-sm font-medium">{draft.isPaid ? "Yes" : "No"}</p></div>}
+            {draft.campaignType !== "programmatic" && draft.isPaid && draft.advertiser && <div><p className="text-xs text-muted-foreground">Advertiser</p><p className="text-sm font-medium">{draft.advertiser}</p></div>}
+            {draft.campaignType !== "programmatic" && draft.isPaid && draft.dealValue && <div><p className="text-xs text-muted-foreground">Deal Value</p><p className="text-sm font-medium tabular-nums">${Number(draft.dealValue).toLocaleString()}</p></div>}
             <div className="col-span-2">
               <p className="text-xs text-muted-foreground">Targeting</p>
               {draft.tags.length > 0 ? (
@@ -904,7 +1043,7 @@ export default function CampaignDetail() {
             </div>
             <div><p className="text-xs text-muted-foreground">Delivery Target</p><p className="text-sm font-medium tabular-nums">{deliveryTargetLabel}</p></div>
             <div><p className="text-xs text-muted-foreground">Fill Behavior</p><p className="text-sm font-medium">{fillBehaviorLabel}</p></div>
-            <div><p className="text-xs text-muted-foreground">Creatives</p><p className="text-sm font-medium">{draft.creatives.length} asset{draft.creatives.length !== 1 ? "s" : ""}</p></div>
+            <div><p className="text-xs text-muted-foreground">Content</p><p className="text-sm font-medium">{draft.creatives.length} asset{draft.creatives.length !== 1 ? "s" : ""}</p></div>
           </div>
         </div>
 
@@ -1166,8 +1305,8 @@ export default function CampaignDetail() {
             </div>
           </div>
 
-          {/* Full-height content sidebar — only on Creatives step */}
-          {editStep === 4 && (
+          {/* Full-height content sidebar — only on What Plays step for standard campaigns */}
+          {editStep === 4 && draft.campaignType !== "programmatic" && (
             <div className="w-[340px] shrink-0 border-l border-border bg-card flex flex-col overflow-hidden">
               {renderContentSidebar()}
             </div>
@@ -1199,7 +1338,7 @@ export default function CampaignDetail() {
         icon={<Megaphone size={20} />}
         actions={
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => navigate("/campaigns")}><ArrowLeft size={14} className="mr-1" /> Back</Button>
+          <Button variant="outline" size="sm" onClick={() => navigate("/campaigns")}><ArrowLeft size={14} className="mr-1" /> Back</Button>
             <Button size="sm" onClick={startEdit}><Pencil size={14} className="mr-1" /> Edit</Button>
           </div>
         }
@@ -1241,8 +1380,8 @@ export default function CampaignDetail() {
               </div>
               <div className="space-y-1">
                 {draft.timeWindows.map(w => <p key={w.id} className="text-sm font-medium">{windowLabel(w)}</p>)}
-              </div>
-            </div>
+                      </div>
+                    </div>
             {/* Delivery */}
             <div className="skoop-card p-5 space-y-3">
               <p className="skoop-section-header">Delivery Settings</p>
@@ -1257,11 +1396,11 @@ export default function CampaignDetail() {
               {draft.hasTarget ? (
                 <>
                   <div className="flex items-center gap-4"><Progress value={pct} className="h-2 flex-1" /><span className="text-sm font-medium tabular-nums">{pct}%</span></div>
-                  <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                     <div><p className="text-xs text-muted-foreground">Delivered</p><p className="text-sm font-semibold tabular-nums">{draft.delivered.toLocaleString()}</p></div>
                     <div><p className="text-xs text-muted-foreground">Target</p><p className="text-sm font-semibold tabular-nums">{draft.target.toLocaleString()}</p></div>
-                    <div><p className="text-xs text-muted-foreground">Pacing</p><StatusChip status={pct >= 60 ? "healthy" : "at-risk"} label={pct >= 60 ? "On Track" : "Behind Pace"} /></div>
-                  </div>
+                <div><p className="text-xs text-muted-foreground">Pacing</p><StatusChip status={pct >= 60 ? "healthy" : "at-risk"} label={pct >= 60 ? "On Track" : "Behind Pace"} /></div>
+              </div>
                 </>
               ) : (
                 <div className="space-y-2">
@@ -1273,9 +1412,9 @@ export default function CampaignDetail() {
                 </div>
               )}
             </div>
-            {/* Creatives */}
+            {/* Content */}
             <div className="skoop-card p-5 space-y-3">
-              <p className="skoop-section-header">Creatives</p>
+              <p className="skoop-section-header">Content</p>
               <div className="space-y-2">
                 {draft.creatives.map(c => (
                   <div key={c.id} className="flex items-center justify-between py-2 px-3 border border-border rounded-md">

@@ -4,8 +4,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import AppLayout from "@/components/layout/AppLayout";
-import Placements from "./pages/Placements";
-import PlacementDetail from "./pages/PlacementDetail";
 import Campaigns from "./pages/Campaigns";
 import CampaignCreate from "./pages/CampaignCreate";
 import ProofOfPlay from "./pages/ProofOfPlay";
@@ -30,9 +28,6 @@ const App = () => (
                 <Route path="/" element={<Navigate to="/screens" replace />} />
                 <Route path="/screens" element={<Screens />} />
                 <Route path="/screens/:id" element={<ScreenDetail />} />
-                <Route path="/placements" element={<Placements />} />
-                <Route path="/placements/new" element={<PlacementDetail />} />
-                <Route path="/placements/:id" element={<PlacementDetail />} />
                 <Route path="/campaigns" element={<Campaigns />} />
                 <Route path="/campaigns/create" element={<CampaignCreate />} />
                 <Route path="/campaigns/:id" element={<CampaignDetail />} />
