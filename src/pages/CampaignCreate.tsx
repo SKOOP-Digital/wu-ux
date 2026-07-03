@@ -119,6 +119,7 @@ export default function CampaignCreate() {
   const [sovValue, setSovValue] = useState(15);
   const [totalPlays, setTotalPlays] = useState(5000);
   const [playsPerDay, setPlaysPerDay] = useState(200);
+  const [targetBufferPct, setTargetBufferPct] = useState(5);
 
   // Step 5 — Creatives
   const [creatives, setCreatives] = useState<Creative[]>([]);
@@ -807,6 +808,46 @@ export default function CampaignCreate() {
               </div>
             )}
 
+            {/* Over-delivery buffer — only for play-based goals */}
+            {(deliveryGoalType === "total" || deliveryGoalType === "plays-per-day") && (
+              <div className="rounded-lg border border-border bg-secondary/30 px-4 py-3 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-medium text-foreground">Over-delivery buffer</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                      System targets slightly more than the sold amount to ensure full delivery
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      min={0} max={50} step={0.5}
+                      className="w-20 text-right"
+                      value={targetBufferPct}
+                      onChange={(e) => setTargetBufferPct(Number(e.target.value))}
+                    />
+                    <span className="text-sm text-muted-foreground">%</span>
+                  </div>
+                </div>
+                {targetBufferPct > 0 && (
+                  <p className="text-[11px] text-muted-foreground">
+                    Sold:{" "}
+                    <span className="font-medium text-foreground">
+                      {deliveryGoalType === "total"
+                        ? `${totalPlays.toLocaleString()} plays`
+                        : `${playsPerDay.toLocaleString()} plays/screen/day`}
+                    </span>
+                    {" → "}System targets:{" "}
+                    <span className="font-medium text-foreground">
+                      {deliveryGoalType === "total"
+                        ? `${Math.round(totalPlays * (1 + targetBufferPct / 100)).toLocaleString()} plays`
+                        : `${Math.round(playsPerDay * (1 + targetBufferPct / 100)).toLocaleString()} plays/screen/day`}
+                    </span>
+                  </p>
+                )}
+              </div>
+            )}
+
             {capacitySummary && (
               <div className={`rounded-lg border px-4 py-4 space-y-3 ${capacitySummary.fits ? "border-border bg-secondary/40" : "border-destructive/40 bg-destructive/5"}`}>
                 <p className="text-xs font-medium text-foreground">Availability Check</p>
@@ -1233,8 +1274,8 @@ export default function CampaignCreate() {
       : deliveryGoalType === "sov"
       ? `${sovValue}% of screen time`
       : deliveryGoalType === "plays-per-day"
-      ? `${playsPerDay.toLocaleString()} plays/screen/day`
-      : `${totalPlays.toLocaleString()} total plays`;
+      ? `${playsPerDay.toLocaleString()} plays/screen/day${targetBufferPct > 0 ? ` → ${Math.round(playsPerDay * (1 + targetBufferPct / 100)).toLocaleString()} w/ ${targetBufferPct}% buffer` : ''}`
+      : `${totalPlays.toLocaleString()} total plays${targetBufferPct > 0 ? ` → ${Math.round(totalPlays * (1 + targetBufferPct / 100)).toLocaleString()} w/ ${targetBufferPct}% buffer` : ''}`;
 
     const fillBehaviorLabel = !hasTarget
       ? "Fill only"

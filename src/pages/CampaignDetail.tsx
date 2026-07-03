@@ -61,7 +61,7 @@ interface CampaignRecord {
   startDate: string; endDate: string; timeWindows: TimeWindow[];
   tags: string[];
   hasTarget: boolean; deliveryGoalType: "sov" | "total" | "plays-per-day";
-  sovValue: number; totalPlays: number; playsPerDay: number;
+  sovValue: number; totalPlays: number; playsPerDay: number; targetBufferPct: number;
   fillEnabled: boolean;
   delivered: number; target: number; status: string;
   creatives: Creative[];
@@ -170,11 +170,15 @@ function newWindow(): TimeWindow {
   return { id: crypto.randomUUID(), days: ALL_DAYS.slice(0, 5), startTime: "08:00", endTime: "20:00" };
 }
 
-function goalDisplay(c: Pick<CampaignRecord, "hasTarget" | "deliveryGoalType" | "sovValue" | "totalPlays" | "playsPerDay">) {
+function goalDisplay(c: Pick<CampaignRecord, "hasTarget" | "deliveryGoalType" | "sovValue" | "totalPlays" | "playsPerDay" | "targetBufferPct">) {
   if (!c.hasTarget) return "Fill only";
   if (c.deliveryGoalType === "sov") return `SOV ${c.sovValue}%`;
-  if (c.deliveryGoalType === "plays-per-day") return `${c.playsPerDay.toLocaleString()} plays/day`;
-  return `${c.totalPlays.toLocaleString()} total plays`;
+  if (c.deliveryGoalType === "plays-per-day") {
+    const eff = Math.round(c.playsPerDay * (1 + (c.targetBufferPct ?? 0) / 100));
+    return c.targetBufferPct > 0 ? `${c.playsPerDay.toLocaleString()} plays/day → ${eff.toLocaleString()} w/ ${c.targetBufferPct}% buffer` : `${c.playsPerDay.toLocaleString()} plays/day`;
+  }
+  const eff = Math.round(c.totalPlays * (1 + (c.targetBufferPct ?? 0) / 100));
+  return c.targetBufferPct > 0 ? `${c.totalPlays.toLocaleString()} plays → ${eff.toLocaleString()} w/ ${c.targetBufferPct}% buffer` : `${c.totalPlays.toLocaleString()} total plays`;
 }
 
 function windowLabel(w: TimeWindow) {
@@ -683,6 +687,42 @@ export default function CampaignDetail() {
                   <Input type="number" min={1} value={draft.playsPerDay} onChange={e => set("playsPerDay", Number(e.target.value))} className="w-40 text-sm" />
                   <span className="text-sm text-muted-foreground">plays / screen / day</span>
                 </div>
+              </div>
+            )}
+            {/* Over-delivery buffer — play-based goals only */}
+            {(draft.deliveryGoalType === "total" || draft.deliveryGoalType === "plays-per-day") && (
+              <div className="rounded-lg border border-border bg-secondary/30 px-4 py-3 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-medium text-foreground">Over-delivery buffer</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">System targets slightly more to ensure full delivery</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number" min={0} max={50} step={0.5}
+                      className="w-20 text-right text-sm"
+                      value={draft.targetBufferPct ?? 5}
+                      onChange={e => set("targetBufferPct", Number(e.target.value))}
+                    />
+                    <span className="text-sm text-muted-foreground">%</span>
+                  </div>
+                </div>
+                {(draft.targetBufferPct ?? 0) > 0 && (
+                  <p className="text-[11px] text-muted-foreground">
+                    Sold:{" "}
+                    <span className="font-medium text-foreground">
+                      {draft.deliveryGoalType === "total"
+                        ? `${draft.totalPlays.toLocaleString()} plays`
+                        : `${draft.playsPerDay.toLocaleString()} plays/screen/day`}
+                    </span>
+                    {" → "}System targets:{" "}
+                    <span className="font-medium text-foreground">
+                      {draft.deliveryGoalType === "total"
+                        ? `${Math.round(draft.totalPlays * (1 + (draft.targetBufferPct ?? 5) / 100)).toLocaleString()} plays`
+                        : `${Math.round(draft.playsPerDay * (1 + (draft.targetBufferPct ?? 5) / 100)).toLocaleString()} plays/screen/day`}
+                    </span>
+                  </p>
+                )}
               </div>
             )}
             {capacitySummary && (
