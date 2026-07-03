@@ -1,24 +1,28 @@
 import { useState, useMemo, useRef } from "react";
 import {
-  Megaphone, ArrowLeft, ArrowRight, MapPin, ExternalLink, Pencil, X, Check,
-  Tag, Globe, Search, ChevronDown, ChevronRight, Clock, Upload, Trash2,
+  Megaphone, ArrowLeft, ArrowRight, ExternalLink, Pencil, X, Check,
+  Clock, Upload, Trash2,
   Info, AlertTriangle, Plus, Image as ImageIcon, Folder, MoreHorizontal,
 } from "lucide-react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import PageHeader from "@/components/layout/PageHeader";
 import StatusChip from "@/components/shared/StatusChip";
-import POIAutocomplete from "@/components/shared/POIAutocomplete";
+import TargetingRuleBuilder from "@/components/shared/TargetingRuleBuilder";
+import TargetingSummary from "@/components/shared/TargetingSummary";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb";
-import { allPlacements, calcCapacityFromRule } from "@/data/placements";
-import { allScreens } from "@/data/screens";
-import { getAllScreenTags, getScreensMatchingTags } from "@/data/screenTags";
-import { defaultCdmKeys, GEO_CDM_KEYS } from "@/data/cdmTags";
 import { hasAnyImpressionData, getImpressionMultiplier } from "@/data/impressionStore";
-import { searchPOIs, getScreensNearPOIs, getRegionalSearchCenters, milesToMeters, POI } from "@/services/foursquareService";
+import {
+  cloneTargeting,
+  estimateCapacityFromTargeting,
+  getScreensMatchingTargeting,
+  migrateTagsToTargeting,
+  targetingHasConditions,
+  type TargetingRules,
+} from "@/data/targeting";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -59,7 +63,7 @@ interface CampaignRecord {
   name: string; advertiser: string; isPaid: boolean; dealValue: string;
   campaignType: "standard" | "programmatic"; sspPartner: string; sspApiKey: string; sspAvgDuration: number;
   startDate: string; endDate: string; timeWindows: TimeWindow[];
-  tags: string[];
+  targeting: TargetingRules;
   hasTarget: boolean; deliveryGoalType: "sov" | "total" | "plays-per-day";
   sovValue: number; totalPlays: number; playsPerDay: number; targetBufferPct: number;
   fillEnabled: boolean;
@@ -75,7 +79,7 @@ const campaignData: Record<string, CampaignRecord> = {
     campaignType: "standard", sspPartner: "", sspApiKey: "", sspAvgDuration: 30,
     startDate: "2026-04-01", endDate: "2026-06-30",
     timeWindows: [{ id: "w1", days: ALL_DAYS, startTime: "06:00", endTime: "22:00" }],
-    tags: ["Financial Banks · Northeast", "Urban Panels · National"],
+    targeting: migrateTagsToTargeting(["Financial Banks · Northeast", "Urban Panels · National"]),
     hasTarget: true, deliveryGoalType: "sov", sovValue: 40, totalPlays: 5000, playsPerDay: 200,
     fillEnabled: false, delivered: 3200, target: 5000, status: "Live",
     creatives: [
@@ -88,7 +92,7 @@ const campaignData: Record<string, CampaignRecord> = {
     campaignType: "standard", sspPartner: "", sspApiKey: "", sspAvgDuration: 30,
     startDate: "2026-03-01", endDate: "2026-05-31",
     timeWindows: [{ id: "w1", days: ALL_DAYS, startTime: "06:00", endTime: "22:00" }],
-    tags: ["Convenience Stores · Midwest & South"],
+    targeting: migrateTagsToTargeting(["Convenience Stores · Midwest & South"]),
     hasTarget: true, deliveryGoalType: "total", sovValue: 20, totalPlays: 5000, playsPerDay: 200,
     fillEnabled: true, delivered: 3100, target: 5000, status: "Live",
     creatives: [{ id: "c1", name: "Nike_Spring_16x9.mp4", type: "Video", size: "9.1 MB", duration: 30 }],
@@ -98,7 +102,7 @@ const campaignData: Record<string, CampaignRecord> = {
     campaignType: "standard", sspPartner: "", sspApiKey: "", sspAvgDuration: 30,
     startDate: "2026-01-01", endDate: "2026-12-31",
     timeWindows: [{ id: "w1", days: ALL_DAYS, startTime: "06:00", endTime: "22:00" }],
-    tags: ["Financial Banks · Northeast", "Financial Banks · Southwest & Rocky Mountain"],
+    targeting: migrateTagsToTargeting(["Financial Banks · Northeast", "Financial Banks · Southwest & Rocky Mountain"]),
     hasTarget: false, deliveryGoalType: "total", sovValue: 20, totalPlays: 0, playsPerDay: 200,
     fillEnabled: true, delivered: 48000, target: 0, status: "Live",
     creatives: [
@@ -114,7 +118,7 @@ const campaignData: Record<string, CampaignRecord> = {
       { id: "w1", days: ["Mon", "Tue", "Wed", "Thu", "Fri"], startTime: "11:00", endTime: "21:00" },
       { id: "w2", days: ["Sat", "Sun"], startTime: "10:00", endTime: "22:00" },
     ],
-    tags: ["Grocery Retail · West Coast"],
+    targeting: migrateTagsToTargeting(["Grocery Retail · West Coast"]),
     hasTarget: true, deliveryGoalType: "sov", sovValue: 20, totalPlays: 4000, playsPerDay: 200,
     fillEnabled: false, delivered: 0, target: 4000, status: "Scheduled",
     creatives: [{ id: "c1", name: "CocaCola_Summer.mp4", type: "Video", size: "14.7 MB", duration: 30 }],
@@ -124,7 +128,7 @@ const campaignData: Record<string, CampaignRecord> = {
     campaignType: "standard", sspPartner: "", sspApiKey: "", sspAvgDuration: 30,
     startDate: "2026-03-01", endDate: "2026-03-31",
     timeWindows: [{ id: "w1", days: ["Mon", "Tue", "Wed", "Thu", "Fri"], startTime: "08:00", endTime: "18:00" }],
-    tags: ["Pharmacies · National"],
+    targeting: migrateTagsToTargeting(["Pharmacies · National"]),
     hasTarget: true, deliveryGoalType: "total", sovValue: 20, totalPlays: 3000, playsPerDay: 200,
     fillEnabled: true, delivered: 1200, target: 3000, status: "Under-delivering",
     creatives: [{ id: "c1", name: "WU_Remit_Promo.mp4", type: "Video", size: "8.3 MB", duration: 30 }],
@@ -134,7 +138,7 @@ const campaignData: Record<string, CampaignRecord> = {
     campaignType: "standard", sspPartner: "", sspApiKey: "", sspAvgDuration: 30,
     startDate: "2026-01-01", endDate: "2026-12-31",
     timeWindows: [{ id: "w1", days: ALL_DAYS, startTime: "07:00", endTime: "21:00" }],
-    tags: ["WU Partners"],
+    targeting: migrateTagsToTargeting(["WU Partners"]),
     hasTarget: true, deliveryGoalType: "plays-per-day", sovValue: 0, totalPlays: 0, playsPerDay: 200,
     fillEnabled: true, delivered: 8200, target: 12000, status: "Live",
     creatives: [
@@ -147,7 +151,7 @@ const campaignData: Record<string, CampaignRecord> = {
     campaignType: "programmatic", sspPartner: "Screenverse", sspApiKey: "svr-prod-key-4f9a2c", sspAvgDuration: 30,
     startDate: "2026-01-01", endDate: "2026-12-31",
     timeWindows: [{ id: "w1", days: ALL_DAYS, startTime: "06:00", endTime: "23:00" }],
-    tags: ["Kroger Network", "Independent Retail"],
+    targeting: migrateTagsToTargeting(["Kroger Network", "Independent Retail"]),
     hasTarget: true, deliveryGoalType: "sov", sovValue: 15, totalPlays: 0, playsPerDay: 0,
     fillEnabled: true, delivered: 21400, target: 30000, status: "Live",
     creatives: [],
@@ -157,7 +161,7 @@ const campaignData: Record<string, CampaignRecord> = {
     campaignType: "programmatic", sspPartner: "Xandr", sspApiKey: "", sspAvgDuration: 15,
     startDate: "2026-06-01", endDate: "2026-08-31",
     timeWindows: [{ id: "w1", days: ALL_DAYS, startTime: "08:00", endTime: "22:00" }],
-    tags: ["WU Partners", "Continental Forex"],
+    targeting: migrateTagsToTargeting(["WU Partners", "Continental Forex"]),
     hasTarget: true, deliveryGoalType: "sov", sovValue: 10, totalPlays: 0, playsPerDay: 0,
     fillEnabled: true, delivered: 4800, target: 18000, status: "Live",
     creatives: [],
@@ -187,7 +191,12 @@ function windowLabel(w: TimeWindow) {
 }
 
 function cloneCampaign(c: CampaignRecord): CampaignRecord {
-  return { ...c, timeWindows: c.timeWindows.map(w => ({ ...w })), tags: [...c.tags], creatives: [...c.creatives] };
+  return {
+    ...c,
+    timeWindows: c.timeWindows.map((w) => ({ ...w })),
+    targeting: cloneTargeting(c.targeting),
+    creatives: [...c.creatives],
+  };
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -204,19 +213,6 @@ export default function CampaignDetail() {
   const [conflictAcknowledged, setConflictAcknowledged] = useState(false);
   const [draft, setDraft] = useState<CampaignRecord | null>(original ? cloneCampaign(original) : null);
 
-  // ── Tag picker state ──
-  const [tagSearch, setTagSearch] = useState("");
-  const [expandedGroups, setExpandedGroups] = useState<string[]>(["folder"]);
-  const [showAllGroups, setShowAllGroups] = useState<Record<string, boolean>>({});
-
-  // ── Proximity state ──
-  const [proximityPOIs, setProximityPOIs] = useState<POI[]>([]);
-  const [proximityRadius, setProximityRadius] = useState(1);
-  const [poiSearch, setPoiSearch] = useState("");
-  const [poiLoading, setPoiLoading] = useState(false);
-  const [activePoiQuery, setActivePoiQuery] = useState("");
-  const [poiSearched, setPoiSearched] = useState(false);
-
   // ── Content sidebar state ──
   const [showContentModal, setShowContentModal] = useState(false);
   const [contentView, setContentView] = useState<"list" | "media" | "website">("list");
@@ -227,65 +223,24 @@ export default function CampaignDetail() {
   const [newWebsiteTitle, setNewWebsiteTitle] = useState("");
   const [newWebsiteUrl, setNewWebsiteUrl] = useState("");
 
-  // ── Derived ──
-  const allTags = useMemo(() => {
-    const base = getAllScreenTags();
-    const cdmExtras = defaultCdmKeys
-      .filter((k) => !k.isAuto || !GEO_CDM_KEYS.has(k.key))
-      .flatMap((k) => k.values.map((v) => ({
-        value: v.value,
-        type: (k.isAuto ? "auto" : "manual") as "auto" | "manual",
-        category: k.key,
-        screenCount: v.screenCount,
-      })));
-    const baseValues = new Set(base.map((t) => t.value));
-    const uniqueExtras = cdmExtras.filter((e) => !baseValues.has(e.value));
-    const cdmValueToKey: Record<string, string> = {};
-    cdmExtras.forEach((e) => { cdmValueToKey[e.value] = e.category; });
-    const updatedBase = base.map((t) => cdmValueToKey[t.value] ? { ...t, category: cdmValueToKey[t.value] } : t);
-    return [...updatedBase, ...uniqueExtras];
-  }, []);
   const hasImpressions = hasAnyImpressionData();
 
-  const proximityMatchedScreens = useMemo(
-    () => proximityPOIs.length === 0 ? [] : getScreensNearPOIs(proximityPOIs, allScreens, milesToMeters(proximityRadius)),
-    [proximityPOIs, proximityRadius]
-  );
-
   const capacitySummary = useMemo(() => {
-    if (!draft || (draft.tags.length === 0 && proximityPOIs.length === 0)) return null;
-    let totalScreens = 0, totalAvailable = 0, totalCapacity = 0;
-    draft.tags.forEach(tag => {
-      const pl = allPlacements.find(p => p.name.toLowerCase() === tag.toLowerCase());
-      if (pl) {
-        const cap = calcCapacityFromRule(pl);
-        totalScreens += pl.screenCount; totalCapacity += cap.total; totalAvailable += cap.available;
-      }
-    });
-    const nonPl = draft.tags.filter(t => !allPlacements.some(p => p.name.toLowerCase() === t.toLowerCase()));
-    if (nonPl.length > 0) {
-      const matched = getScreensMatchingTags(nonPl).length;
-      totalScreens += matched; totalCapacity += matched * 480; totalAvailable += Math.round(matched * 480 * 0.7);
-    }
-    if (proximityMatchedScreens.length > 0) {
-      totalScreens += proximityMatchedScreens.length;
-      totalCapacity += proximityMatchedScreens.length * 480;
-      totalAvailable += Math.round(proximityMatchedScreens.length * 480 * 0.7);
-    }
-    const availablePct = totalCapacity > 0 ? Math.round((totalAvailable / totalCapacity) * 100) : 0;
-    const bookedPct = 100 - availablePct;
+    if (!draft || !targetingHasConditions(draft.targeting)) return null;
+    const base = estimateCapacityFromTargeting(draft.targeting);
+
     let requested = 0;
     if (draft.hasTarget) {
-      if (draft.deliveryGoalType === "sov") requested = Math.round(totalCapacity * draft.sovValue / 100);
+      if (draft.deliveryGoalType === "sov") requested = Math.round(base.totalCapacity * draft.sovValue / 100);
       else if (draft.deliveryGoalType === "total") requested = draft.totalPlays;
-      else requested = draft.playsPerDay * totalScreens;
+      else requested = draft.playsPerDay * base.totalScreens;
     }
-    const fits = !draft.hasTarget || requested <= totalAvailable;
+    const fits = !draft.hasTarget || requested <= base.totalAvailable;
     const dailyPacing = draft.hasTarget && draft.deliveryGoalType === "total" && draft.startDate && draft.endDate
       ? Math.round(draft.totalPlays / Math.max(1, Math.ceil((new Date(draft.endDate).getTime() - new Date(draft.startDate).getTime()) / 86400000)))
       : 0;
-    return { totalScreens, totalAvailable, totalCapacity, availablePct, bookedPct, requested, fits, dailyPacing };
-  }, [draft?.tags, draft?.hasTarget, draft?.deliveryGoalType, draft?.sovValue, draft?.totalPlays, draft?.playsPerDay, draft?.startDate, draft?.endDate, proximityMatchedScreens, proximityPOIs]);
+    return { ...base, requested, fits, dailyPacing };
+  }, [draft?.targeting, draft?.hasTarget, draft?.deliveryGoalType, draft?.sovValue, draft?.totalPlays, draft?.playsPerDay, draft?.startDate, draft?.endDate]);
 
   const estimatedDailyPlays = useMemo(() => {
     if (!capacitySummary || !draft?.hasTarget) return 0;
@@ -296,19 +251,15 @@ export default function CampaignDetail() {
 
   const estimatedDailyImpressions = useMemo(() => {
     if (!hasImpressions || !capacitySummary || !draft) return 0;
-    const screenIds = new Set<string>();
-    getScreensMatchingTags(draft.tags).forEach(s => screenIds.add(s.id));
-    proximityMatchedScreens.forEach(s => screenIds.add(s.id));
+    const matchedScreens = getScreensMatchingTargeting(draft.targeting);
     const pps = capacitySummary.totalScreens > 0 ? estimatedDailyPlays / capacitySummary.totalScreens : 0;
     let total = 0;
-    screenIds.forEach(sid => { const m = getImpressionMultiplier(sid); if (m !== null) total += pps * m; });
+    matchedScreens.forEach((s) => {
+      const m = getImpressionMultiplier(s.id);
+      if (m !== null) total += pps * m;
+    });
     return Math.round(total);
-  }, [hasImpressions, capacitySummary, estimatedDailyPlays, draft?.tags, proximityMatchedScreens]);
-
-  const filteredTags = useMemo(() => allTags.filter(t =>
-    !(draft?.tags ?? []).includes(t.value) &&
-    (tagSearch === "" || t.value.toLowerCase().includes(tagSearch.toLowerCase()))
-  ), [allTags, draft?.tags, tagSearch]);
+  }, [hasImpressions, capacitySummary, estimatedDailyPlays, draft?.targeting]);
 
   if (!original || !draft) {
     return (
@@ -322,8 +273,8 @@ export default function CampaignDetail() {
   // ── Edit helpers ──
   const startEdit = () => {
     setDraft(cloneCampaign(original));
-    setProximityPOIs([]); setPoiSearch(""); setPoiSearched(false); setTagSearch("");
-    setEditStep(0); setConflictAcknowledged(false);
+    setEditStep(0);
+    setConflictAcknowledged(false);
     setIsEditing(true);
   };
   const cancelEdit = () => { setDraft(cloneCampaign(original)); setEditStep(0); setIsEditing(false); };
@@ -342,9 +293,9 @@ export default function CampaignDetail() {
     updateWindow(wid, { days: w.days.includes(day) ? w.days.filter(d => d !== day) : [...w.days, day] });
   };
 
-  // Tags
-  const addTag = (tag: string) => { if (!draft.tags.includes(tag)) set("tags", [...draft.tags, tag]); setTagSearch(""); };
-  const removeTag = (tag: string) => set("tags", draft.tags.filter(t => t !== tag));
+  // Targeting
+  const setTargeting = (targeting: TargetingRules) =>
+    setDraft((d) => (d ? { ...d, targeting } : d));
 
   // Creatives
   const addCreative = (name: string, type: string) => {
@@ -368,28 +319,9 @@ export default function CampaignDetail() {
     e.target.value = "";
   };
 
-  // Proximity
-  const handlePoiSearch = async (queryOverride?: string) => {
-    const query = queryOverride || poiSearch.trim(); if (!query) return;
-    setPoiLoading(true);
-    try {
-      const results = await searchPOIs(query, getRegionalSearchCenters(allScreens), 100000);
-      setProximityPOIs(results); setActivePoiQuery(query); setPoiSearched(true);
-    } catch { /* ignore */ } finally { setPoiLoading(false); }
-  };
-  const clearProximity = () => { setProximityPOIs([]); setPoiSearch(""); setActivePoiQuery(""); setPoiSearched(false); };
-
   // ── Computed view values ──
   const pct = draft.target > 0 ? Math.round((draft.delivered / draft.target) * 100) : 100;
   const fillBehaviorLabel = !draft.hasTarget ? "Fill only" : draft.fillEnabled ? "Target then fill" : "Target, no fill";
-  const STANDARD_GROUP_ORDER = ["Country", "State", "City", "ZIP", "Venue"];
-  const tagGroups: Record<string, typeof filteredTags> = {};
-  filteredTags.forEach(t => { const cat = t.category || "Venue"; if (!tagGroups[cat]) tagGroups[cat] = []; tagGroups[cat].push(t); });
-  const visibleGroupNames = [
-    ...STANDARD_GROUP_ORDER.filter(g => tagGroups[g]?.length),
-    ...Object.keys(tagGroups).filter(g => !STANDARD_GROUP_ORDER.includes(g) && tagGroups[g]?.length),
-  ];
-  const isSearching = tagSearch.trim().length > 0;
 
   // ─────────────────────────────────────────────────────────────────────────────
   // SECTION RENDERERS (edit mode)
@@ -455,107 +387,9 @@ export default function CampaignDetail() {
     </div>
   );
 
-  const renderEditTargeting = () => {
-    return (
-      <div className="space-y-4">
-        {/* Tags card */}
-        <div className="skoop-card p-5 space-y-4">
-          <div className="flex items-center gap-2"><Tag size={16} className="text-muted-foreground" /><p className="skoop-section-header">Target by Tags</p></div>
-          <p className="text-xs text-muted-foreground">Select placement groups or individual screen tags. Placement groups appear at the top.</p>
-          {draft.tags.length > 0 && (
-            <div className="space-y-2">
-              <div className="flex flex-wrap gap-1.5">
-                {draft.tags.map(tag => (
-                  <span key={tag} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-secondary text-foreground border border-border">
-                    {tag}
-                    <button onClick={() => removeTag(tag)} className="ml-0.5 hover:opacity-70"><X size={10} /></button>
-                  </span>
-                ))}
-              </div>
-              {capacitySummary && (
-                <div className="flex items-center gap-2 bg-secondary/60 border border-border rounded-md px-3 py-2">
-                  <Info size={12} className="text-primary shrink-0" />
-                  <p className="text-xs text-foreground font-medium tabular-nums">{capacitySummary.totalScreens.toLocaleString()} screens selected</p>
-                </div>
-              )}
-            </div>
-          )}
-          <div className="relative">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder="Search placement groups, states, cities..." className="pl-9 text-xs" value={tagSearch} onChange={e => setTagSearch(e.target.value)} />
-          </div>
-          <div className="space-y-1">
-            {visibleGroupNames.length === 0 && tagSearch && <p className="text-xs text-muted-foreground py-2">No tags match "{tagSearch}"</p>}
-            {visibleGroupNames.map(groupName => {
-              const tags = tagGroups[groupName];
-              const isExpanded = isSearching || expandedGroups.includes(groupName);
-              const showAll = showAllGroups[groupName];
-              const CAP = 15;
-              const visibleTags = showAll ? tags : tags.slice(0, CAP);
-              return (
-                <div key={groupName} className="border border-border rounded-md">
-                  <button
-                    onClick={() => setExpandedGroups(prev => prev.includes(groupName) ? prev.filter(g => g !== groupName) : [...prev, groupName])}
-                    className="flex items-center justify-between w-full px-3 py-2 text-xs font-medium text-foreground hover:bg-muted/50 transition-colors"
-                  >
-                    <span className="flex items-center gap-1.5">
-                      {isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
-                      {groupName}
-                      <span className="text-muted-foreground font-normal">({tags.length})</span>
-                    </span>
-                  </button>
-                  {isExpanded && (
-                    <div className="px-3 pb-2.5 flex flex-wrap gap-1.5">
-                      {visibleTags.map(tag => (
-                        <button key={tag.value} onClick={() => addTag(tag.value)}
-                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-dashed border-border text-xs text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
-                        >
-                          {tag.type === "auto" && <Globe size={10} className="shrink-0" />}
-                          + {tag.value} <span className="text-[10px] opacity-60">({tag.screenCount})</span>
-                        </button>
-                      ))}
-                      {!showAll && tags.length > CAP && (
-                        <button onClick={() => setShowAllGroups(prev => ({ ...prev, [groupName]: true }))} className="text-xs text-primary hover:underline px-1">Show all {tags.length}</button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Proximity card */}
-        <div className="skoop-card p-5 space-y-4">
-          <div className="flex items-center gap-2"><MapPin size={16} className="text-muted-foreground" /><p className="skoop-section-header">Target by Proximity</p></div>
-          <p className="text-xs text-muted-foreground">Find screens near specific points of interest.</p>
-          {poiSearched && !poiLoading && (
-            <div className="flex items-center justify-between gap-2 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
-              <div className="flex items-center gap-2">
-                <MapPin size={14} className="text-primary shrink-0" />
-                <p className="text-sm font-semibold text-foreground">{proximityMatchedScreens.length} screen{proximityMatchedScreens.length !== 1 ? "s" : ""} within {proximityRadius} mi of {activePoiQuery}</p>
-              </div>
-              <Button variant="ghost" size="sm" onClick={clearProximity} className="text-xs h-7"><X size={12} className="mr-1" /> Clear</Button>
-            </div>
-          )}
-          <div className="flex items-end gap-3">
-            <div className="flex-1">
-              <label className="text-[11px] text-muted-foreground mb-1 block">Search POI</label>
-              <POIAutocomplete value={poiSearch} onChange={setPoiSearch} onSelect={name => { setPoiSearch(name); handlePoiSearch(name); }} placeholder="e.g. Walmart, Family Dollar, CVS..." className="text-xs" />
-            </div>
-            <div>
-              <label className="text-[11px] text-muted-foreground mb-1 block">Radius</label>
-              <select className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm" value={proximityRadius} onChange={e => setProximityRadius(Number(e.target.value))}>
-                <option value={0.25}>0.25 mi</option><option value={0.5}>0.5 mi</option>
-                <option value={1}>1 mi</option><option value={2}>2 mi</option><option value={5}>5 mi</option>
-              </select>
-            </div>
-            <Button size="sm" onClick={() => handlePoiSearch()} disabled={poiLoading}>{poiLoading ? "Searching..." : "Search"}</Button>
-          </div>
-        </div>
-      </div>
-    );
-  };
+  const renderEditTargeting = () => (
+    <TargetingRuleBuilder value={draft.targeting} onChange={setTargeting} />
+  );
 
   const renderEditSchedule = () => (
     <div className="space-y-4">
@@ -829,7 +663,7 @@ export default function CampaignDetail() {
   };
 
   const renderCapacityPanel = () => {
-    if (!capacitySummary || (draft.tags.length === 0 && proximityPOIs.length === 0)) return null;
+    if (!capacitySummary || !targetingHasConditions(draft.targeting)) return null;
     return (
       <div className="w-72 shrink-0 space-y-4">
         <div className="skoop-card p-5 space-y-3 sticky top-8">
@@ -1059,15 +893,9 @@ export default function CampaignDetail() {
             {draft.campaignType !== "programmatic" && draft.isPaid && draft.dealValue && <div><p className="text-xs text-muted-foreground">Deal Value</p><p className="text-sm font-medium tabular-nums">${Number(draft.dealValue).toLocaleString()}</p></div>}
             <div className="col-span-2">
               <p className="text-xs text-muted-foreground">Targeting</p>
-              {draft.tags.length > 0 ? (
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {draft.tags.map(tag => (
-                    <span key={tag} className="px-2 py-0.5 rounded-full text-xs font-medium bg-secondary text-foreground border border-border">{tag}</span>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground mt-1">No tags selected</p>
-              )}
+              <div className="mt-1">
+                <TargetingSummary targeting={draft.targeting} />
+              </div>
             </div>
             <div><p className="text-xs text-muted-foreground">Screens</p><p className="text-sm font-medium tabular-nums">{capacitySummary?.totalScreens.toLocaleString() || 0}</p></div>
             <div><p className="text-xs text-muted-foreground">Schedule</p><p className="text-sm font-medium">{draft.startDate || "—"} → {draft.endDate || "—"}</p></div>
@@ -1399,17 +1227,8 @@ export default function CampaignDetail() {
             </div>
             {/* Targeting */}
             <div className="skoop-card p-5 space-y-3">
-              <div className="flex items-center gap-2"><Tag size={14} className="text-muted-foreground" /><p className="skoop-section-header">Targeting</p></div>
-              {draft.tags.length > 0 ? (
-                <div className="flex flex-wrap gap-1.5">
-                  {draft.tags.map(tag => (
-                    <span key={tag} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-secondary text-foreground border border-border">{tag}</span>
-                  ))}
-                </div>
-              ) : <p className="text-sm text-muted-foreground">No tags selected</p>}
-              {proximityMatchedScreens.length > 0 && (
-                <p className="text-xs text-muted-foreground">{proximityMatchedScreens.length} screens via proximity</p>
-              )}
+              <p className="skoop-section-header">Targeting</p>
+              <TargetingSummary targeting={draft.targeting} />
             </div>
             {/* Schedule */}
             <div className="skoop-card p-5 space-y-3">
@@ -1476,7 +1295,15 @@ export default function CampaignDetail() {
                 <p className="text-xs text-muted-foreground">Active Hours</p>
                 {draft.timeWindows.map(w => <p key={w.id} className="text-xs text-foreground mt-0.5">{windowLabel(w)}</p>)}
               </div>
-              <div><p className="text-xs text-muted-foreground">Targeting</p><p className="text-sm font-medium">{draft.tags.length} tag{draft.tags.length !== 1 ? "s" : ""}</p></div>
+              <div>
+                <p className="text-xs text-muted-foreground">Targeting</p>
+                <p className="text-sm font-medium">
+                  {draft.targeting.rules.length} rule{draft.targeting.rules.length !== 1 ? "s" : ""}
+                  {draft.targeting.globalExclusions.length > 0
+                    ? `, ${draft.targeting.globalExclusions.length} global exclusion${draft.targeting.globalExclusions.length !== 1 ? "s" : ""}`
+                    : ""}
+                </p>
+              </div>
             </div>
             <div className="skoop-card p-5 space-y-3">
               <p className="skoop-section-header">Quick Links</p>
