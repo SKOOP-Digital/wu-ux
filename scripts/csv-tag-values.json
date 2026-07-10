@@ -1,0 +1,10060 @@
+{
+  "device_type": [
+    {
+      "value": "windows",
+      "count": 1258
+    },
+    {
+      "value": "brightsign",
+      "count": 1153
+    }
+  ],
+  "audience_grouping": [
+    {
+      "value": "Spanish-Speaking Countries-LATAMCA",
+      "count": 1064
+    },
+    {
+      "value": "LATAMCA",
+      "count": 245
+    },
+    {
+      "value": "North America",
+      "count": 140
+    },
+    {
+      "value": "Asia",
+      "count": 57
+    },
+    {
+      "value": "Spanish-Speaking Countries",
+      "count": 26
+    },
+    {
+      "value": "Africa",
+      "count": 17
+    },
+    {
+      "value": "Europe",
+      "count": 12
+    },
+    {
+      "value": "MENA",
+      "count": 9
+    }
+  ],
+  "unit_type": [
+    {
+      "value": "dual sided window",
+      "count": 1199
+    },
+    {
+      "value": "countertop",
+      "count": 423
+    },
+    {
+      "value": "freestanding",
+      "count": 416
+    },
+    {
+      "value": "wall mount",
+      "count": 346
+    },
+    {
+      "value": "digi conversion",
+      "count": 26
+    },
+    {
+      "value": "ceiling mount",
+      "count": 1
+    }
+  ],
+  "region": [
+    {
+      "value": "East",
+      "count": 1193
+    },
+    {
+      "value": "Central",
+      "count": 784
+    },
+    {
+      "value": "West",
+      "count": 432
+    },
+    {
+      "value": "Canada",
+      "count": 1
+    },
+    {
+      "value": "WEST",
+      "count": 1
+    }
+  ],
+  "agent_partner": [
+    {
+      "value": "Independent In Lane",
+      "count": 1100
+    },
+    {
+      "value": "Advance America",
+      "count": 472
+    },
+    {
+      "value": "CFSC",
+      "count": 195
+    },
+    {
+      "value": "Pay-O-Matic",
+      "count": 150
+    },
+    {
+      "value": "Barr Management",
+      "count": 92
+    },
+    {
+      "value": "Continental Currency",
+      "count": 48
+    },
+    {
+      "value": "Western Union Corporate O&O",
+      "count": 43
+    },
+    {
+      "value": "A1 Check Cashing",
+      "count": 40
+    },
+    {
+      "value": "West Suburban",
+      "count": 38
+    },
+    {
+      "value": "New Lincoln Addison",
+      "count": 37
+    },
+    {
+      "value": "GFG Management",
+      "count": 34
+    },
+    {
+      "value": "CHECK CASHING USA",
+      "count": 32
+    },
+    {
+      "value": "Economy CE",
+      "count": 25
+    },
+    {
+      "value": "Keller 6365",
+      "count": 25
+    },
+    {
+      "value": "David's Check Cashing",
+      "count": 23
+    },
+    {
+      "value": "Rumba Money Centers",
+      "count": 20
+    },
+    {
+      "value": "Chicago Financial Network",
+      "count": 16
+    },
+    {
+      "value": "Chavez Supermarket",
+      "count": 11
+    },
+    {
+      "value": "Western North",
+      "count": 10
+    }
+  ],
+  "category": [
+    {
+      "value": "Independent",
+      "count": 1012
+    },
+    {
+      "value": "Strategic",
+      "count": 935
+    },
+    {
+      "value": "Regional",
+      "count": 361
+    },
+    {
+      "value": "0",
+      "count": 1
+    }
+  ],
+  "brand": [
+    {
+      "value": "WU",
+      "count": 1855
+    },
+    {
+      "value": "VG",
+      "count": 485
+    },
+    {
+      "value": "OV",
+      "count": 67
+    }
+  ],
+  "corridor": [
+    {
+      "value": "El Salvador; Guatemala; Honduras; Mexico; Nicaragua",
+      "count": 41
+    },
+    {
+      "value": "Colombia; El Salvador; Honduras; Mexico; Nicaragua",
+      "count": 36
+    },
+    {
+      "value": "Colombia; El Salvador; Guatemala; Honduras; Mexico",
+      "count": 33
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; United States; Venezuela",
+      "count": 28
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Honduras; Jamaica; United States",
+      "count": 27
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Haiti; Jamaica; United States",
+      "count": 23
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; Peru; Venezuela",
+      "count": 22
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Honduras; Mexico; United States",
+      "count": 21
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Jamaica; Mexico; United States",
+      "count": 19
+    },
+    {
+      "value": "El Salvador; Guatemala; Honduras; Mexico; United States",
+      "count": 17
+    },
+    {
+      "value": "Colombia; El Salvador; Guatemala; Mexico; Nicaragua",
+      "count": 17
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Mexico; Peru",
+      "count": 15
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Mexico; United States",
+      "count": 15
+    },
+    {
+      "value": "Colombia; El Salvador; Honduras; Mexico; Venezuela",
+      "count": 14
+    },
+    {
+      "value": "Colombia",
+      "count": 13
+    },
+    {
+      "value": "Dominican Republic; Haiti; Jamaica; Mexico; United States",
+      "count": 12
+    },
+    {
+      "value": "Dominican Republic; Guyana; Haiti; Jamaica; United States",
+      "count": 11
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; Philippines; United States",
+      "count": 11
+    },
+    {
+      "value": "Colombia; Ecuador; Honduras; Mexico; Venezuela",
+      "count": 11
+    },
+    {
+      "value": "Dominican Republic; Haiti; Jamaica; Trinidad and Tobago; United States",
+      "count": 11
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Haiti; Mexico; United States",
+      "count": 11
+    },
+    {
+      "value": "Colombia; Ecuador; Guatemala; Mexico; United States",
+      "count": 11
+    },
+    {
+      "value": "Colombia; Haiti; Jamaica; United States; Venezuela",
+      "count": 10
+    },
+    {
+      "value": "Dominican Republic; Haiti; Jamaica; United States; Yemen",
+      "count": 9
+    },
+    {
+      "value": "Mexico",
+      "count": 8
+    },
+    {
+      "value": "Colombia; Ecuador; El Salvador; Guatemala; Mexico",
+      "count": 8
+    },
+    {
+      "value": "Colombia; Ecuador; Honduras; Mexico; United States",
+      "count": 8
+    },
+    {
+      "value": "Colombia; Ecuador; Guatemala; Mexico; Venezuela",
+      "count": 8
+    },
+    {
+      "value": "Colombia; Honduras; Mexico; Peru; Venezuela",
+      "count": 8
+    },
+    {
+      "value": "Colombia; Guatemala; Mexico; Nicaragua; United States",
+      "count": 8
+    },
+    {
+      "value": "Dominican Republic; Haiti; Honduras; Jamaica; Nicaragua",
+      "count": 8
+    },
+    {
+      "value": "Dominican Republic; Haiti; Honduras; Jamaica; United States",
+      "count": 8
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; Nicaragua; United States",
+      "count": 8
+    },
+    {
+      "value": "El Salvador; Mexico; Nicaragua; Peru; Philippines",
+      "count": 8
+    },
+    {
+      "value": "Mexico; United States",
+      "count": 7
+    },
+    {
+      "value": "Honduras; Mexico; United States",
+      "count": 7
+    },
+    {
+      "value": "Colombia; El Salvador; Mexico; Philippines; United States",
+      "count": 7
+    },
+    {
+      "value": "Colombia; El Salvador; Guatemala; Mexico; Peru",
+      "count": 7
+    },
+    {
+      "value": "Colombia; Guatemala; Mexico; United States; Venezuela",
+      "count": 7
+    },
+    {
+      "value": "Colombia; Mexico; Peru; United States; Venezuela",
+      "count": 7
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Jamaica; United States",
+      "count": 7
+    },
+    {
+      "value": "El Salvador; Guatemala; Mexico; Nicaragua; Philippines",
+      "count": 7
+    },
+    {
+      "value": "Colombia; Ecuador; Guatemala; Mexico; Peru",
+      "count": 6
+    },
+    {
+      "value": "Dominican Republic; El Salvador; Haiti; Jamaica; United States",
+      "count": 6
+    },
+    {
+      "value": "Colombia; Ecuador; Guatemala; Honduras; Mexico",
+      "count": 6
+    },
+    {
+      "value": "Colombia; El Salvador; Mexico; Nicaragua; Peru",
+      "count": 6
+    },
+    {
+      "value": "Colombia; El Salvador; Mexico; Peru; Venezuela",
+      "count": 6
+    },
+    {
+      "value": "Colombia; El Salvador; Honduras; Mexico; Peru",
+      "count": 6
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Haiti; United States",
+      "count": 6
+    },
+    {
+      "value": "Colombia; Dominican Republic; Honduras; Mexico; Nicaragua",
+      "count": 6
+    },
+    {
+      "value": "Guyana; Haiti; Jamaica; Trinidad and Tobago; United States",
+      "count": 6
+    },
+    {
+      "value": "Colombia; Dominican Republic; Haiti; Mexico; United States",
+      "count": 6
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; Nicaragua; Venezuela",
+      "count": 6
+    },
+    {
+      "value": "Colombia; Mexico; Philippines; Ukraine; United States",
+      "count": 6
+    },
+    {
+      "value": "Belize; Haiti; Jamaica; Mexico; United States",
+      "count": 6
+    },
+    {
+      "value": "Dominican Republic; Haiti; Jamaica; Panama; United States",
+      "count": 6
+    },
+    {
+      "value": "Colombia; Mexico; Nicaragua; United States; Venezuela",
+      "count": 6
+    },
+    {
+      "value": "Belize; El Salvador; Jamaica; Mexico; United States",
+      "count": 6
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Honduras; United States",
+      "count": 6
+    },
+    {
+      "value": "Colombia; Jamaica; Mexico; Philippines; United States",
+      "count": 6
+    },
+    {
+      "value": "Colombia; Jamaica; Mexico; United States; Venezuela",
+      "count": 6
+    },
+    {
+      "value": "Colombia; El Salvador; Honduras; Mexico; United States",
+      "count": 6
+    },
+    {
+      "value": "Belize; El Salvador; Guatemala; Mexico; United States",
+      "count": 6
+    },
+    {
+      "value": "Guatemala; Mexico; United States",
+      "count": 5
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Guatemala; Mexico",
+      "count": 5
+    },
+    {
+      "value": "Colombia; Guatemala; Mexico; United States",
+      "count": 5
+    },
+    {
+      "value": "Colombia; El Salvador; Guatemala; Mexico; United States",
+      "count": 5
+    },
+    {
+      "value": "Colombia; Ecuador; El Salvador; Mexico; Venezuela",
+      "count": 5
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Jamaica; Mexico; United States",
+      "count": 5
+    },
+    {
+      "value": "Colombia; Ecuador; El Salvador; Mexico; Peru",
+      "count": 5
+    },
+    {
+      "value": "Colombia; Dominican Republic; Haiti; Honduras; Mexico",
+      "count": 5
+    },
+    {
+      "value": "El Salvador; Guatemala; Honduras; Mexico; Philippines",
+      "count": 5
+    },
+    {
+      "value": "Colombia; Guatemala; Honduras; Mexico; Nicaragua",
+      "count": 5
+    },
+    {
+      "value": "Brazil; Dominican Republic; Haiti; Mexico; United States",
+      "count": 5
+    },
+    {
+      "value": "Colombia; El Salvador; Guatemala; Mexico; Philippines",
+      "count": 5
+    },
+    {
+      "value": "El Salvador; Guatemala; Honduras; Mexico; Peru",
+      "count": 5
+    },
+    {
+      "value": "Colombia; Honduras; Mexico; United States; Venezuela",
+      "count": 5
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Guyana; Jamaica; United States",
+      "count": 5
+    },
+    {
+      "value": "Ecuador; Guatemala; Honduras; Mexico; Nicaragua",
+      "count": 4
+    },
+    {
+      "value": "Colombia; Guatemala; Honduras; Mexico; United States",
+      "count": 4
+    },
+    {
+      "value": "Colombia; Honduras; Mexico; Nicaragua; Venezuela",
+      "count": 4
+    },
+    {
+      "value": "El Salvador; Guatemala; Haiti; Honduras; Nicaragua",
+      "count": 4
+    },
+    {
+      "value": "Colombia; Dominican Republic; El Salvador; Haiti; Honduras",
+      "count": 4
+    },
+    {
+      "value": "Colombia; Dominican Republic; Haiti; Mexico; Venezuela",
+      "count": 4
+    },
+    {
+      "value": "Guatemala; Honduras; Mexico; Nicaragua; United States",
+      "count": 4
+    },
+    {
+      "value": "Argentina; Colombia; Mexico; Paraguay; United States",
+      "count": 4
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Peru; United States",
+      "count": 4
+    },
+    {
+      "value": "El Salvador; Honduras; Mexico; Nicaragua",
+      "count": 4
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Guyana; Haiti; Jamaica",
+      "count": 4
+    },
+    {
+      "value": "Guyana; Haiti; Jamaica; United States; Yemen",
+      "count": 4
+    },
+    {
+      "value": "Dominican Republic; El Salvador; Honduras; Mexico; Nicaragua",
+      "count": 4
+    },
+    {
+      "value": "Colombia; Guatemala; Mexico; Nicaragua; Venezuela",
+      "count": 4
+    },
+    {
+      "value": "Dominican Republic; Haiti; Honduras; Mexico; United States",
+      "count": 4
+    },
+    {
+      "value": "Colombia; Dominican Republic; El Salvador; Guatemala; Mexico",
+      "count": 4
+    },
+    {
+      "value": "El Salvador; Guatemala; Mexico; Nicaragua; United States",
+      "count": 4
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; El Salvador; Mexico",
+      "count": 4
+    },
+    {
+      "value": "Colombia; Guatemala; Mexico; Nicaragua; Peru",
+      "count": 4
+    },
+    {
+      "value": "United States",
+      "count": 4
+    },
+    {
+      "value": "Belize; Colombia; Jamaica; United States; Venezuela",
+      "count": 4
+    },
+    {
+      "value": "Ecuador; El Salvador; Guatemala; Mexico; Philippines",
+      "count": 4
+    },
+    {
+      "value": "Colombia; Ecuador; El Salvador; Mexico; Philippines",
+      "count": 4
+    },
+    {
+      "value": "Colombia; India; Mexico; Philippines; United States",
+      "count": 4
+    },
+    {
+      "value": "Colombia; Ecuador; El Salvador; Honduras; Mexico",
+      "count": 4
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; Peru; Philippines",
+      "count": 4
+    },
+    {
+      "value": "Colombia; Ecuador; Honduras; Mexico; Philippines",
+      "count": 4
+    },
+    {
+      "value": "El Salvador; Guatemala; Mexico; Philippines; United States",
+      "count": 4
+    },
+    {
+      "value": "Ecuador; Mexico; Philippines; Poland; Ukraine",
+      "count": 4
+    },
+    {
+      "value": "Ecuador; El Salvador; Haiti; Honduras; Jamaica",
+      "count": 4
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; Philippines; Venezuela",
+      "count": 4
+    },
+    {
+      "value": "Colombia; Jordan; Mexico; United States; Venezuela",
+      "count": 4
+    },
+    {
+      "value": "Colombia; Dominican Republic; El Salvador; Honduras; Mexico",
+      "count": 4
+    },
+    {
+      "value": "Colombia; India; Mexico; Pakistan; Philippines",
+      "count": 4
+    },
+    {
+      "value": "Guatemala; Honduras; Mexico; United States",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Dominican Republic; Guatemala; Mexico; Nicaragua",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Dominican Republic; Haiti; United States; Venezuela",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Mexico; Nicaragua; Peru; Venezuela",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Dominican Republic; Mexico; Philippines; United States",
+      "count": 3
+    },
+    {
+      "value": "Dominican Republic; Guatemala; Haiti; Honduras; Mexico",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Guatemala; Mexico; Peru; United States",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Dominican Republic; Honduras; Mexico; United States",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Dominican Republic; Mexico; Nicaragua; Peru",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Dominican Republic; Guatemala; Honduras; Mexico",
+      "count": 3
+    },
+    {
+      "value": "Dominican Republic; Haiti; Honduras; Mexico; Nicaragua",
+      "count": 3
+    },
+    {
+      "value": "El Salvador; Guatemala; Mexico; Nicaragua; Peru",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; Nicaragua; Peru",
+      "count": 3
+    },
+    {
+      "value": "El Salvador; Honduras; Mexico; Peru; United States",
+      "count": 3
+    },
+    {
+      "value": "Ecuador; El Salvador; Guatemala; Mexico; Peru",
+      "count": 3
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Guatemala; Haiti; Mexico",
+      "count": 3
+    },
+    {
+      "value": "Guatemala; Haiti; Honduras; Mexico; United States",
+      "count": 3
+    },
+    {
+      "value": "Colombia; El Salvador; Haiti; Honduras; Mexico",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Ecuador; Jamaica; United States; Venezuela",
+      "count": 3
+    },
+    {
+      "value": "Dominican Republic; Guatemala; Haiti; Jamaica; United States",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Ecuador; Peru; United States; Venezuela",
+      "count": 3
+    },
+    {
+      "value": "Dominican Republic; Honduras; Jamaica; Philippines; United States",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Dominican Republic; Haiti; Honduras; Nicaragua",
+      "count": 3
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Haiti; Jamaica; Peru",
+      "count": 3
+    },
+    {
+      "value": "Ecuador; Mexico; Philippines; United States; Venezuela",
+      "count": 3
+    },
+    {
+      "value": "Dominican Republic; Guyana; Haiti; Jamaica; Trinidad and Tobago; United States",
+      "count": 3
+    },
+    {
+      "value": "Guatemala; Honduras; Mexico; United States; Venezuela",
+      "count": 3
+    },
+    {
+      "value": "Colombia; El Salvador; Mexico; Nicaragua; Philippines",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Dominican Republic; Jamaica; Mexico; United States",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; Paraguay; Peru; Philippines",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Haiti; Nicaragua",
+      "count": 3
+    },
+    {
+      "value": "Dominican Republic; El Salvador; Haiti; Honduras; Mexico",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Dominican Republic; Haiti; Mexico; Nicaragua",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Ecuador; Haiti; Mexico; Peru",
+      "count": 3
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Jamaica; United States; Yemen",
+      "count": 3
+    },
+    {
+      "value": "Colombia; El Salvador; Mexico; Nicaragua; United States",
+      "count": 3
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Guyana; Jamaica; Trinidad and Tobago",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Haiti; Mexico; United States; Venezuela",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Mexico",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Honduras; Mexico; Nicaragua; United States",
+      "count": 3
+    },
+    {
+      "value": "Colombia; El Salvador; Honduras; India; Mexico",
+      "count": 3
+    },
+    {
+      "value": "El Salvador; India; Mexico; Nicaragua; Philippines",
+      "count": 3
+    },
+    {
+      "value": "Dominican Republic; Guatemala; Haiti; Mexico; United States",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Guatemala; Honduras; Mexico; Peru",
+      "count": 3
+    },
+    {
+      "value": "Belize; El Salvador; Guatemala; Honduras; Mexico",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Ecuador; Haiti; United States; Venezuela",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; United States; Venezuela",
+      "count": 3
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Guatemala; Haiti; Jamaica",
+      "count": 3
+    },
+    {
+      "value": "Colombia; El Salvador; Honduras; Mexico; Philippines",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; Oman; Philippines; Romania",
+      "count": 3
+    },
+    {
+      "value": "Afghanistan; India; Mexico; Pakistan; Philippines",
+      "count": 3
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Haiti; Honduras; United States",
+      "count": 3
+    },
+    {
+      "value": "El Salvador; Guatemala; Mexico; Peru; Philippines",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Mexico; Philippines; United States",
+      "count": 3
+    },
+    {
+      "value": "Afghanistan; Haiti; Jamaica; Mexico; Philippines",
+      "count": 3
+    },
+    {
+      "value": "Colombia; Dominican Republic; Haiti; Honduras; United States",
+      "count": 3
+    },
+    {
+      "value": "El Salvador; Guatemala; Honduras; Mexico",
+      "count": 2
+    },
+    {
+      "value": "Guatemala; India; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; El Salvador; Guatemala; Honduras; Mexico",
+      "count": 2
+    },
+    {
+      "value": "Honduras; Mexico",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Haiti; Honduras; Jamaica; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Haiti; Jamaica; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Haiti; Jamaica; Pakistan; United States",
+      "count": 2
+    },
+    {
+      "value": "India; Jamaica; Mexico; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Haiti; Honduras; United States; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Colombia; El Salvador; Guatemala; Honduras; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Mexico; Nicaragua; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Honduras; Mexico; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Haiti; Jamaica",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Ecuador; Haiti; Jamaica; Peru",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Jamaica; Peru",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Guatemala; Mexico; Peru; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Haiti; Honduras; Jamaica; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Haiti; Mexico; Nicaragua; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; Guatemala; Haiti; Honduras; Mexico",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Ecuador; Guatemala; Nicaragua; Peru",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Honduras; Mexico; Peru",
+      "count": 2
+    },
+    {
+      "value": "Cambodia; Dominican Republic; Haiti; Peru; United States",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; Honduras; Mexico; Nicaragua; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Belize; Honduras; Mexico; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Brazil; Dominican Republic; Ecuador; Haiti; United States",
+      "count": 2
+    },
+    {
+      "value": "Cape Verde; Dominican Republic; Ecuador; Haiti; United States",
+      "count": 2
+    },
+    {
+      "value": "Jamaica; Mexico; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; El Salvador; Turkey",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Haiti; Jamaica; Mexico",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; El Salvador; Guatemala; Haiti",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Ecuador; Guatemala; Jamaica; Mexico",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; Peru; United States",
+      "count": 2
+    },
+    {
+      "value": "Cape Verde; Dominican Republic; Ecuador; Haiti; Mexico",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Guatemala; Honduras; Mexico; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Panama; Peru",
+      "count": 2
+    },
+    {
+      "value": "Guatemala; Honduras; Mexico; Peru; United States",
+      "count": 2
+    },
+    {
+      "value": "Brazil; Dominican Republic; Ecuador; Haiti; Jamaica",
+      "count": 2
+    },
+    {
+      "value": "Colombia; El Salvador; Mexico; United States; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Colombia; El Salvador; Honduras; Nicaragua; Philippines",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; Guatemala; Honduras; Nicaragua; Peru",
+      "count": 2
+    },
+    {
+      "value": "Ecuador; Guatemala; Honduras; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; Honduras; Mexico; Nicaragua; Peru",
+      "count": 2
+    },
+    {
+      "value": "Honduras; Mexico; Nicaragua; Peru",
+      "count": 2
+    },
+    {
+      "value": "Ecuador; El Salvador; Haiti; Honduras; Peru",
+      "count": 2
+    },
+    {
+      "value": "Honduras; Mexico; Philippines; United States; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Ecuador; India; Mexico; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; DRC; Haiti; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Jamaica; Mexico; Nigeria; Peru; United States",
+      "count": 2
+    },
+    {
+      "value": "Guatemala; Kenya; Mexico; Pakistan; Panama",
+      "count": 2
+    },
+    {
+      "value": "Gambia; United States",
+      "count": 2
+    },
+    {
+      "value": "Haiti; United States",
+      "count": 2
+    },
+    {
+      "value": "Mexico; United States; Vietnam",
+      "count": 2
+    },
+    {
+      "value": "China; Colombia; Ecuador; Mexico; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Haiti; Mexico; Philippines; Thailand; UAE",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Mexico; Peru; Philippines; United States; Vietnam",
+      "count": 2
+    },
+    {
+      "value": "American Samoa; India; Mexico; Pakistan; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Argentina; Colombia; Mexico; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "United States; Vietnam",
+      "count": 2
+    },
+    {
+      "value": "Cambodia; China; Dominican Republic; Vietnam",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; Haiti; Jamaica; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Bosnia and Herzegovina; Costa Rica; Haiti; Palestine; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; El Salvador; Honduras; India; Panama",
+      "count": 2
+    },
+    {
+      "value": "India; Laos; Mexico; United States; Vietnam",
+      "count": 2
+    },
+    {
+      "value": "Brazil; Honduras; Mexico; Nicaragua; Turkey",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; Fiji; India; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Cape Verde; Colombia; Dominican Republic; Nigeria; Panama",
+      "count": 2
+    },
+    {
+      "value": "Bahamas; Colombia; Dominican Republic; Haiti; Jamaica; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Guatemala; Honduras; Jamaica; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Guyana; Haiti; Jamaica; Panama; Trinidad and Tobago; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; El Salvador; Haiti; Honduras",
+      "count": 2
+    },
+    {
+      "value": "Honduras; India; Jamaica; United States; Vietnam",
+      "count": 2
+    },
+    {
+      "value": "Cameroon; Canada; Dominican Republic; Haiti; Honduras; United States",
+      "count": 2
+    },
+    {
+      "value": "Bangladesh; El Salvador; Haiti; Mexico; Peru",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Haiti; India; Nicaragua",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Haiti; Jamaica; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Haiti; Jamaica; Panama; Trinidad and Tobago",
+      "count": 2
+    },
+    {
+      "value": "Brazil; Haiti; Honduras; Jamaica; United States",
+      "count": 2
+    },
+    {
+      "value": "Chile; Dominican Republic; Haiti; Jamaica; Pakistan; Peru",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; El Salvador; Haiti; Jamaica; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; El Salvador; Haiti; Jamaica; Lebanon; Liberia",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Guyana; Haiti; Jamaica; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Haiti; Mexico; United States; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Ghana; Haiti; Honduras; Nigeria",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; El Salvador; Jamaica; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Jamaica; Mexico; Nicaragua; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Haiti; Jamaica; United Kingdom; United States",
+      "count": 2
+    },
+    {
+      "value": "Brazil; Colombia; Dominican Republic; Haiti; Mexico",
+      "count": 2
+    },
+    {
+      "value": "Bahamas; Colombia; Haiti; Nicaragua; United States",
+      "count": 2
+    },
+    {
+      "value": "Argentina; Dominican Republic; Haiti; Honduras; Mexico",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Haiti; Jamaica; Mexico; Nicaragua",
+      "count": 2
+    },
+    {
+      "value": "Haiti; Jamaica; Paraguay; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Haiti; Mexico; Philippines; UAE; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Haiti; Jamaica; Nicaragua",
+      "count": 2
+    },
+    {
+      "value": "Haiti; Jamaica; Nicaragua; Pakistan; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Jamaica; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Afghanistan; Colombia; Dominican Republic; Guinea; Guinea-Bissau; Mexico; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Haiti; Panama; Ukraine; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Haiti; Jamaica; Lebanon; Liberia; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Ghana; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Mexico; Uganda; United States",
+      "count": 2
+    },
+    {
+      "value": "Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Brazil; El Salvador; Honduras; Mexico; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Haiti; Jamaica; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Egypt; Lebanon; Liberia; United States",
+      "count": 2
+    },
+    {
+      "value": "Honduras; Mexico; Pakistan; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Haiti; Honduras; United States; Yemen",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Haiti; Jamaica; Poland; United Kingdom",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; El Salvador; Guyana; Haiti; United States",
+      "count": 2
+    },
+    {
+      "value": "Argentina; Bangladesh; Canada; Colombia; Jamaica; United States",
+      "count": 2
+    },
+    {
+      "value": "China; Ecuador; Ukraine; United States",
+      "count": 2
+    },
+    {
+      "value": "Mexico; Syria",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Mexico; Philippines; Saudi Arabia; United States",
+      "count": 2
+    },
+    {
+      "value": "Mexico; Tanzania",
+      "count": 2
+    },
+    {
+      "value": "Colombia; El Salvador; Mexico; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "China; Colombia; Philippines; United States; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Mexico; Peru; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Mexico; Panama; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Guatemala; Guyana; Mexico; Nicaragua",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Mexico; Nigeria; Philippines; Thailand",
+      "count": 2
+    },
+    {
+      "value": "Colombia; El Salvador; United States",
+      "count": 2
+    },
+    {
+      "value": "Honduras; Mexico; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; El Salvador; Honduras; Mexico; Slovakia",
+      "count": 2
+    },
+    {
+      "value": "Honduras; India; Mexico; Pakistan; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Cambodia; Dominican Republic; Panama; United States",
+      "count": 2
+    },
+    {
+      "value": "Chile; India; Mexico; Philippines; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Afghanistan; Colombia; Jordan; Mexico; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Argentina; Mexico; United States; Venezuela; Vietnam",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Honduras",
+      "count": 2
+    },
+    {
+      "value": "Guatemala; India; Mexico; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Nicaragua; Spain",
+      "count": 2
+    },
+    {
+      "value": "Honduras; Mexico; Nicaragua; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Canada; Colombia; Ecuador; Mexico; Spain",
+      "count": 2
+    },
+    {
+      "value": "DRC; Honduras; Mexico; Nicaragua",
+      "count": 2
+    },
+    {
+      "value": "Brazil; Dominican Republic; Haiti; Honduras; United States",
+      "count": 2
+    },
+    {
+      "value": "Belize; Haiti; Mexico; Nicaragua; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Mexico; Nicaragua; Peru; Philippines; Tonga",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Jamaica; Mexico; Nicaragua",
+      "count": 2
+    },
+    {
+      "value": "Fiji; Guatemala; India; Mexico; Nicaragua",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Guatemala; Honduras; Mexico; Uruguay",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Ecuador; Federated States of Micronesia; United States",
+      "count": 2
+    },
+    {
+      "value": "Oman; Peru; Philippines; Romania; Ukraine; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Turkey; United States",
+      "count": 2
+    },
+    {
+      "value": "Ecuador; Haiti; Honduras; Jamaica; United States",
+      "count": 2
+    },
+    {
+      "value": "Haiti; Jamaica; Panama; Peru; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Argentina; China; Dominican Republic; Mexico; Pakistan",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; Mexico; Pakistan; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; India; Mexico; Nigeria; United States",
+      "count": 2
+    },
+    {
+      "value": "Guyana; Mexico",
+      "count": 2
+    },
+    {
+      "value": "Belize; Colombia; Guatemala; Mexico; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Honduras; Nicaragua; Uruguay",
+      "count": 2
+    },
+    {
+      "value": "Bangladesh; Ecuador; El Salvador; Haiti; Jamaica",
+      "count": 2
+    },
+    {
+      "value": "Nicaragua; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Guatemala; Mexico; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Haiti; Mexico; Nicaragua; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; United States; Venezuela; Zambia",
+      "count": 2
+    },
+    {
+      "value": "China; Colombia; India; Mexico; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; Honduras; India; Mexico; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Guatemala; Honduras; Turkey; United States",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; Mexico",
+      "count": 2
+    },
+    {
+      "value": "Colombia; El Salvador; Honduras; Mexico",
+      "count": 2
+    },
+    {
+      "value": "Cambodia; Colombia; Guatemala; Mexico; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Brazil; Colombia; Honduras; Nicaragua; Panama",
+      "count": 2
+    },
+    {
+      "value": "Haiti; Honduras; Jamaica; Panama; Spain",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; Honduras; Mexico; Peru; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Colombia; El Salvador; Mexico; Philippines; United States; Yemen",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Haiti; Nicaragua; Peru",
+      "count": 2
+    },
+    {
+      "value": "Chile; Colombia; Ecuador; Jamaica; Mexico",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Haiti; Nicaragua; United States; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Cambodia; El Salvador; Guatemala; Honduras; Nicaragua",
+      "count": 2
+    },
+    {
+      "value": "Colombia; El Salvador; Jamaica; Nicaragua; Palestine",
+      "count": 2
+    },
+    {
+      "value": "Ghana; Mexico",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Guyana; Honduras; Mexico; Nigeria",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; El Salvador; Honduras; Kenya; Mexico",
+      "count": 2
+    },
+    {
+      "value": "Cameroon; Colombia; Uruguay",
+      "count": 2
+    },
+    {
+      "value": "Chile; Colombia; Nicaragua; Peru; United States",
+      "count": 2
+    },
+    {
+      "value": "Brazil; Colombia; Guatemala; Honduras; Mexico; Nigeria",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Guyana; Mexico; Panama; Peru",
+      "count": 2
+    },
+    {
+      "value": "Canada; Colombia; Dominican Republic; Honduras; Mexico",
+      "count": 2
+    },
+    {
+      "value": "Mexico; Panama; Peru; Philippines",
+      "count": 2
+    },
+    {
+      "value": "China; El Salvador; Guatemala; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; Nicaragua; Philippines; United States; Vietnam",
+      "count": 2
+    },
+    {
+      "value": "China; Honduras; India; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Cameroon; Mexico; Nicaragua; Philippines; United States; Zimbabwe",
+      "count": 2
+    },
+    {
+      "value": "Brazil; El Salvador; Haiti; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Honduras; Mexico; Peru; Philippines; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "France",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Guatemala; Jamaica; Mexico; Nicaragua",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Ecuador; El Salvador; Mexico; Syria",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Ecuador; Haiti; Honduras; Jamaica",
+      "count": 2
+    },
+    {
+      "value": "Honduras; Mexico; Sri Lanka; United States",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; Guatemala; Mexico; Peru",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Mexico; Nicaragua; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Cameroon; Dominican Republic; Equatorial Guinea; Guinea; Laos; Mexico",
+      "count": 2
+    },
+    {
+      "value": "Guatemala; Mexico; South Africa; United States",
+      "count": 2
+    },
+    {
+      "value": "Bangladesh; El Salvador; Mexico; Pakistan; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Afghanistan; Mexico; Panama; Philippines; Vietnam",
+      "count": 2
+    },
+    {
+      "value": "Colombia; India; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Mexico; Nicaragua; Peru; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Bangladesh; El Salvador; Mexico; Nigeria; Philippines",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; India; Mexico; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Bangladesh; Colombia; Haiti; Honduras; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Haiti; Mexico; Nicaragua",
+      "count": 2
+    },
+    {
+      "value": "Egypt; Jamaica; Mexico",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Ecuador; El Salvador; Jamaica; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Mexico; Panama; Peru; United States",
+      "count": 2
+    },
+    {
+      "value": "China; Dominican Republic; India; Panama; United States",
+      "count": 2
+    },
+    {
+      "value": "Cambodia; Colombia; Mexico; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Belize; El Salvador; Fiji; Mexico; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Honduras; Italy; Mexico; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Mexico; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "China; Colombia; Costa Rica; Mexico; Yemen",
+      "count": 2
+    },
+    {
+      "value": "Bangladesh; India; Mexico; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Honduras; Indonesia; Nicaragua; Thailand; United States",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; Guatemala; Kenya; Mexico",
+      "count": 2
+    },
+    {
+      "value": "Cape Verde; Dominican Republic; Ecuador; Haiti; Peru",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Mexico; United States; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Nepal",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; Mexico; Philippines; United States; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Albania; Jamaica; United States; Venezuela; Zambia",
+      "count": 2
+    },
+    {
+      "value": "Bahamas; Dominican Republic; Haiti; Jamaica; United States",
+      "count": 2
+    },
+    {
+      "value": "Ecuador; El Salvador; Honduras; Mexico; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Belize; Guatemala",
+      "count": 2
+    },
+    {
+      "value": "Argentina; Haiti; Jamaica; Nicaragua; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Bangladesh; India; Jordan; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "India; Jamaica; Pakistan; United States; Zimbabwe",
+      "count": 2
+    },
+    {
+      "value": "Honduras; Mexico; Morocco; Philippines; Ukraine",
+      "count": 2
+    },
+    {
+      "value": "India; Mexico; Philippines; Ukraine",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Ecuador; Haiti; Nicaragua; Peru",
+      "count": 2
+    },
+    {
+      "value": "Colombia; El Salvador; Haiti; Nicaragua; Peru",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Ecuador; El Salvador; Honduras; Nicaragua",
+      "count": 2
+    },
+    {
+      "value": "Colombia; El Salvador; Guatemala; Mexico; Panama",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Mexico; Philippines; United States; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Ecuador; Guyana; Haiti; Jamaica; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; El Salvador; Laos; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Haiti; Jamaica; Panama; United States; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Mexico; Pakistan; Ukraine; United States",
+      "count": 2
+    },
+    {
+      "value": "Honduras; Mexico; Philippines; United Kingdom; United States",
+      "count": 2
+    },
+    {
+      "value": "Belize; Honduras; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; United States; Yemen",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Guyana; Jamaica; Peru",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Honduras; Jamaica; United States",
+      "count": 2
+    },
+    {
+      "value": "Afghanistan; Colombia; El Salvador; Mexico; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Mexico; United States; Yemen",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Mexico; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "China; Mexico; Poland; Ukraine; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; Philippines; Ukraine",
+      "count": 2
+    },
+    {
+      "value": "Ecuador; Macedonia; Mexico; Oman; Romania; United States",
+      "count": 2
+    },
+    {
+      "value": "Mexico; Nicaragua; Philippines; United States; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Guyana; Haiti; Jamaica; Trinidad and Tobago",
+      "count": 2
+    },
+    {
+      "value": "Belize; Colombia; Jamaica; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Belize; Colombia; Ecuador; Jamaica; United States; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Bosnia and Herzegovina; Colombia; Mexico; Philippines; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Mexico; Pakistan; Peru; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Ecuador; India; Mexico; Oman; Philippines; Romania",
+      "count": 2
+    },
+    {
+      "value": "Ghana; Jamaica; Laos; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "China; Jamaica; Rwanda; Syria; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Honduras; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Ecuador; Haiti; Jamaica; Paraguay; Peru",
+      "count": 2
+    },
+    {
+      "value": "Mexico; Philippines; Poland; Ukraine; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Jordan; Mexico; Palestine; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Honduras; Jamaica; Mexico; Sierra Leone; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Mexico; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Brazil; Colombia; Dominican Republic; Ecuador; Mexico; Peru; United States",
+      "count": 2
+    },
+    {
+      "value": "Brazil; Dominican Republic; Haiti; Jamaica; United States",
+      "count": 2
+    },
+    {
+      "value": "India; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Haiti; Jamaica; Peru; United States",
+      "count": 2
+    },
+    {
+      "value": "Jordan; Mexico; Palestine; United States; Yemen",
+      "count": 2
+    },
+    {
+      "value": "China; Ecuador; Egypt; Mexico; Yemen",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Haiti; Mexico; Peru; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Honduras; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Mexico; Tajikistan; Turkey; Ukraine; Yemen",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Haiti; Mexico; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Argentina; Colombia; El Salvador; Mexico; Nicaragua",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; Honduras; Mexico; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Guyana; Trinidad and Tobago; United States",
+      "count": 2
+    },
+    {
+      "value": "Belize; Colombia; United States; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "China; Ecuador; Haiti; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; Ukraine; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; El Salvador; Guatemala; Mexico; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; Honduras; Mexico; Nicaragua; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; El Salvador; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Ecuador; Mexico; Philippines; Poland",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; Honduras; Mexico; Nicaragua; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Haiti; Jordan; United States; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Mexico; Nicaragua",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Mexico; United States; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; El Salvador; Haiti; Jamaica; Peru",
+      "count": 2
+    },
+    {
+      "value": "Chile; Dominican Republic; Haiti; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Jamaica; Mexico; Nigeria; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Jamaica; Mexico; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Haiti; Jamaica; Panama; Trinidad and Tobago; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Ecuador; Haiti; Honduras; United States",
+      "count": 2
+    },
+    {
+      "value": "Jamaica; Laos; Mexico; Nigeria; United States",
+      "count": 2
+    },
+    {
+      "value": "Jamaica; Mexico; Palestine; United States",
+      "count": 2
+    },
+    {
+      "value": "Bahamas; Dominican Republic; Haiti; Jamaica; Mexico",
+      "count": 2
+    },
+    {
+      "value": "Mexico; Philippines; Poland; Ukraine; United States",
+      "count": 2
+    },
+    {
+      "value": "China; Colombia; Ecuador; Honduras; Mexico",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Mexico; Nicaragua; Peru; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Laos; Mexico; United States; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Mexico; Philippines; Poland; Serbia; Ukraine",
+      "count": 2
+    },
+    {
+      "value": "Ecuador; Haiti; Jamaica; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Haiti; Honduras; Mexico; Philippines; Ukraine",
+      "count": 2
+    },
+    {
+      "value": "China; Colombia; Mexico; United States; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Honduras; Mexico; Peru; Ukraine",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Honduras; Mexico; Peru; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Ecuador; El Salvador; Honduras; Mexico",
+      "count": 2
+    },
+    {
+      "value": "Cambodia; El Salvador; Jamaica; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Mexico; Peru; United States",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Honduras; Jamaica; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Belize; El Salvador; Mexico; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Georgia; Mexico; Turkey; Ukraine; Uzbekistan",
+      "count": 2
+    },
+    {
+      "value": "Haiti; Jamaica; Turkey; Ukraine; Uzbekistan",
+      "count": 2
+    },
+    {
+      "value": "Haiti; Jamaica; Mexico; United States; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Guyana; Peru",
+      "count": 2
+    },
+    {
+      "value": "Afghanistan; Colombia; Dominican Republic; Ecuador; Haiti; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Jamaica; Mexico",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Jamaica; Nigeria; United States; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Belize; Colombia; Dominican Republic; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Honduras; Mexico; Nicaragua; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Jamaica; Mexico; Nigeria; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Costa Rica; Haiti; Jamaica; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Mexico; Peru; United States",
+      "count": 2
+    },
+    {
+      "value": "Belize; Colombia; Dominican Republic; Haiti; Jamaica; United States",
+      "count": 2
+    },
+    {
+      "value": "India; Lithuania; Pakistan; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; El Salvador; India; Mexico; Philippines",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; Guatemala; Honduras; Mexico; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Colombia; El Salvador; Mexico; Philippines; United States; Vietnam",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Mexico; Peru; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "China; El Salvador; Mexico; Nicaragua; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Dominican Republic; Ecuador; El Salvador; Mexico; United States",
+      "count": 2
+    },
+    {
+      "value": "Cambodia; Dominican Republic; El Salvador; Haiti; United States",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; Guatemala; Mexico; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Colombia; El Salvador; Mexico; Nicaragua; Ukraine",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; Mexico; Nicaragua; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Dominican Republic; El Salvador; Mexico; Philippines",
+      "count": 2
+    },
+    {
+      "value": "Colombia; Mexico; Paraguay; United States; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "Colombia; India; Mexico; Philippines; Venezuela",
+      "count": 2
+    },
+    {
+      "value": "El Salvador; Mexico; Peru; United States",
+      "count": 2
+    },
+    {
+      "value": "India; Jordan; Mexico; Philippines; United States",
+      "count": 2
+    },
+    {
+      "value": "Argentina; China; Haiti; Hong Kong",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Mexico; Nicaragua; Panama; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Guyana; India; Kenya; Ukraine; United States",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Guatemala; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; India; Mexico; United States; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; Jamaica; Mexico; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Haiti; Jamaica; Nigeria; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Jamaica; Pakistan; Peru; Philippines",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Mexico; Peru; Tunisia; United Kingdom",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Mexico; Panama; Peru; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Haiti; Mexico; Nicaragua; Peru",
+      "count": 1
+    },
+    {
+      "value": "Cambodia; Colombia; Nicaragua; Spain; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Mexico; Sri Lanka; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; El Salvador; Honduras; Jordan; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Jordan; Mauritania; Mexico; Nepal; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Guatemala; Honduras; Mexico; Nigeria",
+      "count": 1
+    },
+    {
+      "value": "Honduras; Mexico; Peru; United States; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Belize; El Salvador; Mexico; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; Panama; United States",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Mexico; Peru; Spain; United States",
+      "count": 1
+    },
+    {
+      "value": "Chile; Colombia; Mexico; Peru; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Guatemala; Mexico; Uruguay; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Cameroon; China; DRC; Philippines; Vietnam",
+      "count": 1
+    },
+    {
+      "value": "Brazil; Dominican Republic; Haiti; Mexico; Sierra Leone",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; Jordan; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Albania; Egypt; Jamaica; Jordan; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Argentina; El Salvador; Honduras; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; El Salvador; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Haiti; Honduras; Jamaica; United States",
+      "count": 1
+    },
+    {
+      "value": "Haiti; Honduras; Mexico; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Czech Republic; Italy; Kyrgyzstan; Poland; Ukraine",
+      "count": 1
+    },
+    {
+      "value": "Egypt; Haiti; Pakistan; Tajikistan; Uzbekistan",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Guatemala; Mexico; Spain; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Mexico; Spain; United States",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; India; Jamaica; Pakistan; United States",
+      "count": 1
+    },
+    {
+      "value": "Bosnia and Herzegovina; Dominican Republic; Haiti; Jamaica; United States",
+      "count": 1
+    },
+    {
+      "value": "Haiti; Jamaica; Pakistan; United States",
+      "count": 1
+    },
+    {
+      "value": "Haiti; Jamaica; Laos; Nigeria; United States",
+      "count": 1
+    },
+    {
+      "value": "Brazil; Colombia; Dominican Republic; El Salvador; Haiti",
+      "count": 1
+    },
+    {
+      "value": "India; Mexico; Panama; United States",
+      "count": 1
+    },
+    {
+      "value": "Haiti; India; Jamaica; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Lebanon; Liberia; Malaysia; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Mexico; Philippines; United States; Vietnam",
+      "count": 1
+    },
+    {
+      "value": "China; Egypt; Jamaica; Kenya; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Jamaica; Philippines; United States; Vietnam",
+      "count": 1
+    },
+    {
+      "value": "Haiti; Mexico; Philippines; United States; Vietnam",
+      "count": 1
+    },
+    {
+      "value": "Haiti; Jamaica; Lebanon; Liberia; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Jamaica; Mexico; Peru; United States",
+      "count": 1
+    },
+    {
+      "value": "Burundi; Jamaica; Nigeria; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Jamaica; Nigeria; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Jamaica; Panama; Philippines; United States; Vietnam",
+      "count": 1
+    },
+    {
+      "value": "China; Ecuador; Philippines; Thailand; United States",
+      "count": 1
+    },
+    {
+      "value": "Jamaica; Mexico; Nigeria; Sierra Leone; United States",
+      "count": 1
+    },
+    {
+      "value": "Haiti; Jamaica; Mexico; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Guatemala; Honduras; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Guatemala; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Haiti; Mexico; Pakistan; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Jamaica; Nigeria; Panama; United States",
+      "count": 1
+    },
+    {
+      "value": "Chile; Colombia; Guatemala; Honduras; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Haiti; Honduras; Jamaica; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Guatemala; Honduras; Laos; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Jamaica; Mexico; Turkey; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Honduras; India; Mexico; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Malaysia; Mexico; Philippines; Tanzania; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Jordan; Mexico; Peru",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Guatemala; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Guatemala; Mexico; Nicaragua; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Argentina; Colombia; Guatemala; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Guatemala; Haiti; Mexico; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Guatemala; Honduras; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Haiti; Mexico; Nicaragua; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "DRC; Laos; Syria; United States",
+      "count": 1
+    },
+    {
+      "value": "Guatemala; Honduras; Mexico; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; India; Mexico; Turkey",
+      "count": 1
+    },
+    {
+      "value": "Chile; Colombia; Honduras; Jordan; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Guatemala; Mexico; United States; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Guatemala; Haiti; Spain",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Honduras; Peru; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Guatemala; Mexico; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Bahamas; Dominican Republic; Haiti; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Bhutan; India; Nepal; Pakistan; United States",
+      "count": 1
+    },
+    {
+      "value": "Belize; Ecuador; Honduras; Mexico; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Argentina; Colombia; Ecuador; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Guatemala; Peru",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Mexico; United States; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Guatemala; Mexico; Spain; United States; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Guatemala; Mexico; Nicaragua; Panama; United States",
+      "count": 1
+    },
+    {
+      "value": "Argentina; Colombia; Mexico; United States; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Argentina; Colombia; Nicaragua; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "DRC; El Salvador; Jamaica; Panama; United States",
+      "count": 1
+    },
+    {
+      "value": "Mexico; Nepal",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Guatemala; Haiti; Jamaica; Mexico",
+      "count": 1
+    },
+    {
+      "value": "China; Guatemala; Honduras; Mexico; Nigeria",
+      "count": 1
+    },
+    {
+      "value": "Argentina; Chile; Colombia; Nicaragua; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Guatemala; Mexico; Peru; Philippines",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; El Salvador; Peru",
+      "count": 1
+    },
+    {
+      "value": "Guatemala; Honduras; Mexico; Nicaragua; Spain",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; Peru; Spain",
+      "count": 1
+    },
+    {
+      "value": "Brazil; Dominican Republic; Guatemala; Haiti; Honduras",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Haiti; Nicaragua; Peru; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Argentina; Colombia; Dominican Republic; Nicaragua; Peru",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Mexico; Nicaragua; Spain",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Haiti; Honduras; Mexico; Philippines",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Haiti; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Guatemala; Honduras; India; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Brazil; Colombia; Mexico; Panama; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Guatemala; Mexico; Peru",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; Honduras; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Guatemala; Kenya; Mexico; Peru",
+      "count": 1
+    },
+    {
+      "value": "Cape Verde; Colombia; Dominican Republic; Haiti; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Nicaragua; Panama; Spain",
+      "count": 1
+    },
+    {
+      "value": "Chile; Colombia; Mexico; Spain",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Jamaica; Mexico; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; El Salvador; Guatemala; Peru",
+      "count": 1
+    },
+    {
+      "value": "Guatemala; Jamaica; Mexico; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; El Salvador; Guatemala; Spain",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; El Salvador; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Argentina; Colombia; Ecuador; Mexico; Spain",
+      "count": 1
+    },
+    {
+      "value": "Guyana; India; Pakistan; United States",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Mexico; Nicaragua; Peru; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Honduras; Nicaragua; Peru",
+      "count": 1
+    },
+    {
+      "value": "Cape Verde; Colombia; Dominican Republic; Ecuador; Haiti",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Jamaica; Mexico; Peru",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Mexico; Peru",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Honduras; Jamaica; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Guatemala; Mexico; Sierra Leone",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Haiti; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Guatemala; Mexico; Senegal; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Afghanistan; Guatemala; Honduras; Mexico; Nepal",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Guinea; Mexico; Nicaragua; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Burundi; Ecuador; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Chile; Colombia; Ecuador; Peru; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Guatemala; Mexico; Philippines",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Ghana; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Bolivia; El Salvador; Guatemala; Peru; Tajikistan",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; El Salvador; Haiti; Mexico; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Jamaica; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Guatemala; Nicaragua; Peru",
+      "count": 1
+    },
+    {
+      "value": "Cambodia; China; Colombia; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Haiti; Jamaica; Sierra Leone; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Haiti; United States; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Burkina Faso; Colombia; Dominican Republic; Peru; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Honduras; Nicaragua; Peru; Uruguay",
+      "count": 1
+    },
+    {
+      "value": "Afghanistan; Dominican Republic; United States; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Belize; Bolivia; Colombia; Mexico; Pakistan",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Haiti; Honduras; Nicaragua; Peru",
+      "count": 1
+    },
+    {
+      "value": "Brazil; Colombia; Dominican Republic; Guatemala; Haiti; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Afghanistan; Mexico; Peru; Philippines; Syria",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Haiti; Honduras; Peru",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; El Salvador; Jamaica; Peru; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Honduras; Jamaica; Nigeria",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; El Salvador; Jamaica; Peru; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; El Salvador; Honduras; Peru",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; India; Mexico; Morocco",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Egypt; Haiti; Palestine",
+      "count": 1
+    },
+    {
+      "value": "Cambodia; Dominican Republic; Haiti; Honduras; Jamaica",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Haiti; Honduras; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; Honduras; Peru; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Mexico; Nigeria; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; Philippines; United States; Vietnam",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; El Salvador; Jordan; Mexico; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Honduras; Nicaragua; Panama; United States",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Mexico; Paraguay; Peru; Philippines",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Haiti; Jamaica; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Guatemala; Haiti; Jamaica; Philippines",
+      "count": 1
+    },
+    {
+      "value": "Haiti; Honduras; Mexico; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Argentina; Colombia; Dominican Republic; Guatemala; Mexico; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Bolivia; Guatemala; Mexico; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Afghanistan; DRC; Haiti; Honduras; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Cambodia; DRC; Jamaica; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Jamaica; Nigeria; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Haiti; Jamaica; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Haiti; Jamaica; Nicaragua; Peru",
+      "count": 1
+    },
+    {
+      "value": "Haiti; Honduras; Jamaica; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Haiti; Jamaica; Pakistan; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ghana; Guyana; Jamaica; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Haiti; United States; Vietnam",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Honduras; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Haiti; Mexico; Nicaragua; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Nicaragua; Panama; Peru",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Guatemala; Honduras; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; Honduras; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Honduras; Jamaica; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; El Salvador; Haiti; United States",
+      "count": 1
+    },
+    {
+      "value": "Brazil; DRC; Egypt; Haiti; United States",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Honduras; India; Mexico; Pakistan",
+      "count": 1
+    },
+    {
+      "value": "Guatemala; Mexico; Peru; United States; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Belize; Ecuador; Mexico; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Brazil; Dominican Republic; Guatemala; Haiti; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; Jamaica; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Guatemala; Peru; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Georgia; Haiti; Jamaica",
+      "count": 1
+    },
+    {
+      "value": "Haiti; Honduras; Jamaica; United States; Vietnam",
+      "count": 1
+    },
+    {
+      "value": "Costa Rica; Honduras; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Haiti; Honduras; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Haiti; Jamaica; St. Lucia; Trinidad and Tobago; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; El Salvador; Honduras; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Guatemala; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Cambodia; Haiti; Jamaica; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; India; Peru",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; El Salvador; Guatemala; Haiti; Honduras",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Haiti; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; El Salvador; Honduras; Mexico; United States; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; El Salvador; Haiti; Peru",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Haiti; Panama; United States",
+      "count": 1
+    },
+    {
+      "value": "Brazil; Chile; Dominican Republic; Haiti; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Guatemala; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Guatemala; Mexico; Peru; Philippines",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Guatemala; Honduras; Mexico; Panama; Spain",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Haiti; Honduras; Mexico; Rwanda",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Haiti; Mexico; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; El Salvador; Honduras; India; Pakistan",
+      "count": 1
+    },
+    {
+      "value": "Belize; Dominican Republic; Ukraine; United States; Vietnam",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; El Salvador; Jamaica; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; DRC; Haiti; India; Lebanon; Liberia",
+      "count": 1
+    },
+    {
+      "value": "Afghanistan; Haiti; Jamaica; Jordan; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Egypt; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Guatemala; Mexico; Paraguay; Peru",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Egypt; Haiti; Honduras; Philippines",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Honduras; Mexico; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Honduras; Jordan; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Haiti; Nicaragua; Peru",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Mexico; Nicaragua; Philippines; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Jamaica; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Mexico; Nicaragua; Poland; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Cape Verde; Dominican Republic; Guatemala; Haiti; Portugal",
+      "count": 1
+    },
+    {
+      "value": "Canada; El Salvador; Jamaica; Mexico; Philippines; Vietnam",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; India; Jamaica; Kosovo; United States",
+      "count": 1
+    },
+    {
+      "value": "Haiti; Jamaica; Mexico; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Brazil; Canada; Dominican Republic; Haiti; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; India; Jamaica; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; Jamaica; Mexico; Peru",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Guatemala; Haiti; Mexico; Peru",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; Mexico; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Georgia; Jamaica; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; Nicaragua; Peru; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; El Salvador; Haiti",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Guatemala; Haiti",
+      "count": 1
+    },
+    {
+      "value": "Chile; Colombia; Ecuador; Guatemala; Mexico; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Jamaica; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Haiti; Mexico; Philippines; Poland; Ukraine",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; El Salvador; Honduras; Peru; Philippines",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Mexico; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; Peru; Turkey",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Honduras; Nicaragua; Spain; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "DRC; Ecuador; Oman; Portugal",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Guatemala; Mexico; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "DRC; Ecuador; Jamaica; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Brazil; Congo; DRC; France; Haiti",
+      "count": 1
+    },
+    {
+      "value": "Cambodia; Dominican Republic; El Salvador; Haiti; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Brazil; Ecuador; Egypt; Jamaica; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Guatemala; Jamaica; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Honduras; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; El Salvador; Guatemala; Haiti; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Jamaica; Jordan; Mexico; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Honduras; Peru",
+      "count": 1
+    },
+    {
+      "value": "Guatemala; Laos; Mexico; Nicaragua; Sierra Leone",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Guatemala; Spain; United States; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; El Salvador; Guatemala; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Costa Rica; Ecuador; Honduras; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Brazil; Cape Verde; Dominican Republic; Guinea; Guinea-Bissau; Portugal; Senegal",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; El Salvador; Honduras; Mexico; Peru",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Mexico; Peru; Sierra Leone",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Guatemala; Haiti; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; India; Peru; Philippines",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Honduras; Mexico; Peru",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; El Salvador; Mexico; Turkey",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Jamaica; Nicaragua; United States; Vietnam",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Nicaragua; Panama; Peru; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Argentina; Colombia; Nicaragua; Panama",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; Honduras; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Guatemala; Jamaica; Mexico; Nigeria; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Egypt; Honduras; Montenegro; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Ghana; Guatemala; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Haiti; Honduras; United States; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Nicaragua; Peru; Spain; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; El Salvador; Guatemala; Honduras",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Honduras; Mexico; Panama",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; United States; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Honduras; Mexico; Nicaragua; Togo",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; Jamaica; United States; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Guatemala; Mexico; Peru",
+      "count": 1
+    },
+    {
+      "value": "Argentina; Colombia; Ecuador; Mexico; Peru",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Guatemala; Mexico; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Honduras; Jamaica; Mexico; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Guatemala; Honduras; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; El Salvador; Mexico; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Benin; Chile; Colombia; Mexico; Peru; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Honduras; Mexico; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Haiti; Honduras; Nicaragua; Pakistan",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Honduras; Nicaragua; Peru",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Honduras; Jamaica; Mexico; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Haiti; Honduras; Mexico; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Guatemala; India; Mexico; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Peru; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Argentina; Colombia; Ecuador; Mexico; Peru; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Argentina; Colombia; Guatemala; Honduras; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Jamaica",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Mexico; Panama; Peru; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Mexico; Nicaragua; Vietnam",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Guatemala; Mexico; Peru; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic",
+      "count": 1
+    },
+    {
+      "value": "Bolivia; El Salvador; Guatemala; Honduras; Peru",
+      "count": 1
+    },
+    {
+      "value": "Afghanistan; El Salvador; Honduras; Mexico; Peru",
+      "count": 1
+    },
+    {
+      "value": "Chile; Colombia; Dominican Republic; El Salvador; Honduras",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Mexico; Togo; United States; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Honduras; Nicaragua; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; El Salvador; Guatemala; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Haiti; Mexico; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Egypt; El Salvador; Honduras; Nicaragua; Peru",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Mexico; Peru; United States; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Bahamas; China; Honduras; Indonesia; Jamaica; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Guatemala; Haiti; Mexico; Peru",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Haiti; Honduras; Mexico; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Costa Rica; Nicaragua; Spain; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Guatemala; Haiti; Jamaica; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Guatemala; Haiti; Honduras; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; Spain; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Haiti; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Jamaica; Mexico; Turkey; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; El Salvador; United States",
+      "count": 1
+    },
+    {
+      "value": "China; Colombia; Greece; Hong Kong; United States",
+      "count": 1
+    },
+    {
+      "value": "Egypt; India; Lithuania; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "India; Lithuania; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Lebanon; Liberia; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; Jamaica; Mexico; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Guyana; Haiti; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Honduras; Peru; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Egypt; Honduras; Peru; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Costa Rica; Georgia; Jamaica; Philippines",
+      "count": 1
+    },
+    {
+      "value": "Costa Rica; Egypt; Georgia; Jamaica; Philippines",
+      "count": 1
+    },
+    {
+      "value": "Egypt; El Salvador; Mexico; Peru; Philippines",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Mexico; Peru; Philippines",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Guatemala; Haiti; Mexico; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Haiti; Honduras; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Lebanon; Liberia; Mexico; Pakistan; Philippines; Serbia",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Honduras; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Argentina; Egypt; Lebanon; Liberia; Mexico; Philippines",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Mexico; Nepal; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Cambodia; Dominican Republic; Haiti; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; Jamaica; Nigeria; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Mexico; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Mexico; Philippines; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Haiti; Mexico; Peru; United States",
+      "count": 1
+    },
+    {
+      "value": "Brazil; Dominican Republic; Honduras; Mexico; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "India; Mexico; Nicaragua; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Belize; China; Honduras; Mexico; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Costa Rica; Honduras; Mexico; Peru",
+      "count": 1
+    },
+    {
+      "value": "Afghanistan; Colombia; Egypt; Mexico; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Afghanistan; Colombia; Egypt; Guatemala; Mexico",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Nicaragua; Oman; Peru; Philippines; Romania",
+      "count": 1
+    },
+    {
+      "value": "Brazil; Dominican Republic; Ecuador; Honduras; Mexico; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Afghanistan; France; Pakistan; Sierra Leone; Ukraine",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Guatemala; Haiti; Jamaica; Peru",
+      "count": 1
+    },
+    {
+      "value": "Belize; Colombia; Egypt; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Belize; Colombia; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Egypt; Philippines; Ukraine; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Peru; Philippines; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "China; Dominican Republic; Mexico; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Mexico; Nigeria; Philippines; Qatar; United States",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Honduras; Laos; United States; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Chile; Ecuador; Mexico; Peru; United States",
+      "count": 1
+    },
+    {
+      "value": "Argentina; Egypt; El Salvador; Mexico",
+      "count": 1
+    },
+    {
+      "value": "India; Jamaica; Laos; United States",
+      "count": 1
+    },
+    {
+      "value": "Egypt; India; Jamaica; Laos; United States",
+      "count": 1
+    },
+    {
+      "value": "Haiti; Honduras; Mexico; Nicaragua; Peru",
+      "count": 1
+    },
+    {
+      "value": "Canada; Dominican Republic; Haiti; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Mexico; Peru; United States; Uruguay",
+      "count": 1
+    },
+    {
+      "value": "Guatemala; Haiti; Honduras; Jamaica; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Haiti; Honduras; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Cambodia; Guatemala; India; Laos; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Haiti; Honduras; Mexico; Nicaragua; Pakistan; Uruguay",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; India; Mexico; Nicaragua; Peru",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Mexico; Philippines; United States; Yemen",
+      "count": 1
+    },
+    {
+      "value": "India; Mexico; Nicaragua; Peru; United States",
+      "count": 1
+    },
+    {
+      "value": "Egypt; Jordan; Palestine; Saudi Arabia; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Jordan; Lebanon; Liberia; Syria; Turkey; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Haiti; Mexico; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; El Salvador; Haiti; Philippines",
+      "count": 1
+    },
+    {
+      "value": "Brazil; Dominican Republic; Haiti; Honduras; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "China; Hong Kong; Panama; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Guatemala; Honduras; Mexico; Peru",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Honduras; Mexico; Peru; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Afghanistan; Egypt; Haiti; India; Pakistan",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Guatemala; Haiti; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Guatemala; Honduras; Mexico; Nicaragua; Peru",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Egypt; Jordan; Morocco; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Guatemala; Honduras; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Brazil; Dominican Republic; Haiti; Mexico; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Burundi; DRC; Honduras; Mexico; Tanzania",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Mexico; Philippines; United States; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Chile; El Salvador; Honduras; Nicaragua; Philippines",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; India; Mexico; Syria",
+      "count": 1
+    },
+    {
+      "value": "Guatemala; India; Mexico; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Haiti; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Haiti; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Honduras; United States; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Brazil; Cape Verde; Dominican Republic; Haiti; Portugal",
+      "count": 1
+    },
+    {
+      "value": "Costa Rica; India; Pakistan; South Africa; Syria; United States",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; El Salvador; Haiti; Jamaica; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Egypt; Guatemala; Mexico; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Guatemala; Haiti; Honduras; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Fiji; India; Mexico; Pakistan; Philippines",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Honduras; Jordan; Mexico; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Chile; Dominican Republic; Mexico; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Chile; Colombia; Dominican Republic; Ecuador; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Cambodia; El Salvador; Honduras; Mexico; Panama",
+      "count": 1
+    },
+    {
+      "value": "Chile; Dominican Republic; El Salvador; Haiti; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Argentina; El Salvador; Mexico; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Haiti; Jamaica; Philippines",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Haiti; Mexico; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Egypt; Guyana; Haiti; Philippines; Vietnam",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Guatemala; Honduras; Mexico; Philippines",
+      "count": 1
+    },
+    {
+      "value": "Bahamas; Dominican Republic; Haiti; Jamaica; Peru",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Honduras; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Egypt; Honduras; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Haiti; Honduras; Jamaica; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Cape Verde; Dominican Republic; Guinea; Guinea-Bissau; Haiti; Portugal",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; El Salvador; Honduras; Mexico; Peru",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Haiti; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Belize; Dominican Republic; Haiti; Honduras; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Honduras; Mexico; United States; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Brazil; Burundi; El Salvador; Haiti; Honduras",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Guatemala; Honduras; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Mexico; Nicaragua; Peru; United States",
+      "count": 1
+    },
+    {
+      "value": "Cape Verde; Dominican Republic; Guatemala; Haiti; Jamaica",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Haiti; Honduras; Jamaica; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Honduras; Mexico; United States; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Georgia; Guatemala; Mexico; Peru",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Jamaica; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; El Salvador; Guatemala; Haiti; Mexico",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Honduras; Mexico; United States; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; Paraguay; Philippines",
+      "count": 1
+    },
+    {
+      "value": "Afghanistan; Dominican Republic; Guatemala; Haiti; India; Peru",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; Peru; United States; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Belize; Colombia; El Salvador; United States; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Bangladesh; Cape Verde; Haiti; Senegal; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Guyana; India; Trinidad and Tobago",
+      "count": 1
+    },
+    {
+      "value": "Belize; Colombia",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; India; Lebanon; Liberia; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Guatemala; Haiti; United States; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "India; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Honduras; Mexico; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; Honduras; Jamaica; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Haiti; Jamaica; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Cape Verde; Dominican Republic; Guatemala; Nicaragua; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; Honduras; Nicaragua; Peru",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Haiti; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; El Salvador; Guatemala; United States",
+      "count": 1
+    },
+    {
+      "value": "Federated States of Micronesia; Guatemala; Mexico; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Honduras; Mexico; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Bahamas; Chile; Dominican Republic; Haiti; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Guatemala; Mexico; Philippines; Uzbekistan",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Haiti; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Brazil; Cape Verde; Dominican Republic; Haiti; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Haiti; Jamaica; Morocco; United States",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; El Salvador; Haiti; Honduras; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Honduras; Peru; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Haiti; Jamaica; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Jamaica; Mexico; Peru; Uruguay",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Haiti; India; Jamaica; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; Jordan; Mexico; Morocco",
+      "count": 1
+    },
+    {
+      "value": "Bahamas; Brazil; Dominican Republic; Haiti; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Guatemala; Haiti; Jamaica",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; El Salvador; Guatemala; Honduras",
+      "count": 1
+    },
+    {
+      "value": "Brazil; Cape Verde; Dominican Republic; Haiti; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Honduras; Mexico; United States; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Guatemala; Haiti; United States",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Guatemala; Mexico; Nicaragua; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Guatemala; Honduras; Korea; Mexico; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Chile; Dominican Republic; Ecuador; Haiti; Jamaica",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Haiti; Honduras; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Afghanistan; Haiti; Mexico; Philippines; Syria",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Guatemala; Honduras; Mexico; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Guatemala; Honduras; Mexico; Peru",
+      "count": 1
+    },
+    {
+      "value": "Afghanistan; El Salvador; Guatemala; Mexico; Philippines",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Haiti; Honduras; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Mexico; Paraguay; Peru",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Guatemala; Honduras; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Burundi; Colombia; Dominican Republic; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Guyana; Haiti; India; Jamaica",
+      "count": 1
+    },
+    {
+      "value": "Egypt; Jordan; Lebanon; Liberia; Palestine; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Egypt; Kyrgyzstan; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Albania; Australia; Azerbaijan; Bangladesh; Barbados; Benin; Burkina Faso; Cuba; Czech Republic; Germany; Guinea; Hong Kong; Iraq; Ivory Coast; Korea; Kosovo; Liberia; Macedonia; Poland; Qatar; Senegal; Tunisia; UAE; Zambia; Zimbabwe",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Guatemala; Honduras; Mexico; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; Mexico; Peru; United States",
+      "count": 1
+    },
+    {
+      "value": "Federated States of Micronesia; India; Malaysia; Thailand",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Haiti; Paraguay; Peru",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Guatemala; Haiti; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Chile; Guatemala; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Honduras; Nicaragua; Peru",
+      "count": 1
+    },
+    {
+      "value": "Bahamas; Brazil; Canada; Dominican Republic; Haiti",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; El Salvador; Haiti; Philippines",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Georgia; Guatemala; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Guatemala; Peru; Spain",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Guatemala; Honduras; Mexico; Spain",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; India; Mexico; Vietnam",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Jamaica; United States; Venezuela; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Mexico; United States; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Afghanistan; Peru; Philippines; United States; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Guatemala; Mexico; United States; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Guatemala; Mexico; Philippines; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Egypt; Syria; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Costa Rica; El Salvador; Guatemala; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Guatemala; Honduras; Mexico; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; Honduras; Panama; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Mexico; United States; Uruguay; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Chile; Dominican Republic; Haiti; Jamaica; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; DRC; El Salvador; Honduras; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Ecuador; Haiti; Jamaica; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "Egypt; Jordan; Palestine; Tajikistan; Turkey",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Honduras; Mexico; Peru; Yemen",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Honduras; Lebanon; Liberia; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Afghanistan; Burundi; DRC; Egypt; Haiti",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; El Salvador; Honduras",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Guatemala; Haiti; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Cape Verde; Dominican Republic; Haiti; Honduras; Jamaica",
+      "count": 1
+    },
+    {
+      "value": "Brazil; Dominican Republic; Haiti; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Nepal; Pakistan; Syria",
+      "count": 1
+    },
+    {
+      "value": "Brazil; Chile; Dominican Republic; Haiti; Mexico; United States",
+      "count": 1
+    },
+    {
+      "value": "Bahamas; Dominican Republic; Haiti; Mexico; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Chile; Guatemala; Mexico; Peru",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Mexico; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; Haiti; Jamaica; Philippines",
+      "count": 1
+    },
+    {
+      "value": "Honduras; Jordan; Mexico; United States; Yemen",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Haiti; Honduras; Jamaica",
+      "count": 1
+    },
+    {
+      "value": "Ecuador; Honduras; Mexico; Nicaragua; Peru",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Guatemala; Nicaragua; Paraguay; Venezuela",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Jamaica; Mexico; Nicaragua; United States",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Fiji; Guatemala; Honduras; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Argentina; Dominican Republic; Mexico; Peru; United States",
+      "count": 1
+    },
+    {
+      "value": "Chile; Colombia; Dominican Republic; Haiti; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Belize; Colombia; El Salvador; Honduras; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Honduras; Mexico; Nicaragua; Peru",
+      "count": 1
+    },
+    {
+      "value": "El Salvador; Nicaragua; Pakistan; Peru; United States",
+      "count": 1
+    },
+    {
+      "value": "Colombia; Dominican Republic; Ecuador; Haiti; Peru",
+      "count": 1
+    },
+    {
+      "value": "Bangladesh; India; Mexico; Peru; Philippines",
+      "count": 1
+    },
+    {
+      "value": "India; Laos; Mexico; Philippines; United States",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ghana; Guyana; Haiti; Jamaica",
+      "count": 1
+    },
+    {
+      "value": "Costa Rica; El Salvador; Guatemala; Honduras; Mexico",
+      "count": 1
+    },
+    {
+      "value": "Bolivia; El Salvador; Guatemala; Honduras; Nicaragua",
+      "count": 1
+    },
+    {
+      "value": "Dominican Republic; Ecuador; El Salvador; Haiti; Honduras",
+      "count": 1
+    },
+    {
+      "value": "Colombia; El Salvador; Mexico; Peru; United States; Venezuela",
+      "count": 1
+    }
+  ],
+  "partner": [
+    {
+      "value": "Advance-America",
+      "count": 468
+    },
+    {
+      "value": "CFSC",
+      "count": 194
+    },
+    {
+      "value": "Pay-O-Matic",
+      "count": 150
+    },
+    {
+      "value": "Barr-Management",
+      "count": 92
+    },
+    {
+      "value": "Continental-Currency",
+      "count": 48
+    },
+    {
+      "value": "A1-Check-Cashing",
+      "count": 40
+    },
+    {
+      "value": "Kroger",
+      "count": 38
+    },
+    {
+      "value": "West-Suburban",
+      "count": 36
+    },
+    {
+      "value": "New-Lincoln-Addison",
+      "count": 35
+    },
+    {
+      "value": "Check-Cashing-USA",
+      "count": 32
+    },
+    {
+      "value": "GFG",
+      "count": 32
+    },
+    {
+      "value": "Keller-6365",
+      "count": 25
+    },
+    {
+      "value": "Economy-CE",
+      "count": 24
+    },
+    {
+      "value": "Davids-Check-Cashing",
+      "count": 23
+    },
+    {
+      "value": "Rumba-Money-Centers",
+      "count": 20
+    },
+    {
+      "value": "Chicago-Financial-Network",
+      "count": 16
+    },
+    {
+      "value": "Chavez-Supermarkets",
+      "count": 11
+    },
+    {
+      "value": "Western-North",
+      "count": 10
+    },
+    {
+      "value": "Oportun",
+      "count": 10
+    }
+  ],
+  "pom_bucket": [
+    {
+      "value": "open",
+      "count": 145
+    },
+    {
+      "value": "closed",
+      "count": 5
+    }
+  ],
+  "audience": [
+    {
+      "value": "US-to-LATAMCA",
+      "count": 403
+    },
+    {
+      "value": "US-to-Spanish-Speaking-Countries",
+      "count": 324
+    },
+    {
+      "value": "US-to-US",
+      "count": 42
+    },
+    {
+      "value": "US-to-Asia",
+      "count": 15
+    },
+    {
+      "value": "US-to-Africa",
+      "count": 6
+    },
+    {
+      "value": "US-to-Europe",
+      "count": 2
+    },
+    {
+      "value": "US-to-MENA",
+      "count": 1
+    }
+  ],
+  "facing": [
+    {
+      "value": "in",
+      "count": 1808
+    },
+    {
+      "value": "out",
+      "count": 601
+    }
+  ],
+  "vendor_partner": [
+    {
+      "value": "KIS",
+      "count": 1196
+    },
+    {
+      "value": "CRI",
+      "count": 1148
+    },
+    {
+      "value": "CoolerScreens",
+      "count": 62
+    }
+  ],
+  "pool": [
+    {
+      "value": "Pre-Paid-Stores",
+      "count": 493
+    }
+  ],
+  "bundle": [
+    {
+      "value": "Disney-AA",
+      "count": 126
+    },
+    {
+      "value": "Disney-Hispanic",
+      "count": 16
+    }
+  ],
+  "dma": [
+    {
+      "value": "New York, NY",
+      "count": 491
+    },
+    {
+      "value": "Chicago, IL",
+      "count": 370
+    },
+    {
+      "value": "Los Angeles, CA",
+      "count": 198
+    },
+    {
+      "value": "Miami-Ft. Lauderdale, FL",
+      "count": 146
+    },
+    {
+      "value": "Houston, TX",
+      "count": 133
+    },
+    {
+      "value": "Atlanta, GA",
+      "count": 84
+    },
+    {
+      "value": "Boston, MA",
+      "count": 82
+    },
+    {
+      "value": "Dallas-Ft. Worth, TX",
+      "count": 66
+    },
+    {
+      "value": "Orlando, FL",
+      "count": 51
+    },
+    {
+      "value": "Philadelphia, PA",
+      "count": 42
+    },
+    {
+      "value": "Tampa, FL",
+      "count": 40
+    },
+    {
+      "value": "Sacramento-Stockton-Modesto, CA",
+      "count": 39
+    },
+    {
+      "value": "Washington, DC",
+      "count": 36
+    },
+    {
+      "value": "Fresno-Visalia, CA",
+      "count": 30
+    },
+    {
+      "value": "San Francisco-Oakland-San Jose, CA",
+      "count": 29
+    },
+    {
+      "value": "West Palm Beach-Ft. Pierce, FL",
+      "count": 28
+    },
+    {
+      "value": "Jacksonville, FL",
+      "count": 26
+    },
+    {
+      "value": "Ft. Myers-Naples, FL",
+      "count": 25
+    },
+    {
+      "value": "San Antonio, TX",
+      "count": 24
+    },
+    {
+      "value": "San Diego, CA",
+      "count": 23
+    },
+    {
+      "value": "Las Vegas, NV",
+      "count": 20
+    },
+    {
+      "value": "Bakersfield, CA",
+      "count": 16
+    },
+    {
+      "value": "Denver, CO",
+      "count": 15
+    },
+    {
+      "value": "Austin, TX",
+      "count": 15
+    },
+    {
+      "value": "Charlotte, NC",
+      "count": 15
+    },
+    {
+      "value": "Minneapolis-St. Paul, MN",
+      "count": 14
+    },
+    {
+      "value": "Milwaukee, WI",
+      "count": 14
+    },
+    {
+      "value": "Providence, RI",
+      "count": 13
+    },
+    {
+      "value": "Salt Lake City, UT",
+      "count": 10
+    },
+    {
+      "value": "New Orleans, LA",
+      "count": 10
+    },
+    {
+      "value": "Phoenix, AZ",
+      "count": 10
+    },
+    {
+      "value": "Portland-Auburn, ME",
+      "count": 10
+    },
+    {
+      "value": "Detroit, MI",
+      "count": 10
+    },
+    {
+      "value": "Nashville, TN",
+      "count": 9
+    },
+    {
+      "value": "Greensboro-High Point-Winston Salem, NC",
+      "count": 9
+    },
+    {
+      "value": "Santa Barbara-Santa Maria-San Luis Obispo, CA",
+      "count": 9
+    },
+    {
+      "value": "Waco-Temple-Bryan, TX",
+      "count": 8
+    },
+    {
+      "value": "Mobile, AL",
+      "count": 8
+    },
+    {
+      "value": "Birmingham, AL",
+      "count": 7
+    },
+    {
+      "value": "Greenville-Spartanburg, SC",
+      "count": 7
+    },
+    {
+      "value": "Raleigh-Durham, NC",
+      "count": 7
+    },
+    {
+      "value": "Tallahassee, FL",
+      "count": 7
+    },
+    {
+      "value": "Panama City, FL",
+      "count": 7
+    },
+    {
+      "value": "Baltimore, MD",
+      "count": 6
+    },
+    {
+      "value": "Gainesville, FL",
+      "count": 6
+    },
+    {
+      "value": "Grand Rapids-Kalamazoo-Battle Creek, MI",
+      "count": 6
+    },
+    {
+      "value": "Harlingen-Weslaco-Brownsville-McAllen, TX",
+      "count": 6
+    },
+    {
+      "value": "Beaumont-Port Arthur, TX",
+      "count": 5
+    },
+    {
+      "value": "Rockford, IL",
+      "count": 5
+    },
+    {
+      "value": "Albuquerque-Santa Fe, NM",
+      "count": 5
+    },
+    {
+      "value": "Macon, GA",
+      "count": 5
+    },
+    {
+      "value": "Reno, NV",
+      "count": 5
+    },
+    {
+      "value": "Seattle-Tacoma, WA",
+      "count": 5
+    },
+    {
+      "value": "Hartford & New Haven, CT",
+      "count": 5
+    },
+    {
+      "value": "Palm Springs, CA",
+      "count": 5
+    },
+    {
+      "value": "Chico-Redding, CA",
+      "count": 5
+    },
+    {
+      "value": "Columbus, OH",
+      "count": 4
+    },
+    {
+      "value": "Chattanooga, TN",
+      "count": 4
+    },
+    {
+      "value": "Norfolk-Portsmouth-Newport News, VA",
+      "count": 4
+    },
+    {
+      "value": "Green Bay-Appleton, WI",
+      "count": 4
+    },
+    {
+      "value": "Albany-Schenectady-Troy, NY",
+      "count": 4
+    },
+    {
+      "value": "Harrisburg-Lancaster-Lebanon-York, PA",
+      "count": 4
+    },
+    {
+      "value": "Tyler-Longview(Lufkin & Nacogdoches), TX",
+      "count": 4
+    },
+    {
+      "value": "Corpus Christi, TX",
+      "count": 4
+    },
+    {
+      "value": "Odessa-Midland, TX",
+      "count": 4
+    },
+    {
+      "value": "Salisbury, MD",
+      "count": 4
+    },
+    {
+      "value": "Springfield-Holyoke, MA",
+      "count": 4
+    },
+    {
+      "value": "Memphis, TN",
+      "count": 3
+    },
+    {
+      "value": "Paducah, KY",
+      "count": 3
+    },
+    {
+      "value": "Cedar Rapids-Waterloo-Iowa City & Dubuque, IA",
+      "count": 3
+    },
+    {
+      "value": "Yuma, AZ",
+      "count": 3
+    },
+    {
+      "value": "Kansas City, MO",
+      "count": 3
+    },
+    {
+      "value": "Cleveland-Akron (Canton), OH",
+      "count": 3
+    },
+    {
+      "value": "Ft. Smith-Fayetteville-Springdale-Rogers, AR",
+      "count": 3
+    },
+    {
+      "value": "Peoria-Bloomington, IL",
+      "count": 2
+    },
+    {
+      "value": "Colorado Springs-Pueblo, CO",
+      "count": 2
+    },
+    {
+      "value": "Champaign & Springfield-Decatur, IL",
+      "count": 2
+    },
+    {
+      "value": "Florence-Myrtle Beach, SC",
+      "count": 2
+    },
+    {
+      "value": "Laredo, TX",
+      "count": 2
+    },
+    {
+      "value": "Syracuse, NY",
+      "count": 2
+    },
+    {
+      "value": "Roanoke-Lynchburg, VA",
+      "count": 2
+    },
+    {
+      "value": "Youngstown, OH",
+      "count": 2
+    },
+    {
+      "value": "Monterey-Salinas, CA",
+      "count": 2
+    },
+    {
+      "value": "Victoria, TX",
+      "count": 2
+    },
+    {
+      "value": "Ft. Wayne, IN",
+      "count": 2
+    },
+    {
+      "value": "Lima, OH",
+      "count": 2
+    },
+    {
+      "value": "El Paso, TX",
+      "count": 2
+    },
+    {
+      "value": "Abilene-Sweetwater, TX",
+      "count": 2
+    },
+    {
+      "value": "Richmond-Petersburg, VA",
+      "count": 2
+    },
+    {
+      "value": "Wichita Falls, TX",
+      "count": 2
+    },
+    {
+      "value": "South Bend-Elkhart, IN",
+      "count": 1
+    },
+    {
+      "value": "Columbus, GA",
+      "count": 1
+    },
+    {
+      "value": "Savannah, GA",
+      "count": 1
+    },
+    {
+      "value": "Augusta, GA",
+      "count": 1
+    },
+    {
+      "value": "Madison, WI",
+      "count": 1
+    },
+    {
+      "value": "Portland, OR",
+      "count": 1
+    },
+    {
+      "value": "Cincinnati, OH",
+      "count": 1
+    },
+    {
+      "value": "Hattiesburg-Laurel, MS",
+      "count": 1
+    },
+    {
+      "value": "Lincoln & Hastings-Kearney, NE",
+      "count": 1
+    },
+    {
+      "value": "Omaha, NE",
+      "count": 1
+    },
+    {
+      "value": "Knoxville, TN",
+      "count": 1
+    },
+    {
+      "value": "Toledo, OH",
+      "count": 1
+    },
+    {
+      "value": "Wichita-Hutchinson, KS",
+      "count": 1
+    },
+    {
+      "value": "Binghamton, NY",
+      "count": 1
+    },
+    {
+      "value": "Utica, NY",
+      "count": 1
+    },
+    {
+      "value": "Charleston, SC",
+      "count": 1
+    },
+    {
+      "value": "Albany, GA",
+      "count": 1
+    },
+    {
+      "value": "Little Rock-Pine Bluff, AR",
+      "count": 1
+    },
+    {
+      "value": "Oklahoma City, OK",
+      "count": 1
+    },
+    {
+      "value": "Burlington, VT",
+      "count": 1
+    },
+    {
+      "value": "St. Louis, MO",
+      "count": 1
+    },
+    {
+      "value": "Pittsburgh, PA",
+      "count": 1
+    },
+    {
+      "value": "Amarillo, TX",
+      "count": 1
+    },
+    {
+      "value": "Lansing, MI",
+      "count": 1
+    },
+    {
+      "value": "Honolulu, HI",
+      "count": 1
+    },
+    {
+      "value": "Bowling Green, KY",
+      "count": 1
+    },
+    {
+      "value": "Parkersburg, WV",
+      "count": 1
+    },
+    {
+      "value": "Lexington, KY",
+      "count": 1
+    },
+    {
+      "value": "Evansville, IN",
+      "count": 1
+    }
+  ],
+  "state": [
+    {
+      "value": "New York",
+      "count": 406
+    },
+    {
+      "value": "Illinois",
+      "count": 372
+    },
+    {
+      "value": "California",
+      "count": 359
+    },
+    {
+      "value": "Florida",
+      "count": 342
+    },
+    {
+      "value": "Texas",
+      "count": 280
+    },
+    {
+      "value": "New Jersey",
+      "count": 102
+    },
+    {
+      "value": "Georgia",
+      "count": 95
+    },
+    {
+      "value": "Massachusetts",
+      "count": 83
+    },
+    {
+      "value": "North Carolina",
+      "count": 34
+    },
+    {
+      "value": "Pennsylvania",
+      "count": 26
+    },
+    {
+      "value": "Nevada",
+      "count": 24
+    },
+    {
+      "value": "Virginia",
+      "count": 23
+    },
+    {
+      "value": "Maryland",
+      "count": 20
+    },
+    {
+      "value": "Wisconsin",
+      "count": 19
+    },
+    {
+      "value": "Colorado",
+      "count": 17
+    },
+    {
+      "value": "Michigan",
+      "count": 17
+    },
+    {
+      "value": "Connecticut",
+      "count": 16
+    },
+    {
+      "value": "Minnesota",
+      "count": 14
+    },
+    {
+      "value": "Rhode Island",
+      "count": 13
+    },
+    {
+      "value": "Ohio",
+      "count": 13
+    },
+    {
+      "value": "Tennessee",
+      "count": 12
+    },
+    {
+      "value": "Indiana",
+      "count": 12
+    },
+    {
+      "value": "Arizona",
+      "count": 11
+    },
+    {
+      "value": "Louisiana",
+      "count": 10
+    },
+    {
+      "value": "South Carolina",
+      "count": 10
+    },
+    {
+      "value": "Maine",
+      "count": 10
+    },
+    {
+      "value": "Utah",
+      "count": 9
+    },
+    {
+      "value": "Alabama",
+      "count": 9
+    },
+    {
+      "value": "District of Columbia",
+      "count": 7
+    },
+    {
+      "value": "New Mexico",
+      "count": 5
+    },
+    {
+      "value": "Kentucky",
+      "count": 5
+    },
+    {
+      "value": "Washington",
+      "count": 5
+    },
+    {
+      "value": "Arkansas",
+      "count": 4
+    },
+    {
+      "value": "Missouri",
+      "count": 4
+    },
+    {
+      "value": "Iowa",
+      "count": 3
+    },
+    {
+      "value": "New Hampshire",
+      "count": 3
+    },
+    {
+      "value": "Nebraska",
+      "count": 2
+    },
+    {
+      "value": "Kansas",
+      "count": 2
+    },
+    {
+      "value": "Delaware",
+      "count": 2
+    },
+    {
+      "value": "West Virginia",
+      "count": 2
+    },
+    {
+      "value": "Oregon",
+      "count": 1
+    },
+    {
+      "value": "Mississippi",
+      "count": 1
+    },
+    {
+      "value": "Oklahoma",
+      "count": 1
+    },
+    {
+      "value": "Vermont",
+      "count": 1
+    },
+    {
+      "value": "Wyoming",
+      "count": 1
+    },
+    {
+      "value": "Hawaii",
+      "count": 1
+    }
+  ],
+  "zip_code": [
+    {
+      "value": "60629",
+      "count": 14
+    },
+    {
+      "value": "60632",
+      "count": 14
+    },
+    {
+      "value": "10456",
+      "count": 13
+    },
+    {
+      "value": "60623",
+      "count": 13
+    },
+    {
+      "value": "02128",
+      "count": 12
+    },
+    {
+      "value": "60618",
+      "count": 12
+    },
+    {
+      "value": "33010",
+      "count": 10
+    },
+    {
+      "value": "60641",
+      "count": 9
+    },
+    {
+      "value": "33024",
+      "count": 9
+    },
+    {
+      "value": "11207",
+      "count": 9
+    },
+    {
+      "value": "77015",
+      "count": 9
+    },
+    {
+      "value": "60608",
+      "count": 8
+    },
+    {
+      "value": "60639",
+      "count": 8
+    },
+    {
+      "value": "60625",
+      "count": 8
+    },
+    {
+      "value": "02301",
+      "count": 8
+    },
+    {
+      "value": "01841",
+      "count": 8
+    },
+    {
+      "value": "33030",
+      "count": 8
+    },
+    {
+      "value": "60609",
+      "count": 8
+    },
+    {
+      "value": "60804",
+      "count": 8
+    },
+    {
+      "value": "07093",
+      "count": 7
+    },
+    {
+      "value": "11372",
+      "count": 7
+    },
+    {
+      "value": "60123",
+      "count": 7
+    },
+    {
+      "value": "10467",
+      "count": 7
+    },
+    {
+      "value": "33157",
+      "count": 7
+    },
+    {
+      "value": "77036",
+      "count": 7
+    },
+    {
+      "value": "10468",
+      "count": 7
+    },
+    {
+      "value": "10002",
+      "count": 7
+    },
+    {
+      "value": "10472",
+      "count": 7
+    },
+    {
+      "value": "60647",
+      "count": 7
+    },
+    {
+      "value": "11226",
+      "count": 7
+    },
+    {
+      "value": "60616",
+      "count": 7
+    },
+    {
+      "value": "11368",
+      "count": 6
+    },
+    {
+      "value": "33015",
+      "count": 6
+    },
+    {
+      "value": "60085",
+      "count": 6
+    },
+    {
+      "value": "11233",
+      "count": 6
+    },
+    {
+      "value": "10459",
+      "count": 6
+    },
+    {
+      "value": "07055",
+      "count": 6
+    },
+    {
+      "value": "11208",
+      "count": 6
+    },
+    {
+      "value": "11377",
+      "count": 6
+    },
+    {
+      "value": "10031",
+      "count": 6
+    },
+    {
+      "value": "60628",
+      "count": 6
+    },
+    {
+      "value": "89030",
+      "count": 6
+    },
+    {
+      "value": "33162",
+      "count": 5
+    },
+    {
+      "value": "60160",
+      "count": 5
+    },
+    {
+      "value": "10977",
+      "count": 5
+    },
+    {
+      "value": "33193",
+      "count": 5
+    },
+    {
+      "value": "33417",
+      "count": 5
+    },
+    {
+      "value": "11373",
+      "count": 5
+    },
+    {
+      "value": "77083",
+      "count": 5
+    },
+    {
+      "value": "77081",
+      "count": 5
+    },
+    {
+      "value": "11213",
+      "count": 5
+    },
+    {
+      "value": "11220",
+      "count": 5
+    },
+    {
+      "value": "20010",
+      "count": 5
+    },
+    {
+      "value": "06902",
+      "count": 5
+    },
+    {
+      "value": "27604",
+      "count": 5
+    },
+    {
+      "value": "10458",
+      "count": 5
+    },
+    {
+      "value": "77063",
+      "count": 5
+    },
+    {
+      "value": "91950",
+      "count": 5
+    },
+    {
+      "value": "10466",
+      "count": 5
+    },
+    {
+      "value": "33135",
+      "count": 5
+    },
+    {
+      "value": "10453",
+      "count": 5
+    },
+    {
+      "value": "93036",
+      "count": 5
+    },
+    {
+      "value": "11432",
+      "count": 5
+    },
+    {
+      "value": "10463",
+      "count": 5
+    },
+    {
+      "value": "93458",
+      "count": 5
+    },
+    {
+      "value": "11236",
+      "count": 4
+    },
+    {
+      "value": "11237",
+      "count": 4
+    },
+    {
+      "value": "02150",
+      "count": 4
+    },
+    {
+      "value": "30044",
+      "count": 4
+    },
+    {
+      "value": "33018",
+      "count": 4
+    },
+    {
+      "value": "10462",
+      "count": 4
+    },
+    {
+      "value": "60185",
+      "count": 4
+    },
+    {
+      "value": "93306",
+      "count": 4
+    },
+    {
+      "value": "30046",
+      "count": 4
+    },
+    {
+      "value": "02149",
+      "count": 4
+    },
+    {
+      "value": "21224",
+      "count": 4
+    },
+    {
+      "value": "60652",
+      "count": 4
+    },
+    {
+      "value": "77055",
+      "count": 4
+    },
+    {
+      "value": "33415",
+      "count": 4
+    },
+    {
+      "value": "93033",
+      "count": 4
+    },
+    {
+      "value": "60622",
+      "count": 4
+    },
+    {
+      "value": "02860",
+      "count": 4
+    },
+    {
+      "value": "06606",
+      "count": 4
+    },
+    {
+      "value": "11419",
+      "count": 4
+    },
+    {
+      "value": "08701",
+      "count": 4
+    },
+    {
+      "value": "30060",
+      "count": 4
+    },
+    {
+      "value": "33172",
+      "count": 4
+    },
+    {
+      "value": "80237",
+      "count": 4
+    },
+    {
+      "value": "33130",
+      "count": 4
+    },
+    {
+      "value": "02148",
+      "count": 4
+    },
+    {
+      "value": "33147",
+      "count": 4
+    },
+    {
+      "value": "10469",
+      "count": 4
+    },
+    {
+      "value": "10452",
+      "count": 4
+    },
+    {
+      "value": "75040",
+      "count": 4
+    },
+    {
+      "value": "11206",
+      "count": 4
+    },
+    {
+      "value": "34116",
+      "count": 4
+    },
+    {
+      "value": "77504",
+      "count": 4
+    },
+    {
+      "value": "07111",
+      "count": 4
+    },
+    {
+      "value": "10460",
+      "count": 4
+    },
+    {
+      "value": "11423",
+      "count": 4
+    },
+    {
+      "value": "32808",
+      "count": 4
+    },
+    {
+      "value": "32218",
+      "count": 4
+    },
+    {
+      "value": "60181",
+      "count": 4
+    },
+    {
+      "value": "92335",
+      "count": 4
+    },
+    {
+      "value": "34952",
+      "count": 4
+    },
+    {
+      "value": "90280",
+      "count": 4
+    },
+    {
+      "value": "33313",
+      "count": 4
+    },
+    {
+      "value": "90044",
+      "count": 4
+    },
+    {
+      "value": "90805",
+      "count": 4
+    },
+    {
+      "value": "11412",
+      "count": 4
+    },
+    {
+      "value": "11224",
+      "count": 4
+    },
+    {
+      "value": "60649",
+      "count": 4
+    },
+    {
+      "value": "10457",
+      "count": 4
+    },
+    {
+      "value": "11101",
+      "count": 4
+    },
+    {
+      "value": "60636",
+      "count": 4
+    },
+    {
+      "value": "60428",
+      "count": 4
+    },
+    {
+      "value": "60619",
+      "count": 4
+    },
+    {
+      "value": "10128",
+      "count": 4
+    },
+    {
+      "value": "53216",
+      "count": 4
+    },
+    {
+      "value": "77091",
+      "count": 4
+    },
+    {
+      "value": "10011",
+      "count": 4
+    },
+    {
+      "value": "11235",
+      "count": 4
+    },
+    {
+      "value": "60643",
+      "count": 4
+    },
+    {
+      "value": "11219",
+      "count": 4
+    },
+    {
+      "value": "10025",
+      "count": 4
+    },
+    {
+      "value": "11212",
+      "count": 4
+    },
+    {
+      "value": "90022",
+      "count": 4
+    },
+    {
+      "value": "30311",
+      "count": 4
+    },
+    {
+      "value": "60426",
+      "count": 4
+    },
+    {
+      "value": "60617",
+      "count": 4
+    },
+    {
+      "value": "60411",
+      "count": 4
+    },
+    {
+      "value": "90255",
+      "count": 4
+    },
+    {
+      "value": "77833",
+      "count": 3
+    },
+    {
+      "value": "84119",
+      "count": 3
+    },
+    {
+      "value": "20783",
+      "count": 3
+    },
+    {
+      "value": "78660",
+      "count": 3
+    },
+    {
+      "value": "11550",
+      "count": 3
+    },
+    {
+      "value": "60706",
+      "count": 3
+    },
+    {
+      "value": "30047",
+      "count": 3
+    },
+    {
+      "value": "78629",
+      "count": 3
+    },
+    {
+      "value": "37115",
+      "count": 3
+    },
+    {
+      "value": "92704",
+      "count": 3
+    },
+    {
+      "value": "90057",
+      "count": 3
+    },
+    {
+      "value": "92571",
+      "count": 3
+    },
+    {
+      "value": "07601",
+      "count": 3
+    },
+    {
+      "value": "91770",
+      "count": 3
+    },
+    {
+      "value": "07631",
+      "count": 3
+    },
+    {
+      "value": "33403",
+      "count": 3
+    },
+    {
+      "value": "90004",
+      "count": 3
+    },
+    {
+      "value": "93065",
+      "count": 3
+    },
+    {
+      "value": "07087",
+      "count": 3
+    },
+    {
+      "value": "77093",
+      "count": 3
+    },
+    {
+      "value": "33442",
+      "count": 3
+    },
+    {
+      "value": "02151",
+      "count": 3
+    },
+    {
+      "value": "60406",
+      "count": 3
+    },
+    {
+      "value": "08401",
+      "count": 3
+    },
+    {
+      "value": "11746",
+      "count": 3
+    },
+    {
+      "value": "77074",
+      "count": 3
+    },
+    {
+      "value": "06106",
+      "count": 3
+    },
+    {
+      "value": "11413",
+      "count": 3
+    },
+    {
+      "value": "11201",
+      "count": 3
+    },
+    {
+      "value": "60409",
+      "count": 3
+    },
+    {
+      "value": "60640",
+      "count": 3
+    },
+    {
+      "value": "32809",
+      "count": 3
+    },
+    {
+      "value": "77301",
+      "count": 3
+    },
+    {
+      "value": "34207",
+      "count": 3
+    },
+    {
+      "value": "32839",
+      "count": 3
+    },
+    {
+      "value": "33131",
+      "count": 3
+    },
+    {
+      "value": "11222",
+      "count": 3
+    },
+    {
+      "value": "33805",
+      "count": 3
+    },
+    {
+      "value": "60505",
+      "count": 3
+    },
+    {
+      "value": "11418",
+      "count": 3
+    },
+    {
+      "value": "01905",
+      "count": 3
+    },
+    {
+      "value": "95833",
+      "count": 3
+    },
+    {
+      "value": "33844",
+      "count": 3
+    },
+    {
+      "value": "75227",
+      "count": 3
+    },
+    {
+      "value": "34135",
+      "count": 3
+    },
+    {
+      "value": "32966",
+      "count": 3
+    },
+    {
+      "value": "33023",
+      "count": 3
+    },
+    {
+      "value": "33016",
+      "count": 3
+    },
+    {
+      "value": "60106",
+      "count": 3
+    },
+    {
+      "value": "33144",
+      "count": 3
+    },
+    {
+      "value": "77071",
+      "count": 3
+    },
+    {
+      "value": "11215",
+      "count": 3
+    },
+    {
+      "value": "11420",
+      "count": 3
+    },
+    {
+      "value": "30126",
+      "count": 3
+    },
+    {
+      "value": "89110",
+      "count": 3
+    },
+    {
+      "value": "32114",
+      "count": 3
+    },
+    {
+      "value": "33440",
+      "count": 3
+    },
+    {
+      "value": "92201",
+      "count": 3
+    },
+    {
+      "value": "93215",
+      "count": 3
+    },
+    {
+      "value": "77327",
+      "count": 3
+    },
+    {
+      "value": "33935",
+      "count": 3
+    },
+    {
+      "value": "60614",
+      "count": 3
+    },
+    {
+      "value": "93454",
+      "count": 3
+    },
+    {
+      "value": "75052",
+      "count": 3
+    },
+    {
+      "value": "77086",
+      "count": 3
+    },
+    {
+      "value": "60612",
+      "count": 3
+    },
+    {
+      "value": "77084",
+      "count": 3
+    },
+    {
+      "value": "94509",
+      "count": 3
+    },
+    {
+      "value": "93637",
+      "count": 3
+    },
+    {
+      "value": "32822",
+      "count": 3
+    },
+    {
+      "value": "77502",
+      "count": 3
+    },
+    {
+      "value": "90745",
+      "count": 3
+    },
+    {
+      "value": "89115",
+      "count": 3
+    },
+    {
+      "value": "11378",
+      "count": 3
+    },
+    {
+      "value": "60099",
+      "count": 3
+    },
+    {
+      "value": "10034",
+      "count": 3
+    },
+    {
+      "value": "10601",
+      "count": 3
+    },
+    {
+      "value": "60644",
+      "count": 3
+    },
+    {
+      "value": "77072",
+      "count": 3
+    },
+    {
+      "value": "07050",
+      "count": 3
+    },
+    {
+      "value": "60453",
+      "count": 3
+    },
+    {
+      "value": "11204",
+      "count": 3
+    },
+    {
+      "value": "30274",
+      "count": 3
+    },
+    {
+      "value": "30071",
+      "count": 3
+    },
+    {
+      "value": "02124",
+      "count": 3
+    },
+    {
+      "value": "11214",
+      "count": 3
+    },
+    {
+      "value": "10033",
+      "count": 3
+    },
+    {
+      "value": "60659",
+      "count": 3
+    },
+    {
+      "value": "32818",
+      "count": 3
+    },
+    {
+      "value": "11223",
+      "count": 3
+    },
+    {
+      "value": "94025",
+      "count": 3
+    },
+    {
+      "value": "94544",
+      "count": 3
+    },
+    {
+      "value": "60651",
+      "count": 3
+    },
+    {
+      "value": "60634",
+      "count": 3
+    },
+    {
+      "value": "60402",
+      "count": 3
+    },
+    {
+      "value": "33161",
+      "count": 3
+    },
+    {
+      "value": "10940",
+      "count": 3
+    },
+    {
+      "value": "60077",
+      "count": 3
+    },
+    {
+      "value": "10030",
+      "count": 3
+    },
+    {
+      "value": "10550",
+      "count": 3
+    },
+    {
+      "value": "02130",
+      "count": 3
+    },
+    {
+      "value": "61701",
+      "count": 2
+    },
+    {
+      "value": "91706",
+      "count": 2
+    },
+    {
+      "value": "02863",
+      "count": 2
+    },
+    {
+      "value": "93307",
+      "count": 2
+    },
+    {
+      "value": "38115",
+      "count": 2
+    },
+    {
+      "value": "43229",
+      "count": 2
+    },
+    {
+      "value": "92701",
+      "count": 2
+    },
+    {
+      "value": "01901",
+      "count": 2
+    },
+    {
+      "value": "89101",
+      "count": 2
+    },
+    {
+      "value": "30324",
+      "count": 2
+    },
+    {
+      "value": "93203",
+      "count": 2
+    },
+    {
+      "value": "95215",
+      "count": 2
+    },
+    {
+      "value": "30319",
+      "count": 2
+    },
+    {
+      "value": "30315",
+      "count": 2
+    },
+    {
+      "value": "31206",
+      "count": 2
+    },
+    {
+      "value": "30501",
+      "count": 2
+    },
+    {
+      "value": "35124",
+      "count": 2
+    },
+    {
+      "value": "92530",
+      "count": 2
+    },
+    {
+      "value": "60435",
+      "count": 2
+    },
+    {
+      "value": "33132",
+      "count": 2
+    },
+    {
+      "value": "94520",
+      "count": 2
+    },
+    {
+      "value": "22042",
+      "count": 2
+    },
+    {
+      "value": "84118",
+      "count": 2
+    },
+    {
+      "value": "33174",
+      "count": 2
+    },
+    {
+      "value": "90011",
+      "count": 2
+    },
+    {
+      "value": "89502",
+      "count": 2
+    },
+    {
+      "value": "20782",
+      "count": 2
+    },
+    {
+      "value": "20901",
+      "count": 2
+    },
+    {
+      "value": "33186",
+      "count": 2
+    },
+    {
+      "value": "70065",
+      "count": 2
+    },
+    {
+      "value": "33618",
+      "count": 2
+    },
+    {
+      "value": "33012",
+      "count": 2
+    },
+    {
+      "value": "94063",
+      "count": 2
+    },
+    {
+      "value": "70053",
+      "count": 2
+    },
+    {
+      "value": "55428",
+      "count": 2
+    },
+    {
+      "value": "08861",
+      "count": 2
+    },
+    {
+      "value": "80010",
+      "count": 2
+    },
+    {
+      "value": "08302",
+      "count": 2
+    },
+    {
+      "value": "28027",
+      "count": 2
+    },
+    {
+      "value": "76010",
+      "count": 2
+    },
+    {
+      "value": "55413",
+      "count": 2
+    },
+    {
+      "value": "22204",
+      "count": 2
+    },
+    {
+      "value": "33155",
+      "count": 2
+    },
+    {
+      "value": "19111",
+      "count": 2
+    },
+    {
+      "value": "07104",
+      "count": 2
+    },
+    {
+      "value": "07060",
+      "count": 2
+    },
+    {
+      "value": "08901",
+      "count": 2
+    },
+    {
+      "value": "19120",
+      "count": 2
+    },
+    {
+      "value": "19401",
+      "count": 2
+    },
+    {
+      "value": "19135",
+      "count": 2
+    },
+    {
+      "value": "04102",
+      "count": 2
+    },
+    {
+      "value": "08021",
+      "count": 2
+    },
+    {
+      "value": "33009",
+      "count": 2
+    },
+    {
+      "value": "33056",
+      "count": 2
+    },
+    {
+      "value": "33013",
+      "count": 2
+    },
+    {
+      "value": "42240",
+      "count": 2
+    },
+    {
+      "value": "77506",
+      "count": 2
+    },
+    {
+      "value": "30307",
+      "count": 2
+    },
+    {
+      "value": "30721",
+      "count": 2
+    },
+    {
+      "value": "07010",
+      "count": 2
+    },
+    {
+      "value": "11434",
+      "count": 2
+    },
+    {
+      "value": "03103",
+      "count": 2
+    },
+    {
+      "value": "75220",
+      "count": 2
+    },
+    {
+      "value": "95205",
+      "count": 2
+    },
+    {
+      "value": "95991",
+      "count": 2
+    },
+    {
+      "value": "32351",
+      "count": 2
+    },
+    {
+      "value": "02122",
+      "count": 2
+    },
+    {
+      "value": "01840",
+      "count": 2
+    },
+    {
+      "value": "95820",
+      "count": 2
+    },
+    {
+      "value": "04240",
+      "count": 2
+    },
+    {
+      "value": "08611",
+      "count": 2
+    },
+    {
+      "value": "72901",
+      "count": 2
+    },
+    {
+      "value": "32837",
+      "count": 2
+    },
+    {
+      "value": "55407",
+      "count": 2
+    },
+    {
+      "value": "75061",
+      "count": 2
+    },
+    {
+      "value": "75208",
+      "count": 2
+    },
+    {
+      "value": "10302",
+      "count": 2
+    },
+    {
+      "value": "92618",
+      "count": 2
+    },
+    {
+      "value": "07202",
+      "count": 2
+    },
+    {
+      "value": "11590",
+      "count": 2
+    },
+    {
+      "value": "07022",
+      "count": 2
+    },
+    {
+      "value": "30337",
+      "count": 2
+    },
+    {
+      "value": "10705",
+      "count": 2
+    },
+    {
+      "value": "77080",
+      "count": 2
+    },
+    {
+      "value": "55409",
+      "count": 2
+    },
+    {
+      "value": "33137",
+      "count": 2
+    },
+    {
+      "value": "94565",
+      "count": 2
+    },
+    {
+      "value": "07740",
+      "count": 2
+    },
+    {
+      "value": "07728",
+      "count": 2
+    },
+    {
+      "value": "30297",
+      "count": 2
+    },
+    {
+      "value": "19604",
+      "count": 2
+    },
+    {
+      "value": "02909",
+      "count": 2
+    },
+    {
+      "value": "92870",
+      "count": 2
+    },
+    {
+      "value": "27405",
+      "count": 2
+    },
+    {
+      "value": "93501",
+      "count": 2
+    },
+    {
+      "value": "60175",
+      "count": 2
+    },
+    {
+      "value": "60517",
+      "count": 2
+    },
+    {
+      "value": "60193",
+      "count": 2
+    },
+    {
+      "value": "52241",
+      "count": 2
+    },
+    {
+      "value": "64030",
+      "count": 2
+    },
+    {
+      "value": "76063",
+      "count": 2
+    },
+    {
+      "value": "32177",
+      "count": 2
+    },
+    {
+      "value": "32221",
+      "count": 2
+    },
+    {
+      "value": "77707",
+      "count": 2
+    },
+    {
+      "value": "76542",
+      "count": 2
+    },
+    {
+      "value": "92027",
+      "count": 2
+    },
+    {
+      "value": "95758",
+      "count": 2
+    },
+    {
+      "value": "44483",
+      "count": 2
+    },
+    {
+      "value": "77437",
+      "count": 2
+    },
+    {
+      "value": "76522",
+      "count": 2
+    },
+    {
+      "value": "32256",
+      "count": 2
+    },
+    {
+      "value": "60156",
+      "count": 2
+    },
+    {
+      "value": "77598",
+      "count": 2
+    },
+    {
+      "value": "93727",
+      "count": 2
+    },
+    {
+      "value": "77070",
+      "count": 2
+    },
+    {
+      "value": "34748",
+      "count": 2
+    },
+    {
+      "value": "32905",
+      "count": 2
+    },
+    {
+      "value": "32763",
+      "count": 2
+    },
+    {
+      "value": "34744",
+      "count": 2
+    },
+    {
+      "value": "34113",
+      "count": 2
+    },
+    {
+      "value": "33064",
+      "count": 2
+    },
+    {
+      "value": "34994",
+      "count": 2
+    },
+    {
+      "value": "33936",
+      "count": 2
+    },
+    {
+      "value": "44705",
+      "count": 2
+    },
+    {
+      "value": "60201",
+      "count": 2
+    },
+    {
+      "value": "11225",
+      "count": 2
+    },
+    {
+      "value": "32254",
+      "count": 2
+    },
+    {
+      "value": "33068",
+      "count": 2
+    },
+    {
+      "value": "32210",
+      "count": 2
+    },
+    {
+      "value": "77489",
+      "count": 2
+    },
+    {
+      "value": "32907",
+      "count": 2
+    },
+    {
+      "value": "33169",
+      "count": 2
+    },
+    {
+      "value": "92021",
+      "count": 2
+    },
+    {
+      "value": "33025",
+      "count": 2
+    },
+    {
+      "value": "33312",
+      "count": 2
+    },
+    {
+      "value": "32164",
+      "count": 2
+    },
+    {
+      "value": "02885",
+      "count": 2
+    },
+    {
+      "value": "32225",
+      "count": 2
+    },
+    {
+      "value": "48076",
+      "count": 2
+    },
+    {
+      "value": "32609",
+      "count": 2
+    },
+    {
+      "value": "34429",
+      "count": 2
+    },
+    {
+      "value": "49015",
+      "count": 2
+    },
+    {
+      "value": "93906",
+      "count": 2
+    },
+    {
+      "value": "76710",
+      "count": 2
+    },
+    {
+      "value": "32404",
+      "count": 2
+    },
+    {
+      "value": "95348",
+      "count": 2
+    },
+    {
+      "value": "63830",
+      "count": 2
+    },
+    {
+      "value": "34982",
+      "count": 2
+    },
+    {
+      "value": "33815",
+      "count": 2
+    },
+    {
+      "value": "32084",
+      "count": 2
+    },
+    {
+      "value": "32308",
+      "count": 2
+    },
+    {
+      "value": "78223",
+      "count": 2
+    },
+    {
+      "value": "48038",
+      "count": 2
+    },
+    {
+      "value": "34974",
+      "count": 2
+    },
+    {
+      "value": "77018",
+      "count": 2
+    },
+    {
+      "value": "32534",
+      "count": 2
+    },
+    {
+      "value": "78217",
+      "count": 2
+    },
+    {
+      "value": "32507",
+      "count": 2
+    },
+    {
+      "value": "75150",
+      "count": 2
+    },
+    {
+      "value": "92220",
+      "count": 2
+    },
+    {
+      "value": "78503",
+      "count": 2
+    },
+    {
+      "value": "76240",
+      "count": 2
+    },
+    {
+      "value": "32626",
+      "count": 2
+    },
+    {
+      "value": "78602",
+      "count": 2
+    },
+    {
+      "value": "91405",
+      "count": 2
+    },
+    {
+      "value": "91910",
+      "count": 2
+    },
+    {
+      "value": "77901",
+      "count": 2
+    },
+    {
+      "value": "93618",
+      "count": 2
+    },
+    {
+      "value": "91786",
+      "count": 2
+    },
+    {
+      "value": "93711",
+      "count": 2
+    },
+    {
+      "value": "32257",
+      "count": 2
+    },
+    {
+      "value": "75766",
+      "count": 2
+    },
+    {
+      "value": "78411",
+      "count": 2
+    },
+    {
+      "value": "76117",
+      "count": 2
+    },
+    {
+      "value": "92234",
+      "count": 2
+    },
+    {
+      "value": "33907",
+      "count": 2
+    },
+    {
+      "value": "75006",
+      "count": 2
+    },
+    {
+      "value": "91764",
+      "count": 2
+    },
+    {
+      "value": "95823",
+      "count": 2
+    },
+    {
+      "value": "77066",
+      "count": 2
+    },
+    {
+      "value": "77338",
+      "count": 2
+    },
+    {
+      "value": "95621",
+      "count": 2
+    },
+    {
+      "value": "33525",
+      "count": 2
+    },
+    {
+      "value": "33613",
+      "count": 2
+    },
+    {
+      "value": "33314",
+      "count": 2
+    },
+    {
+      "value": "93277",
+      "count": 2
+    },
+    {
+      "value": "93612",
+      "count": 2
+    },
+    {
+      "value": "92395",
+      "count": 2
+    },
+    {
+      "value": "46992",
+      "count": 2
+    },
+    {
+      "value": "78155",
+      "count": 2
+    },
+    {
+      "value": "32726",
+      "count": 2
+    },
+    {
+      "value": "33870",
+      "count": 2
+    },
+    {
+      "value": "92591",
+      "count": 2
+    },
+    {
+      "value": "54303",
+      "count": 2
+    },
+    {
+      "value": "78221",
+      "count": 2
+    },
+    {
+      "value": "76048",
+      "count": 2
+    },
+    {
+      "value": "79701",
+      "count": 2
+    },
+    {
+      "value": "95337",
+      "count": 2
+    },
+    {
+      "value": "02886",
+      "count": 2
+    },
+    {
+      "value": "78218",
+      "count": 2
+    },
+    {
+      "value": "93710",
+      "count": 2
+    },
+    {
+      "value": "33175",
+      "count": 2
+    },
+    {
+      "value": "33990",
+      "count": 2
+    },
+    {
+      "value": "90029",
+      "count": 2
+    },
+    {
+      "value": "93230",
+      "count": 2
+    },
+    {
+      "value": "34474",
+      "count": 2
+    },
+    {
+      "value": "77054",
+      "count": 2
+    },
+    {
+      "value": "45805",
+      "count": 2
+    },
+    {
+      "value": "76116",
+      "count": 2
+    },
+    {
+      "value": "78520",
+      "count": 2
+    },
+    {
+      "value": "77373",
+      "count": 2
+    },
+    {
+      "value": "76028",
+      "count": 2
+    },
+    {
+      "value": "77469",
+      "count": 2
+    },
+    {
+      "value": "78250",
+      "count": 2
+    },
+    {
+      "value": "90250",
+      "count": 2
+    },
+    {
+      "value": "79763",
+      "count": 2
+    },
+    {
+      "value": "32216",
+      "count": 2
+    },
+    {
+      "value": "92553",
+      "count": 2
+    },
+    {
+      "value": "92843",
+      "count": 2
+    },
+    {
+      "value": "91722",
+      "count": 2
+    },
+    {
+      "value": "32405",
+      "count": 2
+    },
+    {
+      "value": "75116",
+      "count": 2
+    },
+    {
+      "value": "92345",
+      "count": 2
+    },
+    {
+      "value": "32065",
+      "count": 2
+    },
+    {
+      "value": "92503",
+      "count": 2
+    },
+    {
+      "value": "90706",
+      "count": 2
+    },
+    {
+      "value": "78934",
+      "count": 2
+    },
+    {
+      "value": "32780",
+      "count": 2
+    },
+    {
+      "value": "77581",
+      "count": 2
+    },
+    {
+      "value": "60004",
+      "count": 2
+    },
+    {
+      "value": "77375",
+      "count": 2
+    },
+    {
+      "value": "77521",
+      "count": 2
+    },
+    {
+      "value": "90301",
+      "count": 2
+    },
+    {
+      "value": "91801",
+      "count": 2
+    },
+    {
+      "value": "32703",
+      "count": 2
+    },
+    {
+      "value": "92243",
+      "count": 2
+    },
+    {
+      "value": "78102",
+      "count": 2
+    },
+    {
+      "value": "92324",
+      "count": 2
+    },
+    {
+      "value": "95973",
+      "count": 2
+    },
+    {
+      "value": "92404",
+      "count": 2
+    },
+    {
+      "value": "92543",
+      "count": 2
+    },
+    {
+      "value": "90605",
+      "count": 2
+    },
+    {
+      "value": "90640",
+      "count": 2
+    },
+    {
+      "value": "60450",
+      "count": 2
+    },
+    {
+      "value": "90620",
+      "count": 2
+    },
+    {
+      "value": "34785",
+      "count": 2
+    },
+    {
+      "value": "33898",
+      "count": 2
+    },
+    {
+      "value": "92104",
+      "count": 2
+    },
+    {
+      "value": "91340",
+      "count": 2
+    },
+    {
+      "value": "78130",
+      "count": 2
+    },
+    {
+      "value": "95355",
+      "count": 2
+    },
+    {
+      "value": "32607",
+      "count": 2
+    },
+    {
+      "value": "95207",
+      "count": 2
+    },
+    {
+      "value": "78154",
+      "count": 2
+    },
+    {
+      "value": "77566",
+      "count": 2
+    },
+    {
+      "value": "79904",
+      "count": 2
+    },
+    {
+      "value": "78840",
+      "count": 2
+    },
+    {
+      "value": "96003",
+      "count": 2
+    },
+    {
+      "value": "77568",
+      "count": 2
+    },
+    {
+      "value": "75119",
+      "count": 2
+    },
+    {
+      "value": "75901",
+      "count": 2
+    },
+    {
+      "value": "48205",
+      "count": 2
+    },
+    {
+      "value": "79605",
+      "count": 2
+    },
+    {
+      "value": "32060",
+      "count": 2
+    },
+    {
+      "value": "32960",
+      "count": 2
+    },
+    {
+      "value": "48336",
+      "count": 2
+    },
+    {
+      "value": "75103",
+      "count": 2
+    },
+    {
+      "value": "32505",
+      "count": 2
+    },
+    {
+      "value": "33880",
+      "count": 2
+    },
+    {
+      "value": "77662",
+      "count": 2
+    },
+    {
+      "value": "29607",
+      "count": 2
+    },
+    {
+      "value": "48092",
+      "count": 2
+    },
+    {
+      "value": "32448",
+      "count": 2
+    },
+    {
+      "value": "90621",
+      "count": 2
+    },
+    {
+      "value": "10017",
+      "count": 2
+    },
+    {
+      "value": "60015",
+      "count": 2
+    },
+    {
+      "value": "60061",
+      "count": 2
+    },
+    {
+      "value": "85031",
+      "count": 2
+    },
+    {
+      "value": "61109",
+      "count": 2
+    },
+    {
+      "value": "11205",
+      "count": 2
+    },
+    {
+      "value": "60098",
+      "count": 2
+    },
+    {
+      "value": "11211",
+      "count": 2
+    },
+    {
+      "value": "11417",
+      "count": 2
+    },
+    {
+      "value": "92111",
+      "count": 2
+    },
+    {
+      "value": "60047",
+      "count": 2
+    },
+    {
+      "value": "90302",
+      "count": 2
+    },
+    {
+      "value": "60090",
+      "count": 2
+    },
+    {
+      "value": "60613",
+      "count": 2
+    },
+    {
+      "value": "89107",
+      "count": 2
+    },
+    {
+      "value": "46312",
+      "count": 2
+    },
+    {
+      "value": "60048",
+      "count": 2
+    },
+    {
+      "value": "60714",
+      "count": 2
+    },
+    {
+      "value": "11727",
+      "count": 2
+    },
+    {
+      "value": "11514",
+      "count": 2
+    },
+    {
+      "value": "53225",
+      "count": 2
+    },
+    {
+      "value": "10009",
+      "count": 2
+    },
+    {
+      "value": "53208",
+      "count": 2
+    },
+    {
+      "value": "60543",
+      "count": 2
+    },
+    {
+      "value": "60527",
+      "count": 2
+    },
+    {
+      "value": "60462",
+      "count": 2
+    },
+    {
+      "value": "30035",
+      "count": 2
+    },
+    {
+      "value": "90810",
+      "count": 2
+    },
+    {
+      "value": "10016",
+      "count": 2
+    },
+    {
+      "value": "60073",
+      "count": 2
+    },
+    {
+      "value": "77082",
+      "count": 2
+    },
+    {
+      "value": "10019",
+      "count": 2
+    },
+    {
+      "value": "77014",
+      "count": 2
+    },
+    {
+      "value": "77039",
+      "count": 2
+    },
+    {
+      "value": "07203",
+      "count": 2
+    },
+    {
+      "value": "53215",
+      "count": 2
+    },
+    {
+      "value": "10801",
+      "count": 2
+    },
+    {
+      "value": "10027",
+      "count": 2
+    },
+    {
+      "value": "90028",
+      "count": 2
+    },
+    {
+      "value": "60611",
+      "count": 2
+    },
+    {
+      "value": "10455",
+      "count": 2
+    },
+    {
+      "value": "11421",
+      "count": 2
+    },
+    {
+      "value": "93702",
+      "count": 2
+    },
+    {
+      "value": "93313",
+      "count": 2
+    },
+    {
+      "value": "60438",
+      "count": 2
+    },
+    {
+      "value": "60620",
+      "count": 2
+    },
+    {
+      "value": "60430",
+      "count": 2
+    },
+    {
+      "value": "10960",
+      "count": 2
+    },
+    {
+      "value": "10039",
+      "count": 2
+    },
+    {
+      "value": "92706",
+      "count": 2
+    },
+    {
+      "value": "75062",
+      "count": 2
+    },
+    {
+      "value": "75074",
+      "count": 2
+    },
+    {
+      "value": "30345",
+      "count": 2
+    },
+    {
+      "value": "10026",
+      "count": 2
+    },
+    {
+      "value": "10040",
+      "count": 2
+    },
+    {
+      "value": "11209",
+      "count": 2
+    },
+    {
+      "value": "10473",
+      "count": 2
+    },
+    {
+      "value": "60302",
+      "count": 2
+    },
+    {
+      "value": "60805",
+      "count": 2
+    },
+    {
+      "value": "60630",
+      "count": 2
+    },
+    {
+      "value": "94806",
+      "count": 2
+    },
+    {
+      "value": "07306",
+      "count": 2
+    },
+    {
+      "value": "60637",
+      "count": 2
+    },
+    {
+      "value": "92105",
+      "count": 2
+    },
+    {
+      "value": "07107",
+      "count": 2
+    },
+    {
+      "value": "21804",
+      "count": 2
+    },
+    {
+      "value": "11234",
+      "count": 2
+    },
+    {
+      "value": "10304",
+      "count": 2
+    },
+    {
+      "value": "53223",
+      "count": 2
+    },
+    {
+      "value": "60638",
+      "count": 2
+    },
+    {
+      "value": "60501",
+      "count": 2
+    },
+    {
+      "value": "10454",
+      "count": 2
+    },
+    {
+      "value": "18102",
+      "count": 2
+    },
+    {
+      "value": "46324",
+      "count": 2
+    },
+    {
+      "value": "60171",
+      "count": 2
+    },
+    {
+      "value": "60153",
+      "count": 2
+    },
+    {
+      "value": "30032",
+      "count": 2
+    },
+    {
+      "value": "61108",
+      "count": 2
+    },
+    {
+      "value": "11218",
+      "count": 2
+    },
+    {
+      "value": "90002",
+      "count": 2
+    },
+    {
+      "value": "60030",
+      "count": 2
+    },
+    {
+      "value": "90813",
+      "count": 2
+    },
+    {
+      "value": "91303",
+      "count": 2
+    },
+    {
+      "value": "90013",
+      "count": 2
+    },
+    {
+      "value": "91766",
+      "count": 2
+    },
+    {
+      "value": "60139",
+      "count": 2
+    },
+    {
+      "value": "60473",
+      "count": 2
+    },
+    {
+      "value": "46408",
+      "count": 2
+    },
+    {
+      "value": "46405",
+      "count": 2
+    },
+    {
+      "value": "90062",
+      "count": 2
+    },
+    {
+      "value": "60084",
+      "count": 2
+    },
+    {
+      "value": "90222",
+      "count": 2
+    },
+    {
+      "value": "60110",
+      "count": 2
+    },
+    {
+      "value": "90059",
+      "count": 2
+    },
+    {
+      "value": "60074",
+      "count": 2
+    },
+    {
+      "value": "60445",
+      "count": 2
+    },
+    {
+      "value": "75217",
+      "count": 2
+    },
+    {
+      "value": "91343",
+      "count": 2
+    },
+    {
+      "value": "94085",
+      "count": 2
+    },
+    {
+      "value": "28217",
+      "count": 2
+    },
+    {
+      "value": "75229",
+      "count": 2
+    },
+    {
+      "value": "11229",
+      "count": 2
+    },
+    {
+      "value": "90003",
+      "count": 2
+    },
+    {
+      "value": "10470",
+      "count": 2
+    },
+    {
+      "value": "60471",
+      "count": 2
+    },
+    {
+      "value": "60419",
+      "count": 2
+    },
+    {
+      "value": "11416",
+      "count": 2
+    },
+    {
+      "value": "11367",
+      "count": 2
+    },
+    {
+      "value": "60107",
+      "count": 2
+    },
+    {
+      "value": "11385",
+      "count": 2
+    },
+    {
+      "value": "22306",
+      "count": 2
+    },
+    {
+      "value": "93534",
+      "count": 2
+    },
+    {
+      "value": "02136",
+      "count": 2
+    },
+    {
+      "value": "60478",
+      "count": 2
+    },
+    {
+      "value": "90006",
+      "count": 2
+    },
+    {
+      "value": "11221",
+      "count": 2
+    },
+    {
+      "value": "60559",
+      "count": 2
+    },
+    {
+      "value": "60014",
+      "count": 2
+    },
+    {
+      "value": "60188",
+      "count": 2
+    },
+    {
+      "value": "60018",
+      "count": 2
+    },
+    {
+      "value": "60056",
+      "count": 2
+    },
+    {
+      "value": "60502",
+      "count": 2
+    },
+    {
+      "value": "90303",
+      "count": 2
+    },
+    {
+      "value": "90043",
+      "count": 2
+    },
+    {
+      "value": "93001",
+      "count": 2
+    },
+    {
+      "value": "90008",
+      "count": 2
+    },
+    {
+      "value": "11694",
+      "count": 2
+    },
+    {
+      "value": "91204",
+      "count": 2
+    },
+    {
+      "value": "90650",
+      "count": 2
+    },
+    {
+      "value": "60005",
+      "count": 2
+    },
+    {
+      "value": "80219",
+      "count": 2
+    },
+    {
+      "value": "60101",
+      "count": 2
+    },
+    {
+      "value": "60070",
+      "count": 2
+    },
+    {
+      "value": "90201",
+      "count": 2
+    },
+    {
+      "value": "02121",
+      "count": 2
+    },
+    {
+      "value": "60172",
+      "count": 2
+    },
+    {
+      "value": "27260",
+      "count": 2
+    },
+    {
+      "value": "92507",
+      "count": 2
+    },
+    {
+      "value": "77449",
+      "count": 2
+    },
+    {
+      "value": "76306",
+      "count": 2
+    },
+    {
+      "value": "85040",
+      "count": 2
+    },
+    {
+      "value": "60452",
+      "count": 2
+    },
+    {
+      "value": "75210",
+      "count": 1
+    },
+    {
+      "value": "93223",
+      "count": 1
+    },
+    {
+      "value": "19149",
+      "count": 1
+    },
+    {
+      "value": "08102",
+      "count": 1
+    },
+    {
+      "value": "80631",
+      "count": 1
+    },
+    {
+      "value": "30286",
+      "count": 1
+    },
+    {
+      "value": "30224",
+      "count": 1
+    },
+    {
+      "value": "21229",
+      "count": 1
+    },
+    {
+      "value": "33156",
+      "count": 1
+    },
+    {
+      "value": "80910",
+      "count": 1
+    },
+    {
+      "value": "77642",
+      "count": 1
+    },
+    {
+      "value": "76103",
+      "count": 1
+    },
+    {
+      "value": "78747",
+      "count": 1
+    },
+    {
+      "value": "78727",
+      "count": 1
+    },
+    {
+      "value": "46528",
+      "count": 1
+    },
+    {
+      "value": "77035",
+      "count": 1
+    },
+    {
+      "value": "77545",
+      "count": 1
+    },
+    {
+      "value": "93640",
+      "count": 1
+    },
+    {
+      "value": "70466",
+      "count": 1
+    },
+    {
+      "value": "61008",
+      "count": 1
+    },
+    {
+      "value": "78207",
+      "count": 1
+    },
+    {
+      "value": "88260",
+      "count": 1
+    },
+    {
+      "value": "33624",
+      "count": 1
+    },
+    {
+      "value": "34639",
+      "count": 1
+    },
+    {
+      "value": "95326",
+      "count": 1
+    },
+    {
+      "value": "95386",
+      "count": 1
+    },
+    {
+      "value": "61822",
+      "count": 1
+    },
+    {
+      "value": "32714",
+      "count": 1
+    },
+    {
+      "value": "43231",
+      "count": 1
+    },
+    {
+      "value": "92083",
+      "count": 1
+    },
+    {
+      "value": "75231",
+      "count": 1
+    },
+    {
+      "value": "77573",
+      "count": 1
+    },
+    {
+      "value": "11230",
+      "count": 1
+    },
+    {
+      "value": "34652",
+      "count": 1
+    },
+    {
+      "value": "95240",
+      "count": 1
+    },
+    {
+      "value": "75110",
+      "count": 1
+    },
+    {
+      "value": "80221",
+      "count": 1
+    },
+    {
+      "value": "30019",
+      "count": 1
+    },
+    {
+      "value": "30134",
+      "count": 1
+    },
+    {
+      "value": "30114",
+      "count": 1
+    },
+    {
+      "value": "30052",
+      "count": 1
+    },
+    {
+      "value": "30058",
+      "count": 1
+    },
+    {
+      "value": "30039",
+      "count": 1
+    },
+    {
+      "value": "30132",
+      "count": 1
+    },
+    {
+      "value": "30017",
+      "count": 1
+    },
+    {
+      "value": "30135",
+      "count": 1
+    },
+    {
+      "value": "31021",
+      "count": 1
+    },
+    {
+      "value": "30066",
+      "count": 1
+    },
+    {
+      "value": "30269",
+      "count": 1
+    },
+    {
+      "value": "30043",
+      "count": 1
+    },
+    {
+      "value": "30701",
+      "count": 1
+    },
+    {
+      "value": "31069",
+      "count": 1
+    },
+    {
+      "value": "29572",
+      "count": 1
+    },
+    {
+      "value": "29579",
+      "count": 1
+    },
+    {
+      "value": "36830",
+      "count": 1
+    },
+    {
+      "value": "30144",
+      "count": 1
+    },
+    {
+      "value": "30214",
+      "count": 1
+    },
+    {
+      "value": "30506",
+      "count": 1
+    },
+    {
+      "value": "31324",
+      "count": 1
+    },
+    {
+      "value": "29803",
+      "count": 1
+    },
+    {
+      "value": "30349",
+      "count": 1
+    },
+    {
+      "value": "30080",
+      "count": 1
+    },
+    {
+      "value": "31005",
+      "count": 1
+    },
+    {
+      "value": "78752",
+      "count": 1
+    },
+    {
+      "value": "30606",
+      "count": 1
+    },
+    {
+      "value": "30720",
+      "count": 1
+    },
+    {
+      "value": "34208",
+      "count": 1
+    },
+    {
+      "value": "30291",
+      "count": 1
+    },
+    {
+      "value": "95206",
+      "count": 1
+    },
+    {
+      "value": "75007",
+      "count": 1
+    },
+    {
+      "value": "60563",
+      "count": 1
+    },
+    {
+      "value": "31520",
+      "count": 1
+    },
+    {
+      "value": "20910",
+      "count": 1
+    },
+    {
+      "value": "53965",
+      "count": 1
+    },
+    {
+      "value": "88203",
+      "count": 1
+    },
+    {
+      "value": "29611",
+      "count": 1
+    },
+    {
+      "value": "42445",
+      "count": 1
+    },
+    {
+      "value": "28212",
+      "count": 1
+    },
+    {
+      "value": "85128",
+      "count": 1
+    },
+    {
+      "value": "07011",
+      "count": 1
+    },
+    {
+      "value": "37066",
+      "count": 1
+    },
+    {
+      "value": "97233",
+      "count": 1
+    },
+    {
+      "value": "37210",
+      "count": 1
+    },
+    {
+      "value": "02895",
+      "count": 1
+    },
+    {
+      "value": "33901",
+      "count": 1
+    },
+    {
+      "value": "21703",
+      "count": 1
+    },
+    {
+      "value": "19124",
+      "count": 1
+    },
+    {
+      "value": "80026",
+      "count": 1
+    },
+    {
+      "value": "90037",
+      "count": 1
+    },
+    {
+      "value": "91101",
+      "count": 1
+    },
+    {
+      "value": "95380",
+      "count": 1
+    },
+    {
+      "value": "80525",
+      "count": 1
+    },
+    {
+      "value": "45239",
+      "count": 1
+    },
+    {
+      "value": "70003",
+      "count": 1
+    },
+    {
+      "value": "11370",
+      "count": 1
+    },
+    {
+      "value": "89512",
+      "count": 1
+    },
+    {
+      "value": "94558",
+      "count": 1
+    },
+    {
+      "value": "39440",
+      "count": 1
+    },
+    {
+      "value": "60120",
+      "count": 1
+    },
+    {
+      "value": "60060",
+      "count": 1
+    },
+    {
+      "value": "35206",
+      "count": 1
+    },
+    {
+      "value": "75235",
+      "count": 1
+    },
+    {
+      "value": "27344",
+      "count": 1
+    },
+    {
+      "value": "20019",
+      "count": 1
+    },
+    {
+      "value": "78723",
+      "count": 1
+    },
+    {
+      "value": "96150",
+      "count": 1
+    },
+    {
+      "value": "38118",
+      "count": 1
+    },
+    {
+      "value": "98270",
+      "count": 1
+    },
+    {
+      "value": "76574",
+      "count": 1
+    },
+    {
+      "value": "68801",
+      "count": 1
+    },
+    {
+      "value": "78041",
+      "count": 1
+    },
+    {
+      "value": "68107",
+      "count": 1
+    },
+    {
+      "value": "07712",
+      "count": 1
+    },
+    {
+      "value": "94561",
+      "count": 1
+    },
+    {
+      "value": "10566",
+      "count": 1
+    },
+    {
+      "value": "07047",
+      "count": 1
+    },
+    {
+      "value": "60432",
+      "count": 1
+    },
+    {
+      "value": "30012",
+      "count": 1
+    },
+    {
+      "value": "78626",
+      "count": 1
+    },
+    {
+      "value": "01801",
+      "count": 1
+    },
+    {
+      "value": "34108",
+      "count": 1
+    },
+    {
+      "value": "77017",
+      "count": 1
+    },
+    {
+      "value": "33971",
+      "count": 1
+    },
+    {
+      "value": "92805",
+      "count": 1
+    },
+    {
+      "value": "60436",
+      "count": 1
+    },
+    {
+      "value": "84115",
+      "count": 1
+    },
+    {
+      "value": "35216",
+      "count": 1
+    },
+    {
+      "value": "85032",
+      "count": 1
+    },
+    {
+      "value": "37863",
+      "count": 1
+    },
+    {
+      "value": "27954",
+      "count": 1
+    },
+    {
+      "value": "54914",
+      "count": 1
+    },
+    {
+      "value": "20748",
+      "count": 1
+    },
+    {
+      "value": "93234",
+      "count": 1
+    },
+    {
+      "value": "22191",
+      "count": 1
+    },
+    {
+      "value": "22309",
+      "count": 1
+    },
+    {
+      "value": "50702",
+      "count": 1
+    },
+    {
+      "value": "23324",
+      "count": 1
+    },
+    {
+      "value": "55408",
+      "count": 1
+    },
+    {
+      "value": "27948",
+      "count": 1
+    },
+    {
+      "value": "22043",
+      "count": 1
+    },
+    {
+      "value": "60440",
+      "count": 1
+    },
+    {
+      "value": "55378",
+      "count": 1
+    },
+    {
+      "value": "78758",
+      "count": 1
+    },
+    {
+      "value": "21403",
+      "count": 1
+    },
+    {
+      "value": "70363",
+      "count": 1
+    },
+    {
+      "value": "43609",
+      "count": 1
+    },
+    {
+      "value": "76051",
+      "count": 1
+    },
+    {
+      "value": "22601",
+      "count": 1
+    },
+    {
+      "value": "60506",
+      "count": 1
+    },
+    {
+      "value": "08215",
+      "count": 1
+    },
+    {
+      "value": "75041",
+      "count": 1
+    },
+    {
+      "value": "92866",
+      "count": 1
+    },
+    {
+      "value": "28213",
+      "count": 1
+    },
+    {
+      "value": "62526",
+      "count": 1
+    },
+    {
+      "value": "67901",
+      "count": 1
+    },
+    {
+      "value": "55418",
+      "count": 1
+    },
+    {
+      "value": "28675",
+      "count": 1
+    },
+    {
+      "value": "95842",
+      "count": 1
+    },
+    {
+      "value": "33430",
+      "count": 1
+    },
+    {
+      "value": "33319",
+      "count": 1
+    },
+    {
+      "value": "19148",
+      "count": 1
+    },
+    {
+      "value": "12304",
+      "count": 1
+    },
+    {
+      "value": "12206",
+      "count": 1
+    },
+    {
+      "value": "13905",
+      "count": 1
+    },
+    {
+      "value": "12210",
+      "count": 1
+    },
+    {
+      "value": "08016",
+      "count": 1
+    },
+    {
+      "value": "10701",
+      "count": 1
+    },
+    {
+      "value": "13502",
+      "count": 1
+    },
+    {
+      "value": "13205",
+      "count": 1
+    },
+    {
+      "value": "60621",
+      "count": 1
+    },
+    {
+      "value": "60624",
+      "count": 1
+    },
+    {
+      "value": "13208",
+      "count": 1
+    },
+    {
+      "value": "18101",
+      "count": 1
+    },
+    {
+      "value": "78028",
+      "count": 1
+    },
+    {
+      "value": "07208",
+      "count": 1
+    },
+    {
+      "value": "08242",
+      "count": 1
+    },
+    {
+      "value": "08902",
+      "count": 1
+    },
+    {
+      "value": "01852",
+      "count": 1
+    },
+    {
+      "value": "08232",
+      "count": 1
+    },
+    {
+      "value": "08731",
+      "count": 1
+    },
+    {
+      "value": "29405",
+      "count": 1
+    },
+    {
+      "value": "10965",
+      "count": 1
+    },
+    {
+      "value": "33125",
+      "count": 1
+    },
+    {
+      "value": "08876",
+      "count": 1
+    },
+    {
+      "value": "08094",
+      "count": 1
+    },
+    {
+      "value": "08244",
+      "count": 1
+    },
+    {
+      "value": "85021",
+      "count": 1
+    },
+    {
+      "value": "33141",
+      "count": 1
+    },
+    {
+      "value": "31730",
+      "count": 1
+    },
+    {
+      "value": "85204",
+      "count": 1
+    },
+    {
+      "value": "04073",
+      "count": 1
+    },
+    {
+      "value": "33020",
+      "count": 1
+    },
+    {
+      "value": "12305",
+      "count": 1
+    },
+    {
+      "value": "18052",
+      "count": 1
+    },
+    {
+      "value": "04005",
+      "count": 1
+    },
+    {
+      "value": "33166",
+      "count": 1
+    },
+    {
+      "value": "33136",
+      "count": 1
+    },
+    {
+      "value": "04210",
+      "count": 1
+    },
+    {
+      "value": "11040",
+      "count": 1
+    },
+    {
+      "value": "33334",
+      "count": 1
+    },
+    {
+      "value": "77031",
+      "count": 1
+    },
+    {
+      "value": "77087",
+      "count": 1
+    },
+    {
+      "value": "32025",
+      "count": 1
+    },
+    {
+      "value": "23320",
+      "count": 1
+    },
+    {
+      "value": "11510",
+      "count": 1
+    },
+    {
+      "value": "11433",
+      "count": 1
+    },
+    {
+      "value": "60610",
+      "count": 1
+    },
+    {
+      "value": "10451",
+      "count": 1
+    },
+    {
+      "value": "43204",
+      "count": 1
+    },
+    {
+      "value": "27407",
+      "count": 1
+    },
+    {
+      "value": "17202",
+      "count": 1
+    },
+    {
+      "value": "07109",
+      "count": 1
+    },
+    {
+      "value": "10950",
+      "count": 1
+    },
+    {
+      "value": "30101",
+      "count": 1
+    },
+    {
+      "value": "11581",
+      "count": 1
+    },
+    {
+      "value": "11429",
+      "count": 1
+    },
+    {
+      "value": "32725",
+      "count": 1
+    },
+    {
+      "value": "11216",
+      "count": 1
+    },
+    {
+      "value": "33063",
+      "count": 1
+    },
+    {
+      "value": "77590",
+      "count": 1
+    },
+    {
+      "value": "77088",
+      "count": 1
+    },
+    {
+      "value": "01832",
+      "count": 1
+    },
+    {
+      "value": "34711",
+      "count": 1
+    },
+    {
+      "value": "19050",
+      "count": 1
+    },
+    {
+      "value": "33523",
+      "count": 1
+    },
+    {
+      "value": "02134",
+      "count": 1
+    },
+    {
+      "value": "33614",
+      "count": 1
+    },
+    {
+      "value": "76513",
+      "count": 1
+    },
+    {
+      "value": "32757",
+      "count": 1
+    },
+    {
+      "value": "85364",
+      "count": 1
+    },
+    {
+      "value": "95695",
+      "count": 1
+    },
+    {
+      "value": "75407",
+      "count": 1
+    },
+    {
+      "value": "02145",
+      "count": 1
+    },
+    {
+      "value": "10509",
+      "count": 1
+    },
+    {
+      "value": "72206",
+      "count": 1
+    },
+    {
+      "value": "90260",
+      "count": 1
+    },
+    {
+      "value": "73122",
+      "count": 1
+    },
+    {
+      "value": "66102",
+      "count": 1
+    },
+    {
+      "value": "37013",
+      "count": 1
+    },
+    {
+      "value": "76537",
+      "count": 1
+    },
+    {
+      "value": "36535",
+      "count": 1
+    },
+    {
+      "value": "11104",
+      "count": 1
+    },
+    {
+      "value": "44720",
+      "count": 1
+    },
+    {
+      "value": "11801",
+      "count": 1
+    },
+    {
+      "value": "18974",
+      "count": 1
+    },
+    {
+      "value": "17111",
+      "count": 1
+    },
+    {
+      "value": "24017",
+      "count": 1
+    },
+    {
+      "value": "11106",
+      "count": 1
+    },
+    {
+      "value": "10549",
+      "count": 1
+    },
+    {
+      "value": "08330",
+      "count": 1
+    },
+    {
+      "value": "92069",
+      "count": 1
+    },
+    {
+      "value": "33549",
+      "count": 1
+    },
+    {
+      "value": "27101",
+      "count": 1
+    },
+    {
+      "value": "11422",
+      "count": 1
+    },
+    {
+      "value": "12538",
+      "count": 1
+    },
+    {
+      "value": "05478",
+      "count": 1
+    },
+    {
+      "value": "04062",
+      "count": 1
+    },
+    {
+      "value": "12603",
+      "count": 1
+    },
+    {
+      "value": "04106",
+      "count": 1
+    },
+    {
+      "value": "06105",
+      "count": 1
+    },
+    {
+      "value": "12553",
+      "count": 1
+    },
+    {
+      "value": "34471",
+      "count": 1
+    },
+    {
+      "value": "08105",
+      "count": 1
+    },
+    {
+      "value": "12569",
+      "count": 1
+    },
+    {
+      "value": "53221",
+      "count": 1
+    },
+    {
+      "value": "07501",
+      "count": 1
+    },
+    {
+      "value": "33619",
+      "count": 1
+    },
+    {
+      "value": "60067",
+      "count": 1
+    },
+    {
+      "value": "11756",
+      "count": 1
+    },
+    {
+      "value": "12533",
+      "count": 1
+    },
+    {
+      "value": "07503",
+      "count": 1
+    },
+    {
+      "value": "53204",
+      "count": 1
+    },
+    {
+      "value": "93625",
+      "count": 1
+    },
+    {
+      "value": "35007",
+      "count": 1
+    },
+    {
+      "value": "04103",
+      "count": 1
+    },
+    {
+      "value": "17403",
+      "count": 1
+    },
+    {
+      "value": "02568",
+      "count": 1
+    },
+    {
+      "value": "72758",
+      "count": 1
+    },
+    {
+      "value": "12590",
+      "count": 1
+    },
+    {
+      "value": "34481",
+      "count": 1
+    },
+    {
+      "value": "33142",
+      "count": 1
+    },
+    {
+      "value": "77009",
+      "count": 1
+    },
+    {
+      "value": "60423",
+      "count": 1
+    },
+    {
+      "value": "77011",
+      "count": 1
+    },
+    {
+      "value": "82901",
+      "count": 1
+    },
+    {
+      "value": "55130",
+      "count": 1
+    },
+    {
+      "value": "76550",
+      "count": 1
+    },
+    {
+      "value": "98204",
+      "count": 1
+    },
+    {
+      "value": "95376",
+      "count": 1
+    },
+    {
+      "value": "37407",
+      "count": 1
+    },
+    {
+      "value": "78610",
+      "count": 1
+    },
+    {
+      "value": "20710",
+      "count": 1
+    },
+    {
+      "value": "01843",
+      "count": 1
+    },
+    {
+      "value": "07621",
+      "count": 1
+    },
+    {
+      "value": "62234",
+      "count": 1
+    },
+    {
+      "value": "33527",
+      "count": 1
+    },
+    {
+      "value": "78045",
+      "count": 1
+    },
+    {
+      "value": "08110",
+      "count": 1
+    },
+    {
+      "value": "07305",
+      "count": 1
+    },
+    {
+      "value": "11102",
+      "count": 1
+    },
+    {
+      "value": "78216",
+      "count": 1
+    },
+    {
+      "value": "33604",
+      "count": 1
+    },
+    {
+      "value": "18017",
+      "count": 1
+    },
+    {
+      "value": "02062",
+      "count": 1
+    },
+    {
+      "value": "29651",
+      "count": 1
+    },
+    {
+      "value": "85208",
+      "count": 1
+    },
+    {
+      "value": "95203",
+      "count": 1
+    },
+    {
+      "value": "33184",
+      "count": 1
+    },
+    {
+      "value": "29303",
+      "count": 1
+    },
+    {
+      "value": "33167",
+      "count": 1
+    },
+    {
+      "value": "92675",
+      "count": 1
+    },
+    {
+      "value": "61364",
+      "count": 1
+    },
+    {
+      "value": "80022",
+      "count": 1
+    },
+    {
+      "value": "33055",
+      "count": 1
+    },
+    {
+      "value": "33181",
+      "count": 1
+    },
+    {
+      "value": "29687",
+      "count": 1
+    },
+    {
+      "value": "07630",
+      "count": 1
+    },
+    {
+      "value": "33139",
+      "count": 1
+    },
+    {
+      "value": "12550",
+      "count": 1
+    },
+    {
+      "value": "76111",
+      "count": 1
+    },
+    {
+      "value": "33709",
+      "count": 1
+    },
+    {
+      "value": "33756",
+      "count": 1
+    },
+    {
+      "value": "22151",
+      "count": 1
+    },
+    {
+      "value": "15216",
+      "count": 1
+    },
+    {
+      "value": "22003",
+      "count": 1
+    },
+    {
+      "value": "60133",
+      "count": 1
+    },
+    {
+      "value": "22401",
+      "count": 1
+    },
+    {
+      "value": "27707",
+      "count": 1
+    },
+    {
+      "value": "79107",
+      "count": 1
+    },
+    {
+      "value": "28215",
+      "count": 1
+    },
+    {
+      "value": "75081",
+      "count": 1
+    },
+    {
+      "value": "78753",
+      "count": 1
+    },
+    {
+      "value": "20170",
+      "count": 1
+    },
+    {
+      "value": "07701",
+      "count": 1
+    },
+    {
+      "value": "32407",
+      "count": 1
+    },
+    {
+      "value": "28792",
+      "count": 1
+    },
+    {
+      "value": "35209",
+      "count": 1
+    },
+    {
+      "value": "08360",
+      "count": 1
+    },
+    {
+      "value": "77029",
+      "count": 1
+    },
+    {
+      "value": "33150",
+      "count": 1
+    },
+    {
+      "value": "85035",
+      "count": 1
+    },
+    {
+      "value": "07661",
+      "count": 1
+    },
+    {
+      "value": "11717",
+      "count": 1
+    },
+    {
+      "value": "87108",
+      "count": 1
+    },
+    {
+      "value": "11706",
+      "count": 1
+    },
+    {
+      "value": "55404",
+      "count": 1
+    },
+    {
+      "value": "07065",
+      "count": 1
+    },
+    {
+      "value": "33511",
+      "count": 1
+    },
+    {
+      "value": "78542",
+      "count": 1
+    },
+    {
+      "value": "78516",
+      "count": 1
+    },
+    {
+      "value": "60642",
+      "count": 1
+    },
+    {
+      "value": "93021",
+      "count": 1
+    },
+    {
+      "value": "91362",
+      "count": 1
+    },
+    {
+      "value": "94066",
+      "count": 1
+    },
+    {
+      "value": "92057",
+      "count": 1
+    },
+    {
+      "value": "70056",
+      "count": 1
+    },
+    {
+      "value": "91016",
+      "count": 1
+    },
+    {
+      "value": "27107",
+      "count": 1
+    },
+    {
+      "value": "10553",
+      "count": 1
+    },
+    {
+      "value": "07205",
+      "count": 1
+    },
+    {
+      "value": "54302",
+      "count": 1
+    },
+    {
+      "value": "94945",
+      "count": 1
+    },
+    {
+      "value": "92407",
+      "count": 1
+    },
+    {
+      "value": "92337",
+      "count": 1
+    },
+    {
+      "value": "90404",
+      "count": 1
+    },
+    {
+      "value": "91739",
+      "count": 1
+    },
+    {
+      "value": "11203",
+      "count": 1
+    },
+    {
+      "value": "91730",
+      "count": 1
+    },
+    {
+      "value": "92627",
+      "count": 1
+    },
+    {
+      "value": "95603",
+      "count": 1
+    },
+    {
+      "value": "95825",
+      "count": 1
+    },
+    {
+      "value": "10306",
+      "count": 1
+    },
+    {
+      "value": "98273",
+      "count": 1
+    },
+    {
+      "value": "32580",
+      "count": 1
+    },
+    {
+      "value": "28203",
+      "count": 1
+    },
+    {
+      "value": "84624",
+      "count": 1
+    },
+    {
+      "value": "91335",
+      "count": 1
+    },
+    {
+      "value": "77043",
+      "count": 1
+    },
+    {
+      "value": "98003",
+      "count": 1
+    },
+    {
+      "value": "33050",
+      "count": 1
+    },
+    {
+      "value": "84647",
+      "count": 1
+    },
+    {
+      "value": "70130",
+      "count": 1
+    },
+    {
+      "value": "28216",
+      "count": 1
+    },
+    {
+      "value": "75180",
+      "count": 1
+    },
+    {
+      "value": "77065",
+      "count": 1
+    },
+    {
+      "value": "11791",
+      "count": 1
+    },
+    {
+      "value": "89121",
+      "count": 1
+    },
+    {
+      "value": "95202",
+      "count": 1
+    },
+    {
+      "value": "10038",
+      "count": 1
+    },
+    {
+      "value": "89820",
+      "count": 1
+    },
+    {
+      "value": "92019",
+      "count": 1
+    },
+    {
+      "value": "90716",
+      "count": 1
+    },
+    {
+      "value": "30360",
+      "count": 1
+    },
+    {
+      "value": "48911",
+      "count": 1
+    },
+    {
+      "value": "30260",
+      "count": 1
+    },
+    {
+      "value": "11103",
+      "count": 1
+    },
+    {
+      "value": "49036",
+      "count": 1
+    },
+    {
+      "value": "76119",
+      "count": 1
+    },
+    {
+      "value": "89169",
+      "count": 1
+    },
+    {
+      "value": "33916",
+      "count": 1
+    },
+    {
+      "value": "10993",
+      "count": 1
+    },
+    {
+      "value": "10703",
+      "count": 1
+    },
+    {
+      "value": "07105",
+      "count": 1
+    },
+    {
+      "value": "02072",
+      "count": 1
+    },
+    {
+      "value": "02601",
+      "count": 1
+    },
+    {
+      "value": "35244",
+      "count": 1
+    },
+    {
+      "value": "33168",
+      "count": 1
+    },
+    {
+      "value": "95828",
+      "count": 1
+    },
+    {
+      "value": "75149",
+      "count": 1
+    },
+    {
+      "value": "33165",
+      "count": 1
+    },
+    {
+      "value": "93309",
+      "count": 1
+    },
+    {
+      "value": "20176",
+      "count": 1
+    },
+    {
+      "value": "60459",
+      "count": 1
+    },
+    {
+      "value": "02108",
+      "count": 1
+    },
+    {
+      "value": "07304",
+      "count": 1
+    },
+    {
+      "value": "93280",
+      "count": 1
+    },
+    {
+      "value": "95133",
+      "count": 1
+    },
+    {
+      "value": "95111",
+      "count": 1
+    },
+    {
+      "value": "95123",
+      "count": 1
+    },
+    {
+      "value": "95121",
+      "count": 1
+    },
+    {
+      "value": "32811",
+      "count": 1
+    },
+    {
+      "value": "02302",
+      "count": 1
+    },
+    {
+      "value": "93648",
+      "count": 1
+    },
+    {
+      "value": "01830",
+      "count": 1
+    },
+    {
+      "value": "01013",
+      "count": 1
+    },
+    {
+      "value": "33031",
+      "count": 1
+    },
+    {
+      "value": "49504",
+      "count": 1
+    },
+    {
+      "value": "93436",
+      "count": 1
+    },
+    {
+      "value": "89102",
+      "count": 1
+    },
+    {
+      "value": "01902",
+      "count": 1
+    },
+    {
+      "value": "95388",
+      "count": 1
+    },
+    {
+      "value": "03102",
+      "count": 1
+    },
+    {
+      "value": "19963",
+      "count": 1
+    },
+    {
+      "value": "22310",
+      "count": 1
+    },
+    {
+      "value": "89122",
+      "count": 1
+    },
+    {
+      "value": "23234",
+      "count": 1
+    },
+    {
+      "value": "06360",
+      "count": 1
+    },
+    {
+      "value": "12601",
+      "count": 1
+    },
+    {
+      "value": "90061",
+      "count": 1
+    },
+    {
+      "value": "49512",
+      "count": 1
+    },
+    {
+      "value": "02119",
+      "count": 1
+    },
+    {
+      "value": "91321",
+      "count": 1
+    },
+    {
+      "value": "10029",
+      "count": 1
+    },
+    {
+      "value": "01151",
+      "count": 1
+    },
+    {
+      "value": "34203",
+      "count": 1
+    },
+    {
+      "value": "01109",
+      "count": 1
+    },
+    {
+      "value": "96732",
+      "count": 1
+    },
+    {
+      "value": "87121",
+      "count": 1
+    },
+    {
+      "value": "90001",
+      "count": 1
+    },
+    {
+      "value": "87105",
+      "count": 1
+    },
+    {
+      "value": "94401",
+      "count": 1
+    },
+    {
+      "value": "95670",
+      "count": 1
+    },
+    {
+      "value": "28083",
+      "count": 1
+    },
+    {
+      "value": "75224",
+      "count": 1
+    },
+    {
+      "value": "32137",
+      "count": 1
+    },
+    {
+      "value": "11798",
+      "count": 1
+    },
+    {
+      "value": "02368",
+      "count": 1
+    },
+    {
+      "value": "76015",
+      "count": 1
+    },
+    {
+      "value": "06905",
+      "count": 1
+    },
+    {
+      "value": "93647",
+      "count": 1
+    },
+    {
+      "value": "30281",
+      "count": 1
+    },
+    {
+      "value": "10562",
+      "count": 1
+    },
+    {
+      "value": "06610",
+      "count": 1
+    },
+    {
+      "value": "95340",
+      "count": 1
+    },
+    {
+      "value": "75212",
+      "count": 1
+    },
+    {
+      "value": "11217",
+      "count": 1
+    },
+    {
+      "value": "25414",
+      "count": 1
+    },
+    {
+      "value": "95341",
+      "count": 1
+    },
+    {
+      "value": "02126",
+      "count": 1
+    },
+    {
+      "value": "10927",
+      "count": 1
+    },
+    {
+      "value": "17201",
+      "count": 1
+    },
+    {
+      "value": "11228",
+      "count": 1
+    },
+    {
+      "value": "80909",
+      "count": 1
+    },
+    {
+      "value": "92703",
+      "count": 1
+    },
+    {
+      "value": "34221",
+      "count": 1
+    },
+    {
+      "value": "92020",
+      "count": 1
+    },
+    {
+      "value": "30084",
+      "count": 1
+    },
+    {
+      "value": "92064",
+      "count": 1
+    },
+    {
+      "value": "93560",
+      "count": 1
+    },
+    {
+      "value": "10543",
+      "count": 1
+    },
+    {
+      "value": "30354",
+      "count": 1
+    },
+    {
+      "value": "30093",
+      "count": 1
+    },
+    {
+      "value": "20009",
+      "count": 1
+    },
+    {
+      "value": "11428",
+      "count": 1
+    },
+    {
+      "value": "10005",
+      "count": 1
+    },
+    {
+      "value": "49503",
+      "count": 1
+    },
+    {
+      "value": "75042",
+      "count": 1
+    },
+    {
+      "value": "07083",
+      "count": 1
+    },
+    {
+      "value": "42104",
+      "count": 1
+    },
+    {
+      "value": "91710",
+      "count": 1
+    },
+    {
+      "value": "91107",
+      "count": 1
+    },
+    {
+      "value": "95358",
+      "count": 1
+    },
+    {
+      "value": "90262",
+      "count": 1
+    },
+    {
+      "value": "93030",
+      "count": 1
+    },
+    {
+      "value": "98233",
+      "count": 1
+    },
+    {
+      "value": "10901",
+      "count": 1
+    },
+    {
+      "value": "60131",
+      "count": 1
+    },
+    {
+      "value": "70301",
+      "count": 1
+    },
+    {
+      "value": "19601",
+      "count": 1
+    },
+    {
+      "value": "10461",
+      "count": 1
+    },
+    {
+      "value": "91360",
+      "count": 1
+    },
+    {
+      "value": "94501",
+      "count": 1
+    },
+    {
+      "value": "20109",
+      "count": 1
+    },
+    {
+      "value": "30341",
+      "count": 1
+    },
+    {
+      "value": "92804",
+      "count": 1
+    },
+    {
+      "value": "30076",
+      "count": 1
+    },
+    {
+      "value": "30092",
+      "count": 1
+    },
+    {
+      "value": "26101",
+      "count": 1
+    },
+    {
+      "value": "33014",
+      "count": 1
+    },
+    {
+      "value": "19973",
+      "count": 1
+    },
+    {
+      "value": "77042",
+      "count": 1
+    },
+    {
+      "value": "11435",
+      "count": 1
+    },
+    {
+      "value": "60465",
+      "count": 1
+    },
+    {
+      "value": "93304",
+      "count": 1
+    },
+    {
+      "value": "30096",
+      "count": 1
+    },
+    {
+      "value": "91406",
+      "count": 1
+    },
+    {
+      "value": "30083",
+      "count": 1
+    },
+    {
+      "value": "92630",
+      "count": 1
+    },
+    {
+      "value": "28016",
+      "count": 1
+    },
+    {
+      "value": "40353",
+      "count": 1
+    },
+    {
+      "value": "77099",
+      "count": 1
+    },
+    {
+      "value": "37211",
+      "count": 1
+    },
+    {
+      "value": "32304",
+      "count": 1
+    },
+    {
+      "value": "21801",
+      "count": 1
+    },
+    {
+      "value": "47714",
+      "count": 1
+    },
+    {
+      "value": "91701",
+      "count": 1
+    },
+    {
+      "value": "80011",
+      "count": 1
+    },
+    {
+      "value": "10573",
+      "count": 1
+    },
+    {
+      "value": "07920",
+      "count": 1
+    },
+    {
+      "value": "01040",
+      "count": 1
+    },
+    {
+      "value": "90058",
+      "count": 1
+    },
+    {
+      "value": "77433",
+      "count": 1
+    },
+    {
+      "value": "95822",
+      "count": 1
+    },
+    {
+      "value": "30236",
+      "count": 1
+    },
+    {
+      "value": "84116",
+      "count": 1
+    },
+    {
+      "value": "27229",
+      "count": 1
+    },
+    {
+      "value": "55104",
+      "count": 1
+    },
+    {
+      "value": "07840",
+      "count": 1
+    },
+    {
+      "value": "28052",
+      "count": 1
+    },
+    {
+      "value": "07960",
+      "count": 1
+    },
+    {
+      "value": "23237",
+      "count": 1
+    },
+    {
+      "value": "07204",
+      "count": 1
+    },
+    {
+      "value": "81632",
+      "count": 1
+    },
+    {
+      "value": "92780",
+      "count": 1
+    },
+    {
+      "value": "96002",
+      "count": 1
+    },
+    {
+      "value": "07017",
+      "count": 1
+    },
+    {
+      "value": "24541",
+      "count": 1
+    },
+    {
+      "value": "28205",
+      "count": 1
+    },
+    {
+      "value": "28164",
+      "count": 1
+    },
+    {
+      "value": "11722",
+      "count": 1
+    },
+    {
+      "value": "91331",
+      "count": 1
+    },
+    {
+      "value": "28031",
+      "count": 1
+    }
+  ],
+  "country": [
+    {
+      "value": "US",
+      "count": 2409
+    }
+  ]
+}

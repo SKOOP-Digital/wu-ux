@@ -17,9 +17,9 @@ import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbS
 import { hasAnyImpressionData, getImpressionMultiplier } from "@/data/impressionStore";
 import {
   cloneTargeting,
+  createCdmTargeting,
   estimateCapacityFromTargeting,
   getScreensMatchingTargeting,
-  migrateTagsToTargeting,
   targetingHasConditions,
   type TargetingRules,
 } from "@/data/targeting";
@@ -79,7 +79,22 @@ const campaignData: Record<string, CampaignRecord> = {
     campaignType: "standard", sspPartner: "", sspApiKey: "", sspAvgDuration: 30,
     startDate: "2026-04-01", endDate: "2026-06-30",
     timeWindows: [{ id: "w1", days: ALL_DAYS, startTime: "06:00", endTime: "22:00" }],
-    targeting: migrateTagsToTargeting(["Financial Banks · Northeast", "Urban Panels · National"]),
+    targeting: createCdmTargeting([
+      {
+        matchType: "all of",
+        conditions: [
+          { key: "region", value: "East" },
+          { key: "brand", value: "WU" },
+        ],
+      },
+      {
+        matchType: "all of",
+        conditions: [
+          { key: "region", value: "Central" },
+          { key: "dma", value: "Chicago, IL" },
+        ],
+      },
+    ]),
     hasTarget: true, deliveryGoalType: "sov", sovValue: 40, totalPlays: 5000, playsPerDay: 200,
     fillEnabled: false, delivered: 3200, target: 5000, status: "Live",
     creatives: [
@@ -92,7 +107,11 @@ const campaignData: Record<string, CampaignRecord> = {
     campaignType: "standard", sspPartner: "", sspApiKey: "", sspAvgDuration: 30,
     startDate: "2026-03-01", endDate: "2026-05-31",
     timeWindows: [{ id: "w1", days: ALL_DAYS, startTime: "06:00", endTime: "22:00" }],
-    targeting: migrateTagsToTargeting(["Convenience Stores · Midwest & South"]),
+    targeting: createCdmTargeting([
+      {
+        conditions: [{ key: "audience_grouping", value: "Spanish-Speaking Countries-LATAMCA" }],
+      },
+    ]),
     hasTarget: true, deliveryGoalType: "total", sovValue: 20, totalPlays: 5000, playsPerDay: 200,
     fillEnabled: true, delivered: 3100, target: 5000, status: "Live",
     creatives: [{ id: "c1", name: "Nike_Spring_16x9.mp4", type: "Video", size: "9.1 MB", duration: 30 }],
@@ -102,7 +121,18 @@ const campaignData: Record<string, CampaignRecord> = {
     campaignType: "standard", sspPartner: "", sspApiKey: "", sspAvgDuration: 30,
     startDate: "2026-01-01", endDate: "2026-12-31",
     timeWindows: [{ id: "w1", days: ALL_DAYS, startTime: "06:00", endTime: "22:00" }],
-    targeting: migrateTagsToTargeting(["Financial Banks · Northeast", "Financial Banks · Southwest & Rocky Mountain"]),
+    targeting: createCdmTargeting([
+      {
+        matchType: "any of",
+        conditions: [
+          { key: "region", value: "East" },
+          { key: "region", value: "Central" },
+        ],
+      },
+      {
+        conditions: [{ key: "brand", value: "WU" }],
+      },
+    ]),
     hasTarget: false, deliveryGoalType: "total", sovValue: 20, totalPlays: 0, playsPerDay: 200,
     fillEnabled: true, delivered: 48000, target: 0, status: "Live",
     creatives: [
@@ -118,7 +148,15 @@ const campaignData: Record<string, CampaignRecord> = {
       { id: "w1", days: ["Mon", "Tue", "Wed", "Thu", "Fri"], startTime: "11:00", endTime: "21:00" },
       { id: "w2", days: ["Sat", "Sun"], startTime: "10:00", endTime: "22:00" },
     ],
-    targeting: migrateTagsToTargeting(["Grocery Retail · West Coast"]),
+    targeting: createCdmTargeting([
+      {
+        matchType: "all of",
+        conditions: [
+          { key: "region", value: "West" },
+          { key: "category", value: "Independent" },
+        ],
+      },
+    ]),
     hasTarget: true, deliveryGoalType: "sov", sovValue: 20, totalPlays: 4000, playsPerDay: 200,
     fillEnabled: false, delivered: 0, target: 4000, status: "Scheduled",
     creatives: [{ id: "c1", name: "CocaCola_Summer.mp4", type: "Video", size: "14.7 MB", duration: 30 }],
@@ -128,7 +166,15 @@ const campaignData: Record<string, CampaignRecord> = {
     campaignType: "standard", sspPartner: "", sspApiKey: "", sspAvgDuration: 30,
     startDate: "2026-03-01", endDate: "2026-03-31",
     timeWindows: [{ id: "w1", days: ["Mon", "Tue", "Wed", "Thu", "Fri"], startTime: "08:00", endTime: "18:00" }],
-    targeting: migrateTagsToTargeting(["Pharmacies · National"]),
+    targeting: createCdmTargeting([
+      {
+        matchType: "any of",
+        conditions: [
+          { key: "partner", value: "Pay-O-Matic" },
+          { key: "agent_partner", value: "CFSC" },
+        ],
+      },
+    ]),
     hasTarget: true, deliveryGoalType: "total", sovValue: 20, totalPlays: 3000, playsPerDay: 200,
     fillEnabled: true, delivered: 1200, target: 3000, status: "Under-delivering",
     creatives: [{ id: "c1", name: "WU_Remit_Promo.mp4", type: "Video", size: "8.3 MB", duration: 30 }],
@@ -138,7 +184,15 @@ const campaignData: Record<string, CampaignRecord> = {
     campaignType: "standard", sspPartner: "", sspApiKey: "", sspAvgDuration: 30,
     startDate: "2026-01-01", endDate: "2026-12-31",
     timeWindows: [{ id: "w1", days: ALL_DAYS, startTime: "07:00", endTime: "21:00" }],
-    targeting: migrateTagsToTargeting(["WU Partners"]),
+    targeting: createCdmTargeting([
+      {
+        matchType: "all of",
+        conditions: [
+          { key: "brand", value: "WU" },
+          { key: "facing", value: "in" },
+        ],
+      },
+    ]),
     hasTarget: true, deliveryGoalType: "plays-per-day", sovValue: 0, totalPlays: 0, playsPerDay: 200,
     fillEnabled: true, delivered: 8200, target: 12000, status: "Live",
     creatives: [
@@ -151,7 +205,15 @@ const campaignData: Record<string, CampaignRecord> = {
     campaignType: "programmatic", sspPartner: "Screenverse", sspApiKey: "svr-prod-key-4f9a2c", sspAvgDuration: 30,
     startDate: "2026-01-01", endDate: "2026-12-31",
     timeWindows: [{ id: "w1", days: ALL_DAYS, startTime: "06:00", endTime: "23:00" }],
-    targeting: migrateTagsToTargeting(["Kroger Network", "Independent Retail"]),
+    targeting: createCdmTargeting([
+      {
+        matchType: "any of",
+        conditions: [
+          { key: "partner", value: "Kroger" },
+          { key: "category", value: "Independent" },
+        ],
+      },
+    ]),
     hasTarget: true, deliveryGoalType: "sov", sovValue: 15, totalPlays: 0, playsPerDay: 0,
     fillEnabled: true, delivered: 21400, target: 30000, status: "Live",
     creatives: [],
@@ -161,7 +223,18 @@ const campaignData: Record<string, CampaignRecord> = {
     campaignType: "programmatic", sspPartner: "Xandr", sspApiKey: "", sspAvgDuration: 15,
     startDate: "2026-06-01", endDate: "2026-08-31",
     timeWindows: [{ id: "w1", days: ALL_DAYS, startTime: "08:00", endTime: "22:00" }],
-    targeting: migrateTagsToTargeting(["WU Partners", "Continental Forex"]),
+    targeting: createCdmTargeting([
+      {
+        matchType: "all of",
+        conditions: [
+          { key: "partner", value: "Continental-Currency" },
+          { key: "pom_bucket", value: "open" },
+        ],
+      },
+      {
+        conditions: [{ key: "brand", value: "WU" }],
+      },
+    ]),
     hasTarget: true, deliveryGoalType: "sov", sovValue: 10, totalPlays: 0, playsPerDay: 0,
     fillEnabled: true, delivered: 4800, target: 18000, status: "Live",
     creatives: [],

@@ -1,0 +1,844 @@
+{
+  "device_type": [
+    {
+      "value": "windows",
+      "count": 1258
+    },
+    {
+      "value": "brightsign",
+      "count": 1153
+    }
+  ],
+  "unit_type": [
+    {
+      "value": "dual sided window",
+      "count": 1199
+    },
+    {
+      "value": "countertop",
+      "count": 423
+    },
+    {
+      "value": "freestanding",
+      "count": 416
+    },
+    {
+      "value": "wall mount",
+      "count": 346
+    },
+    {
+      "value": "digi conversion",
+      "count": 26
+    },
+    {
+      "value": "ceiling mount",
+      "count": 1
+    }
+  ],
+  "region": [
+    {
+      "value": "East",
+      "count": 1193
+    },
+    {
+      "value": "Central",
+      "count": 784
+    },
+    {
+      "value": "West",
+      "count": 433
+    },
+    {
+      "value": "Canada",
+      "count": 1
+    }
+  ],
+  "agent_partner": [
+    {
+      "value": "Independent In Lane",
+      "count": 1100
+    },
+    {
+      "value": "Advance America",
+      "count": 472
+    },
+    {
+      "value": "CFSC",
+      "count": 195
+    },
+    {
+      "value": "Pay-O-Matic",
+      "count": 150
+    },
+    {
+      "value": "Barr Management",
+      "count": 92
+    },
+    {
+      "value": "Continental Currency",
+      "count": 48
+    },
+    {
+      "value": "Western Union Corporate O&O",
+      "count": 43
+    },
+    {
+      "value": "A1 Check Cashing",
+      "count": 40
+    },
+    {
+      "value": "West Suburban",
+      "count": 38
+    },
+    {
+      "value": "New Lincoln Addison",
+      "count": 37
+    },
+    {
+      "value": "GFG Management",
+      "count": 34
+    },
+    {
+      "value": "CHECK CASHING USA",
+      "count": 32
+    },
+    {
+      "value": "Economy CE",
+      "count": 25
+    },
+    {
+      "value": "Keller 6365",
+      "count": 25
+    },
+    {
+      "value": "David's Check Cashing",
+      "count": 23
+    },
+    {
+      "value": "Rumba Money Centers",
+      "count": 20
+    },
+    {
+      "value": "Chicago Financial Network",
+      "count": 16
+    },
+    {
+      "value": "Chavez Supermarket",
+      "count": 11
+    },
+    {
+      "value": "Western North",
+      "count": 10
+    }
+  ],
+  "brand": [
+    {
+      "value": "WU",
+      "count": 1849
+    },
+    {
+      "value": "VG",
+      "count": 477
+    },
+    {
+      "value": "OV",
+      "count": 64
+    },
+    {
+      "value": "VG; WU",
+      "count": 5
+    },
+    {
+      "value": "OV; VG",
+      "count": 2
+    },
+    {
+      "value": "OV; VG; WU",
+      "count": 1
+    }
+  ],
+  "facing": [
+    {
+      "value": "in",
+      "count": 1808
+    },
+    {
+      "value": "out",
+      "count": 601
+    }
+  ],
+  "vendor_partner": [
+    {
+      "value": "KIS",
+      "count": 1196
+    },
+    {
+      "value": "CRI",
+      "count": 1148
+    },
+    {
+      "value": "CoolerScreens",
+      "count": 62
+    }
+  ],
+  "dma": [
+    {
+      "value": "New York, NY",
+      "count": 491
+    },
+    {
+      "value": "Chicago, IL",
+      "count": 370
+    },
+    {
+      "value": "Los Angeles, CA",
+      "count": 198
+    },
+    {
+      "value": "Miami-Ft. Lauderdale, FL",
+      "count": 146
+    },
+    {
+      "value": "Houston, TX",
+      "count": 133
+    },
+    {
+      "value": "Atlanta, GA",
+      "count": 84
+    },
+    {
+      "value": "Boston, MA",
+      "count": 82
+    },
+    {
+      "value": "Dallas-Ft. Worth, TX",
+      "count": 66
+    },
+    {
+      "value": "Orlando, FL",
+      "count": 51
+    },
+    {
+      "value": "Philadelphia, PA",
+      "count": 42
+    },
+    {
+      "value": "Tampa, FL",
+      "count": 40
+    },
+    {
+      "value": "Sacramento-Stockton-Modesto, CA",
+      "count": 39
+    },
+    {
+      "value": "Washington, DC",
+      "count": 36
+    },
+    {
+      "value": "Fresno-Visalia, CA",
+      "count": 30
+    },
+    {
+      "value": "San Francisco-Oakland-San Jose, CA",
+      "count": 29
+    },
+    {
+      "value": "West Palm Beach-Ft. Pierce, FL",
+      "count": 28
+    },
+    {
+      "value": "Jacksonville, FL",
+      "count": 26
+    },
+    {
+      "value": "Ft. Myers-Naples, FL",
+      "count": 25
+    },
+    {
+      "value": "San Antonio, TX",
+      "count": 24
+    },
+    {
+      "value": "San Diego, CA",
+      "count": 23
+    },
+    {
+      "value": "Las Vegas, NV",
+      "count": 20
+    },
+    {
+      "value": "Bakersfield, CA",
+      "count": 16
+    },
+    {
+      "value": "Denver, CO",
+      "count": 15
+    },
+    {
+      "value": "Austin, TX",
+      "count": 15
+    },
+    {
+      "value": "Charlotte, NC",
+      "count": 15
+    },
+    {
+      "value": "Minneapolis-St. Paul, MN",
+      "count": 14
+    },
+    {
+      "value": "Milwaukee, WI",
+      "count": 14
+    },
+    {
+      "value": "Providence, RI",
+      "count": 13
+    },
+    {
+      "value": "Salt Lake City, UT",
+      "count": 10
+    },
+    {
+      "value": "New Orleans, LA",
+      "count": 10
+    },
+    {
+      "value": "Phoenix, AZ",
+      "count": 10
+    },
+    {
+      "value": "Portland-Auburn, ME",
+      "count": 10
+    },
+    {
+      "value": "Detroit, MI",
+      "count": 10
+    },
+    {
+      "value": "Nashville, TN",
+      "count": 9
+    },
+    {
+      "value": "Greensboro-High Point-Winston Salem, NC",
+      "count": 9
+    },
+    {
+      "value": "Santa Barbara-Santa Maria-San Luis Obispo, CA",
+      "count": 9
+    },
+    {
+      "value": "Waco-Temple-Bryan, TX",
+      "count": 8
+    },
+    {
+      "value": "Mobile, AL",
+      "count": 8
+    },
+    {
+      "value": "Birmingham, AL",
+      "count": 7
+    },
+    {
+      "value": "Greenville-Spartanburg, SC",
+      "count": 7
+    },
+    {
+      "value": "Raleigh-Durham, NC",
+      "count": 7
+    },
+    {
+      "value": "Tallahassee, FL",
+      "count": 7
+    },
+    {
+      "value": "Panama City, FL",
+      "count": 7
+    },
+    {
+      "value": "Baltimore, MD",
+      "count": 6
+    },
+    {
+      "value": "Gainesville, FL",
+      "count": 6
+    },
+    {
+      "value": "Grand Rapids-Kalamazoo-Battle Creek, MI",
+      "count": 6
+    },
+    {
+      "value": "Harlingen-Weslaco-Brownsville-McAllen, TX",
+      "count": 6
+    },
+    {
+      "value": "Beaumont-Port Arthur, TX",
+      "count": 5
+    },
+    {
+      "value": "Rockford, IL",
+      "count": 5
+    },
+    {
+      "value": "Albuquerque-Santa Fe, NM",
+      "count": 5
+    },
+    {
+      "value": "Macon, GA",
+      "count": 5
+    },
+    {
+      "value": "Reno, NV",
+      "count": 5
+    },
+    {
+      "value": "Seattle-Tacoma, WA",
+      "count": 5
+    },
+    {
+      "value": "Hartford & New Haven, CT",
+      "count": 5
+    },
+    {
+      "value": "Palm Springs, CA",
+      "count": 5
+    },
+    {
+      "value": "Chico-Redding, CA",
+      "count": 5
+    },
+    {
+      "value": "Columbus, OH",
+      "count": 4
+    },
+    {
+      "value": "Chattanooga, TN",
+      "count": 4
+    },
+    {
+      "value": "Norfolk-Portsmouth-Newport News, VA",
+      "count": 4
+    },
+    {
+      "value": "Green Bay-Appleton, WI",
+      "count": 4
+    },
+    {
+      "value": "Albany-Schenectady-Troy, NY",
+      "count": 4
+    },
+    {
+      "value": "Harrisburg-Lancaster-Lebanon-York, PA",
+      "count": 4
+    },
+    {
+      "value": "Tyler-Longview(Lufkin & Nacogdoches), TX",
+      "count": 4
+    },
+    {
+      "value": "Corpus Christi, TX",
+      "count": 4
+    },
+    {
+      "value": "Odessa-Midland, TX",
+      "count": 4
+    },
+    {
+      "value": "Salisbury, MD",
+      "count": 4
+    },
+    {
+      "value": "Springfield-Holyoke, MA",
+      "count": 4
+    },
+    {
+      "value": "Memphis, TN",
+      "count": 3
+    },
+    {
+      "value": "Paducah, KY",
+      "count": 3
+    },
+    {
+      "value": "Cedar Rapids-Waterloo-Iowa City & Dubuque, IA",
+      "count": 3
+    },
+    {
+      "value": "Yuma, AZ",
+      "count": 3
+    },
+    {
+      "value": "Kansas City, MO",
+      "count": 3
+    },
+    {
+      "value": "Cleveland-Akron (Canton), OH",
+      "count": 3
+    },
+    {
+      "value": "Ft. Smith-Fayetteville-Springdale-Rogers, AR",
+      "count": 3
+    },
+    {
+      "value": "Peoria-Bloomington, IL",
+      "count": 2
+    },
+    {
+      "value": "Colorado Springs-Pueblo, CO",
+      "count": 2
+    },
+    {
+      "value": "Champaign & Springfield-Decatur, IL",
+      "count": 2
+    },
+    {
+      "value": "Florence-Myrtle Beach, SC",
+      "count": 2
+    },
+    {
+      "value": "Laredo, TX",
+      "count": 2
+    },
+    {
+      "value": "Syracuse, NY",
+      "count": 2
+    },
+    {
+      "value": "Roanoke-Lynchburg, VA",
+      "count": 2
+    },
+    {
+      "value": "Youngstown, OH",
+      "count": 2
+    },
+    {
+      "value": "Monterey-Salinas, CA",
+      "count": 2
+    },
+    {
+      "value": "Victoria, TX",
+      "count": 2
+    },
+    {
+      "value": "Ft. Wayne, IN",
+      "count": 2
+    },
+    {
+      "value": "Lima, OH",
+      "count": 2
+    },
+    {
+      "value": "El Paso, TX",
+      "count": 2
+    },
+    {
+      "value": "Abilene-Sweetwater, TX",
+      "count": 2
+    },
+    {
+      "value": "Richmond-Petersburg, VA",
+      "count": 2
+    },
+    {
+      "value": "Wichita Falls, TX",
+      "count": 2
+    },
+    {
+      "value": "South Bend-Elkhart, IN",
+      "count": 1
+    },
+    {
+      "value": "Columbus, GA",
+      "count": 1
+    },
+    {
+      "value": "Savannah, GA",
+      "count": 1
+    },
+    {
+      "value": "Augusta, GA",
+      "count": 1
+    },
+    {
+      "value": "Madison, WI",
+      "count": 1
+    },
+    {
+      "value": "Portland, OR",
+      "count": 1
+    },
+    {
+      "value": "Cincinnati, OH",
+      "count": 1
+    },
+    {
+      "value": "Hattiesburg-Laurel, MS",
+      "count": 1
+    },
+    {
+      "value": "Lincoln & Hastings-Kearney, NE",
+      "count": 1
+    },
+    {
+      "value": "Omaha, NE",
+      "count": 1
+    },
+    {
+      "value": "Knoxville, TN",
+      "count": 1
+    },
+    {
+      "value": "Toledo, OH",
+      "count": 1
+    },
+    {
+      "value": "Wichita-Hutchinson, KS",
+      "count": 1
+    },
+    {
+      "value": "Binghamton, NY",
+      "count": 1
+    },
+    {
+      "value": "Utica, NY",
+      "count": 1
+    },
+    {
+      "value": "Charleston, SC",
+      "count": 1
+    },
+    {
+      "value": "Albany, GA",
+      "count": 1
+    },
+    {
+      "value": "Little Rock-Pine Bluff, AR",
+      "count": 1
+    },
+    {
+      "value": "Oklahoma City, OK",
+      "count": 1
+    },
+    {
+      "value": "Burlington, VT",
+      "count": 1
+    },
+    {
+      "value": "St. Louis, MO",
+      "count": 1
+    },
+    {
+      "value": "Pittsburgh, PA",
+      "count": 1
+    },
+    {
+      "value": "Amarillo, TX",
+      "count": 1
+    },
+    {
+      "value": "Lansing, MI",
+      "count": 1
+    },
+    {
+      "value": "Honolulu, HI",
+      "count": 1
+    },
+    {
+      "value": "Bowling Green, KY",
+      "count": 1
+    },
+    {
+      "value": "Parkersburg, WV",
+      "count": 1
+    },
+    {
+      "value": "Lexington, KY",
+      "count": 1
+    },
+    {
+      "value": "Evansville, IN",
+      "count": 1
+    }
+  ],
+  "category": [
+    {
+      "value": "Independent",
+      "count": 1012
+    },
+    {
+      "value": "Strategic",
+      "count": 935
+    },
+    {
+      "value": "Regional",
+      "count": 361
+    }
+  ],
+  "audience_grouping": [
+    {
+      "value": "Spanish-Speaking Countries-LATAMCA",
+      "count": 1064
+    },
+    {
+      "value": "LATAMCA",
+      "count": 245
+    },
+    {
+      "value": "North America",
+      "count": 140
+    },
+    {
+      "value": "Asia",
+      "count": 57
+    },
+    {
+      "value": "Spanish-Speaking Countries",
+      "count": 26
+    },
+    {
+      "value": "Africa",
+      "count": 17
+    },
+    {
+      "value": "Europe",
+      "count": 12
+    },
+    {
+      "value": "MENA",
+      "count": 9
+    }
+  ],
+  "audience": [
+    {
+      "value": "US-to-LATAMCA",
+      "count": 403
+    },
+    {
+      "value": "US-to-Spanish-Speaking-Countries",
+      "count": 324
+    },
+    {
+      "value": "US-to-US",
+      "count": 42
+    },
+    {
+      "value": "US-to-Asia",
+      "count": 15
+    },
+    {
+      "value": "US-to-Africa",
+      "count": 6
+    },
+    {
+      "value": "US-to-Europe",
+      "count": 2
+    },
+    {
+      "value": "US-to-MENA",
+      "count": 1
+    }
+  ],
+  "bundle": [
+    {
+      "value": "Disney-AA",
+      "count": 110
+    },
+    {
+      "value": "Disney-AA; Disney-Hispanic",
+      "count": 16
+    }
+  ],
+  "pool": [
+    {
+      "value": "Pre-Paid-Stores",
+      "count": 493
+    }
+  ],
+  "partner": [
+    {
+      "value": "Advance-America",
+      "count": 468
+    },
+    {
+      "value": "CFSC",
+      "count": 194
+    },
+    {
+      "value": "Pay-O-Matic",
+      "count": 150
+    },
+    {
+      "value": "Barr-Management",
+      "count": 92
+    },
+    {
+      "value": "Continental-Currency",
+      "count": 48
+    },
+    {
+      "value": "A1-Check-Cashing",
+      "count": 40
+    },
+    {
+      "value": "Kroger",
+      "count": 38
+    },
+    {
+      "value": "West-Suburban",
+      "count": 36
+    },
+    {
+      "value": "New-Lincoln-Addison",
+      "count": 35
+    },
+    {
+      "value": "Check-Cashing-USA",
+      "count": 32
+    },
+    {
+      "value": "GFG",
+      "count": 32
+    },
+    {
+      "value": "Keller-6365",
+      "count": 25
+    },
+    {
+      "value": "Economy-CE",
+      "count": 24
+    },
+    {
+      "value": "Davids-Check-Cashing",
+      "count": 23
+    },
+    {
+      "value": "Rumba-Money-Centers",
+      "count": 20
+    },
+    {
+      "value": "Chicago-Financial-Network",
+      "count": 16
+    },
+    {
+      "value": "Chavez-Supermarkets",
+      "count": 11
+    },
+    {
+      "value": "Western-North",
+      "count": 10
+    },
+    {
+      "value": "Oportun",
+      "count": 10
+    }
+  ],
+  "pom_bucket": [
+    {
+      "value": "open",
+      "count": 145
+    },
+    {
+      "value": "closed",
+      "count": 5
+    }
+  ]
+}

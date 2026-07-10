@@ -174,7 +174,7 @@ export default function TargetingRuleBuilder({ value, onChange }: TargetingRuleB
 
   const clearProximity = () => update({ proximity: undefined });
 
-  const addKeyValue = (list: KeyValue[]) => [...list, { key: "country", value: "" }];
+  const addKeyValue = (list: KeyValue[]) => [...list, { key: "region", value: "" }];
 
   return (
     <div className="space-y-5">
@@ -244,7 +244,7 @@ export default function TargetingRuleBuilder({ value, onChange }: TargetingRuleB
                   onRemove={() => {
                     const conditions = rule.conditions.filter((_, idx) => idx !== i);
                     updateRule(rule.id, {
-                      conditions: conditions.length > 0 ? conditions : [{ key: "country", value: "" }],
+                      conditions: conditions.length > 0 ? conditions : [{ key: "region", value: "" }],
                     });
                   }}
                   showRemove={rule.conditions.length > 1}
